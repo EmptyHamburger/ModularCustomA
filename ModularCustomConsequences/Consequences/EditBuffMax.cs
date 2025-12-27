@@ -25,11 +25,6 @@ public class ConsequenceEditBuffMax : IModularConsequence
         if (!int.TryParse(circles[5], out modifyIntValue)) return;
 
         BUFF_UNIQUE_KEYWORD var1Keyword = CustomBuffs.ParseBuffUniqueKeyword(circles[1]);
-        if (var1Keyword.ToString() != circles[1]) 
-        {   
-            MTCustomScripts.Main.Logger.LogError($"[editbuffmax]: Invalid buff keyword - {circles[1]}");
-            return;
-        }
 
         for (int index = 0; index < (hasTarget ? targetModelList.Count : 1); index++)
         {
