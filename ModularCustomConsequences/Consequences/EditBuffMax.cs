@@ -107,7 +107,7 @@ public class ConsequenceEditBuffMax : IModularConsequence
                 if (selectedBuff.GetCurrentTurn() > selectedBuff.GetMaxTurn())
                 {
                     loseValue = selectedBuff.GetMaxTurn() - selectedBuff.GetCurrentTurn();
-                    selectedBuff.LoseTurn(model, modular.battleTiming, loseValue);
+                    selectedBuff.LoseTurn(model, modular.battleTiming, out loseValue);
                 }
             }
         }

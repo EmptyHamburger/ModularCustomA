@@ -179,91 +179,7 @@ public class Main : BasePlugin
     {
         public void ExecuteConsequence(ModularSA modular, string section, string circledSection, string[] circles)
         {
-            // var modelList = modular.GetTargetModelList(circles[0]);
-            // if (modelList.Count < 1) return;
-
-            var targetmodel = modular.GetTargetModel(circles[0]);
-            if (targetmodel == null) return;
-
-            foreach(SinActionModel bam in targetmodel.GetSinActionList())
-            {
-                bam.actionSlot.AddTargetIdx(6, 1);
-            }
-
-            // SinActionModel fromSinAction_new = targetmodel.AddNewSinActionModel();
-            // UnitSinModel fromSinModel_new = new UnitSinModel(1071203, targetmodel, fromSinAction_new);
-            // BattleActionModel fromAction_new = new BattleActionModel(fromSinModel_new, targetmodel, fromSinAction_new);
-            // fromSinAction_new.target
-
-            // Il2CppSystem.Collections.Generic.List<BattleUnitModel> allylist = modular.GetTargetModelList("AllyExceptSelf12");
-
-            // var TargetSinActionList = new Il2CppSystem.Collections.Generic.List<SinActionModel>();
-            // var targetactionlist = targetmodel.GetSinActionList();
-            // if (targetactionlist.Count > 0) TargetSinActionList.Add(targetactionlist.ToArray()[0]);
-
-            // foreach(BattleUnitModel targetModel in modelList)
-            // {
-            //     foreach(BattleActionModel bam in targetModel._actionList)
-            //     {
-            //         bam._targetDataDetail.ReadyOriginTargeting(bam);
-            //         if (TargetSinActionList.Count > 0)
-            //         {
-            //             bam.ChangeMainTargetSinAction(TargetSinActionList.ToArray()[0], null, true);
-            //         }
-            //     }
-            // }
-
-            // var bamManager = Singleton<BattleActionModelManager>.Instance;
-            // var sinManager = Singleton<SinManager>.Instance;
-            // var battleObjectManager = sinManager._battleObjectManager;
-            // var modelList = battleObjectManager.GetModelList();
-
-            // // var allySinActionList = new Il2CppSystem.Collections.Generic.List<SinActionModel>();
-
-            // // foreach(BattleUnitModel allyModel in allylist)
-            // // {
-            // //     foreach(SinActionModel sam in allyModel.GetSinActionList())
-            // //     {
-            // //         allySinActionList.Add(sam);
-            // //     }
-            // // }
-            // Il2CppSystem.Collections.Generic.List<SinActionModel> other8726 = new Il2CppSystem.Collections.Generic.List<SinActionModel>();
-            // Il2CppSystem.Collections.Generic.List<SinActionModel> other8727 = new Il2CppSystem.Collections.Generic.List<SinActionModel>();
-            // foreach(BattleUnitModel targetModel in modelList)
-            // {
-            //     if (targetModel.GetUnitID() == 8726)
-            //     {
-            //         other8726 = targetModel.GetSinActionList();
-            //     }
-            //     if (targetModel.GetUnitID()== 8727)
-            //     {
-            //         other8727 = targetModel.GetSinActionList();
-            //     }
-            // //     // targetModel._actionSlotDetail.AddSkillToSkillPool(1071203, 1);
-            // //     // targetModel.OverwriteTargetableList();
-            // //     foreach(BattleActionModel bam in targetModel._actionList)
-            // //     {
-            // //         targetModel.OverwriteTargetableList(bam, targetModel.GetSinActionList(), allylist);
-            // //     }
-            // }
-
-            // foreach(BattleUnitModel targetModel in modelList)
-            // {
-            //     if (targetModel.GetUnitID() == 8726)
-            //     {
-            //         foreach(BattleActionModel bam in targetModel.GetSortedActionList())
-            //         {
-            //             targetModel.OverwriteTargetableList(bam, other8727, null);
-            //         }
-            //     }
-            //     if (targetModel.GetUnitID() == 8727)
-            //     {
-            //         foreach(BattleActionModel bam in targetModel.GetSortedActionList())
-            //         {
-            //             targetModel.OverwriteTargetableList(bam, other8726, null);
-            //         }
-            //     }
-            // }
+            
         }
     }
 
@@ -283,7 +199,7 @@ public class Main : BasePlugin
         // harmony.PatchAll(typeof(RightAfterGiveBuffBySkill));
         harmony.PatchAll(typeof(Modular_Consequence));
 
-        MainClass.timingDict.Add("OnGainBuff", 1337);
+        // MainClass.timingDict.Add("OnGainBuff", 1337);
         // MainClass.timingDict.Add("OnInflictBuff", 1733);
 
         MainClass.luaFunctionDict["jsontolua"] = new LuaFunctionJsonDecoder();
@@ -292,7 +208,7 @@ public class Main : BasePlugin
         MainClass.luaFunctionDict["setgdata"] = new LuaFunctionSetGlobalVarMT();
         MainClass.luaFunctionDict["getgdata"] = new LuaFunctionGetGlobalVarMT();
         MainClass.luaFunctionDict["clearallgdata"] = new LuaFunctionClearGlobalVarMT();
-        MainClass.luaFunctionDict["gbkeyword"] = new LuaFunctionGainBuffKeyword();
+        MainClass.luaFunctionDict["gbkeyword"] = new MTCustomScripts.LuaFunctions.LuaFunctionGainBuffKeyword();
         MainClass.luaFunctionDict["getcurrentmapid"] = new GetCurrentMapID();
         MainClass.luaFunctionDict["listrelatedkeywords"] = new LuaFunctionListRelatedKeywords();
  
