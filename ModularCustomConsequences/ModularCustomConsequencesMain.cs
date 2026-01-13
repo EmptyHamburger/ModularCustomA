@@ -9,24 +9,13 @@ using Lua;
 using System;
 using System.Text.Json;
 using ModularSkillScripts.LuaFunction;
-using System.Threading;
-using System.Threading.Tasks;
-using System.IO;
 using Lethe.Patches;
 using System.Collections.Generic;
 using HarmonyLib;
 using View;
 using UnityEngine;
-using System.Linq;
 using Utils;
-using Il2CppInterop.Runtime.InteropTypes;
-using Il2CppInterop.Runtime;
-using System.Runtime.InteropServices;
-using Il2CppInterop.Runtime.Runtime;
 using ModularSkillScripts.Patches;
-using SharpCompress;
-using System.ComponentModel;
-using System.Text.RegularExpressions;
 using BepInEx.Logging;
 
 namespace MTCustomScripts;
@@ -146,6 +135,8 @@ public class Main : BasePlugin
     
     public class TestStuffStorage
     {
+
+
         private static TestStuffStorage _instance;
 
         public static TestStuffStorage Instance
@@ -164,11 +155,10 @@ public class Main : BasePlugin
 
         // public static ModularSA testModular = new ModularSA();
 
-        // public static string[] GetStringComparerResultValues = { "BREATH", "=", "BuffKeyword_category" };
-
-        // public static string[] HasBuffKeywordValue = {"main", "Breath", "print" };
-
-        // public static string[] EditBuffMaxValues = { "both", "both", "set", "5", "info" };
+        public static string[] StringArrayGenerator(string circle)
+        {
+            return circle.Split('|');
+        }
 
         public static System.Collections.Generic.Dictionary<string, string> stringDict = new System.Collections.Generic.Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
     }
