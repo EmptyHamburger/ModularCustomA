@@ -1,22 +1,21 @@
 ﻿using BepInEx;
+using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
+using DiscordRPC;
+using HarmonyLib;
 using Lethe;
+using Lethe.Patches;
+using Lua;
 using ModularSkillScripts;
+using ModularSkillScripts.LuaFunction;
+using ModularSkillScripts.Patches;
 using MTCustomScripts.Acquirers;
 using MTCustomScripts.Consequences;
 using MTCustomScripts.LuaFunctions;
-using Lua;
 using System;
-using System.Text.Json;
-using ModularSkillScripts.LuaFunction;
-using Lethe.Patches;
 using System.Collections.Generic;
-using HarmonyLib;
-using View;
+using System.Text.Json;
 using UnityEngine;
-using Utils;
-using ModularSkillScripts.Patches;
-using BepInEx.Logging;
 
 namespace MTCustomScripts;
 
@@ -136,6 +135,19 @@ public class Main : BasePlugin
     public class TestStuffStorage
     {
 
+        public static void AddSkill(BattleUnitModel unit, int skillId, int skillAmt)
+        {
+            SkillStaticDataList skillList = Singleton<StaticDataManager>.Instance._skillList;
+            SkillStaticData data = skillList.GetData(skillId);
+            UnitAttribute skillAttribute = new UnitAttribute();
+            skillAttribute.number = skillAmt;
+            skillAttribute.skillId = skillId;
+            SkillModel skillModel = new SkillModel(data, 55, 4);
+
+
+            unit.UnitDataModel._unitAttributeList.Add(skillAttribute);
+            unit.UnitDataModel._skillList.Add(skillModel);
+        }
 
         private static TestStuffStorage _instance;
 
@@ -153,14 +165,13 @@ public class Main : BasePlugin
             return stringDict;
         }
 
-        // public static ModularSA testModular = new ModularSA();
+        public static ModularSA testModular = new ModularSA();
 
-        public static string[] StringArrayGenerator(string circle)
-        {
-            return circle.Split('|');
-        }
+        public static string[] StringArrayGenerator(string circle) { return circle.Split('|'); }
 
         public static System.Collections.Generic.Dictionary<string, string> stringDict = new System.Collections.Generic.Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        public static System.Collections.Generic.Dictionary<BuffModel, PANIC_TYPE> overrideBuffPanicDict = new System.Collections.Generic.Dictionary<BuffModel, PANIC_TYPE>();
     }
 
     public class ConsequenceTest : IModularConsequence
@@ -186,9 +197,18 @@ public class Main : BasePlugin
         harmony.PatchAll(typeof(Modular_SetupModular));
         // harmony.PatchAll(typeof(RightAfterGiveBuffBySkill));
         harmony.PatchAll(typeof(Modular_Consequence));
+        harmony.PatchAll(typeof(BuffModel_OverwritePanic));
+        harmony.PatchAll(typeof(PanicOrLowMorale));
 
         // MainClass.timingDict.Add("OnGainBuff", 1337);
         // MainClass.timingDict.Add("OnInflictBuff", 1733);
+        MainClass.timingDict.Add("Panic", 90901);
+        MainClass.timingDict.Add("OnOtherPanic", 909012);
+        MainClass.timingDict.Add("LowMorale", 90903);
+        MainClass.timingDict.Add("OtherLowMorale", 90904);
+        MainClass.timingDict.Add("RecoverBreak", 90905);
+        MainClass.timingDict.Add("OtherRecoverBreak", 90906);
+
 
         MainClass.luaFunctionDict["jsontolua"] = new MTCustomScripts.LuaFunctions.LuaFunctionJsonDecoder();
         MainClass.luaFunctionDict["listdirectories"] = new MTCustomScripts.LuaFunctions.LuaFunctionListDirectories();
@@ -214,6 +234,8 @@ public class Main : BasePlugin
         MainClass.acquirerDict["comparestring"] = new MTCustomScripts.Acquirers.AcquirerGetStringComparerResult();
         MainClass.acquirerDict["hasbuffkeyword"] = new MTCustomScripts.Acquirers.AcquirerHasBuffKeyword();
         MainClass.acquirerDict["getmapdata"] = new MTCustomScripts.Acquirers.AcquirerGetMapData();
+        MainClass.acquirerDict["getfinal"] = new MTCustomScripts.Acquirers.AcquirerGetFinalPower();
+        MainClass.acquirerDict["getpaniclevel"] = new MTCustomScripts.Acquirers.AcquirerGetPanicLevel();
 
         MainClass.consequenceDict["ovwatkres"] = new MTCustomScripts.Consequences.ConsequenceOverwriteAtkResist();
         MainClass.consequenceDict["ovwsinres"] = new MTCustomScripts.Consequences.ConsequenceOverwriteSinResist();
@@ -225,7 +247,9 @@ public class Main : BasePlugin
         MainClass.consequenceDict["addunitscript"] = new MTCustomScripts.Consequences.ConsequenceAddUnitScript();
         MainClass.consequenceDict["changedefense"] = new MTCustomScripts.Consequences.ConsequenceChangeDefense();
         MainClass.consequenceDict["editbuffmax"] = new MTCustomScripts.Consequences.ConsequenceEditBuffMax();
-
+        MainClass.consequenceDict["changepaniclevel"] = new MTCustomScripts.Consequences.ConsequenceChangePanicLevel();
+        MainClass.consequenceDict["changepanictype"] = new MTCustomScripts.Consequences.ConsequenceChangePanicType();
+        MainClass.consequenceDict["addcoin"] = new MTCustomScripts.Consequences.ConsequenceAddCoin();
         // MainClass.consequenceDict["test"] = new ConsequenceTest();
         // MainClass.consequenceDict["testthree"] = new ConsequenceTest3();
         // MainClass.consequenceDict["reload"] = new ConsequenceReload();

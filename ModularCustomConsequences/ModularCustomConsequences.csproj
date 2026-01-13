@@ -52,11 +52,29 @@
     <Reference Include="Il2Cppmscorlib">
       <HintPath>..\..\..\..\Downloads\Nope\Il2Cppmscorlib.dll</HintPath>
     </Reference>
+    <Reference Include="Il2CppSystem">
+      <HintPath>..\..\..\..\Downloads\Nope\BepInEx\interop\Il2CppSystem.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppSystem.Runtime.CompilerServices.Unsafe">
+      <HintPath>..\..\..\..\Downloads\Nope\BepInEx\interop\Il2CppSystem.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppSystem.Runtime.Serialization">
+      <HintPath>..\..\..\..\Downloads\Nope\BepInEx\interop\Il2CppSystem.Runtime.Serialization.dll</HintPath>
+    </Reference>
+    <Reference Include="InterfacesLibraryAssembly">
+      <HintPath>..\..\..\..\Downloads\Nope\BepInEx\interop\InterfacesLibraryAssembly.dll</HintPath>
+    </Reference>
     <Reference Include="Merged">
       <HintPath>..\..\..\..\Downloads\Nope\BepInEx\plugins\Lethe.dll</HintPath>
     </Reference>
     <Reference Include="ModularSkillScripts">
       <HintPath>..\..\..\..\Downloads\Nope\BepInEx\plugins\ModularSkillScripts.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\..\Downloads\Nope\BepInEx\interop\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\..\..\..\Downloads\Nope\BepInEx\interop\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
   </ItemGroup>
 

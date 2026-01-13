@@ -1,7 +1,4 @@
 using HarmonyLib;
-using MTCustomScripts;
-using Il2CppSystem.Collections.Generic;
-using System;
 using Lethe.Patches;
 
 namespace ModularSkillScripts.Patches;
