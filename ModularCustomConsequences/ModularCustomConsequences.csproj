@@ -46,19 +46,23 @@
       <HintPath>%(Identity)</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="$(LimbusCompanyFolder)\BepInEx\plugins\Lethe.dll">
-      <HintPath>%(Identity)</HintPath>
-      <Private>false</Private>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\..\..\Downloads\Nope\BepInEx\interop\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="$(LimbusCompanyFolder)\BepInEx\plugins\ModularSkillScripts.dll">
-      <HintPath>%(Identity)</HintPath>
-      <Private>false</Private>
+    <Reference Include="Il2Cppmscorlib">
+      <HintPath>..\..\..\..\Downloads\Nope\Il2Cppmscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="Merged">
+      <HintPath>..\..\..\..\Downloads\Nope\BepInEx\plugins\Lethe.dll</HintPath>
+    </Reference>
+    <Reference Include="ModularSkillScripts">
+      <HintPath>..\..\..\..\Downloads\Nope\BepInEx\plugins\ModularSkillScripts.dll</HintPath>
     </Reference>
   </ItemGroup>
 
   <!-- ~~~~~ Copy to game folder on build ~~~~~ -->
   <Target Name="CopyToGame" AfterTargets="build">
-    <Message Text="Copying ModularSkillScripts.dll to game..." Importance="high"/>
-    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFiles="$(LimbusCompanyFolder)\BepInEx\plugins\$(AssemblyName).dll"/>
+    <Message Text="Copying ModularSkillScripts.dll to game..." Importance="high" />
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFiles="$(LimbusCompanyFolder)\BepInEx\plugins\$(AssemblyName).dll" />
   </Target>
 </Project>
