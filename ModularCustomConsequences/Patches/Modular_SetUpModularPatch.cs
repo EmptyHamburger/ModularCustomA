@@ -4,7 +4,7 @@ using Lethe.Patches;
 namespace ModularSkillScripts.Patches;
 
 internal class Modular_SetupModular
-{    
+{   
     [HarmonyPatch(typeof(ModularSA), nameof(ModularSA.SetupModular))]
 	[HarmonyPrefix]
 	private static void Prefix_ModularSA_SetupModular(string instructions, ModularSA __instance)

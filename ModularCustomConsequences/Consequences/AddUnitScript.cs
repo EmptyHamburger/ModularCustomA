@@ -18,12 +18,12 @@ public class ConsequenceAddUnitScript : IModularConsequence
             foreach (BattleUnitModel targetModel in modelList)
             {
                 targetModel._unitScripts.Add(newUnitScript);
+                MTCustomScripts.Main.Logger.LogInfo($"Successfully added 'UnitScript_{unitscriptName}' for id: {targetModel.GetUnitID()}");
             }
-            MTCustomScripts.Main.Logger.LogInfo($"Added '{unitscriptName}'");
         }
         catch (Exception msg)
         {
-            MTCustomScripts.Main.Logger.LogError($"Can't add '{unitscriptName}' to an unit: {msg}");
+            MTCustomScripts.Main.Logger.LogError($"Couldn't add '{unitscriptName}' to an unit: {msg}");
         }
     }
 }
