@@ -6,6 +6,8 @@ namespace MTCustomScripts.Consequences
     {
         public void ExecuteConsequence(ModularSA modular, string section, string circledSection, string[] circles)
         {
+            //TO REVAMP//
+
             /*
              * var_1: Multi-Target
              * var_2: Skill
@@ -20,11 +22,12 @@ namespace MTCustomScripts.Consequences
              * opt_11: CopyStatic
              */
 
+            
             Il2CppSystem.Collections.Generic.List<BattleUnitModel> unitList = modular.GetTargetModelList(circles[0]);
             if (unitList == null || unitList.Count <= 0) return;
             if (!Il2CppSystem.Enum.TryParse<OPERATOR_TYPE>(circles[4], true, out OPERATOR_TYPE coinOperator)) coinOperator = OPERATOR_TYPE.NONE;
             if (!Il2CppSystem.Enum.TryParse<COIN_COLOR_TYPE>(circles[5], true, out COIN_COLOR_TYPE coinColor)) coinColor = COIN_COLOR_TYPE.NONE;
-            bool copyCoin = (circles.Length >= 10 && circles[8] != string.Empty && circles[9] != string.Empty && circles[10] != string.Empty);
+            bool copyCoin = (circles.Length >= 10 && circles[7] != string.Empty && circles[8] != string.Empty && circles[9] != string.Empty);
 
             CoinModel newCoin = null;
 
@@ -34,7 +37,8 @@ namespace MTCustomScripts.Consequences
                 int opt8Value = modular.GetNumFromParamString(circles[8]);
                 int opt9Value = modular.GetNumFromParamString(circles[9]);
 
-                Il2CppSystem.Predicate<BattleActionModel> copyPredicate = new System.Predicate<BattleActionModel>((action) => action.GetSkillID() == opt8Value).GetSafePredicate();
+                Il2CppSystem.Predicate<BattleActionModel> copyPredicate = new System.Predicate<BattleActionModel>((action) => action.GetSkillID() == opt8Value).ToIL2CPP();
+
 
                 BattleUnitModel copyTarget = modular.GetTargetModel(circles[7]);
                 SkillModel copySkill = StyxUtils.SafeGetAbility(copyPredicate, copyTarget, opt8Value);
@@ -45,7 +49,7 @@ namespace MTCustomScripts.Consequences
                 else newCoin = new CoinModel(copySkill.GetCoinByIndex(opt9Value), false);
             }
 
-            Il2CppSystem.Predicate<AbilityData> grayDataPredicate = new System.Predicate<AbilityData>((data) =>data.scriptName == "SuperCoin").GetSafePredicate();
+            Il2CppSystem.Predicate<AbilityData> grayDataPredicate = new System.Predicate<AbilityData>((data) =>data.scriptName == "SuperCoin").ToIL2CPP();
 
             if (coinOperator != OPERATOR_TYPE.NONE) coinData._operatorType = coinOperator;
             if (coinOperator != OPERATOR_TYPE.NONE) coinData.operatorType = circles[4];
@@ -73,18 +77,17 @@ namespace MTCustomScripts.Consequences
             newCoin.CreateCoinAbilities();
 
 
-            Il2CppSystem.Predicate<CoinAbility> grayAbilityPredict = new System.Predicate<CoinAbility>((ability) => ability is CoinAbility_OverwriteToSuperCoin || ability is CoinAbility_SuperCoin).GetSafePredicate();
+            Il2CppSystem.Predicate<CoinAbility> grayAbilityPredict = new System.Predicate<CoinAbility>((ability) => ability is CoinAbility_OverwriteToSuperCoin || ability is CoinAbility_SuperCoin).ToIL2CPP();
 
             if (circles[5].Equals("Grey", System.StringComparison.OrdinalIgnoreCase) && newCoin.CoinAbilityList.Find(grayAbilityPredict) == null)
             {
                 newCoin.CoinAbilityList.Add(new CoinAbility_SuperCoin());
                 newCoin.CoinAbilityList.Add(new CoinAbility_OverwriteToSuperCoin());
             }
-            else if (circles[5].Equals("Gold", System.StringComparison.OrdinalIgnoreCase)) newCoin.CoinAbilityList.RemoveAll(grayAbilityPredict);
+            else if (circles[5].Equals("Gold", System.StringComparison.OrdinalIgnoreCase)) newCoin.CoinAbilityList.RemoveAll(grayAbilityPredict); 
 
-
-            Il2CppSystem.Predicate<BattleActionModel> skillPredicate = new System.Predicate<BattleActionModel>((action) => action.GetSkillID() == var2Value).GetSafePredicate();
-            Il2CppSystem.Predicate<CoinModel> coinPredicate = new System.Predicate<CoinModel>((coin) => coin.GetRealCoinIndex() >= var3Value).GetSafePredicate();
+            Il2CppSystem.Predicate<BattleActionModel> skillPredicate = new System.Predicate<BattleActionModel>((action) => action.GetSkillID() == var2Value).ToIL2CPP();
+            Il2CppSystem.Predicate<CoinModel> coinPredicate = new System.Predicate<CoinModel>((coin) => coin.GetRealCoinIndex() >= var3Value).ToIL2CPP();
             foreach (BattleUnitModel unit in unitList)
             {
                 SkillModel selectedSkill = StyxUtils.SafeGetAbility(skillPredicate, unit, var2Value);
