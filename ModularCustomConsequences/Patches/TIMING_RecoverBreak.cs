@@ -34,8 +34,8 @@ namespace MTCustomScripts.Patches
         [HarmonyPostfix, HarmonyPriority(Priority.VeryHigh)]
         public static void BattleUnitModel_OnRecoverBreak_Postfix(BATTLE_EVENT_TIMING timing, BattleUnitModel __instance)
         {
-            int actevent = MainClass.timingDict["onRecoverBreak"];
-            int actevent_onRecoveryBreak = MainClass.timingDict["onOtherRecoverBreak"];
+            int actevent = MainClass.timingDict["OnRecoverBreak"];
+            int actevent_onRecoveryBreak = MainClass.timingDict["OnOtherRecoverBreak"];
 
             foreach (PassiveModel passiveModel in __instance._passiveDetail.PassiveList)
             {

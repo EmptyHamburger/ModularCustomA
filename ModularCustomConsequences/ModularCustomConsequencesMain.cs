@@ -149,7 +149,6 @@ public class Main : BasePlugin
     
     public class TestStuffStorage
     {
-
         public static void AddSkill(BattleUnitModel unit, int skillId, int skillAmt)
         {
             SkillStaticDataList skillList = Singleton<StaticDataManager>.Instance._skillList;
@@ -174,10 +173,6 @@ public class Main : BasePlugin
                     _instance = new TestStuffStorage();
                 return _instance;
             }
-        }
-        public System.Collections.Generic.Dictionary<string, string> GetDictionnary()
-        {
-            return stringDict;
         }
 
         public static ModularSA testModular = new ModularSA();
@@ -540,12 +535,12 @@ public class Main : BasePlugin
 
         // MainClass.timingDict.Add("OnGainBuff", 1337);
         // MainClass.timingDict.Add("OnInflictBuff", 1733);
-        MainClass.timingDict.Add("Panic", 90901);
+        MainClass.timingDict.Add("OnPanic", 90901);
         MainClass.timingDict.Add("OnOtherPanic", 909012);
-        MainClass.timingDict.Add("LowMorale", 90903);
-        MainClass.timingDict.Add("OtherLowMorale", 90904);
-        MainClass.timingDict.Add("RecoverBreak", 90905);
-        MainClass.timingDict.Add("OtherRecoverBreak", 90906);
+        MainClass.timingDict.Add("OnLowMorale", 90903);
+        MainClass.timingDict.Add("OnOtherLowMorale", 90904);
+        MainClass.timingDict.Add("OnRecoverBreak", 90905);
+        MainClass.timingDict.Add("OnOtherRecoverBreak", 90906);
 
 
         MainClass.luaFunctionDict["jsontolua"] = new MTCustomScripts.LuaFunctions.LuaFunctionJsonDecoder();
@@ -594,6 +589,7 @@ public class Main : BasePlugin
         MainClass.consequenceDict["editbuffmax"] = new MTCustomScripts.Consequences.ConsequenceEditBuffMax();
         MainClass.consequenceDict["changepaniclevel"] = new MTCustomScripts.Consequences.ConsequenceChangePanicLevel();
         MainClass.consequenceDict["changepanictype"] = new MTCustomScripts.Consequences.ConsequenceChangePanicType();
+        MainClass.consequenceDict["piraterichpresence"] = new MTCustomScripts.Consequences.ConsequenceModifyRichPresence();
         MainClass.consequenceDict["addcoin"] = new MTCustomScripts.Consequences.ConsequenceAddCoin();
         MainClass.consequenceDict["clearallunitscript"] = new MTCustomScripts.Consequences.ConsequenceClearUnitScript();
         MainClass.consequenceDict["changehp"] = new MTCustomScripts.Consequences.ConsequenceChangeHp();

@@ -1,29 +1,244 @@
 ﻿using HarmonyLib;
 using Lethe.Patches;
+using ModularSkillScripts;
+using System;
 
 namespace MTCustomScripts
 {
     public static class StyxUtils
     {
-        public static Il2CppSystem.Predicate<T> GetSafePredicate<T>(this System.Predicate<T> systemPredicate)
+        public static System.Collections.Generic.List<T> ToSystem<T>(this Il2CppSystem.Collections.Generic.List<T> il2cppList)
         {
-            System.IntPtr ptr = System.Runtime.InteropServices.Marshal.GetFunctionPointerForDelegate(systemPredicate);
-
-            return new Il2CppSystem.Predicate<T>(ptr);
+            var count = il2cppList.Count;
+            var array = new T[count];
+            for (int i = 0; i < count; i++) array[i] = il2cppList[i];
+            return new System.Collections.Generic.List<T>(array);
         }
 
-        public static SkillModel SafeGetAbility(Il2CppSystem.Predicate<BattleActionModel> actionPredicate, BattleUnitModel unit, int value)
+        public static Il2CppSystem.Collections.Generic.List<T> ToIl2Cpp<T>(this System.Collections.Generic.List<T> systemList)
+        {
+            if (systemList == null) return null;
+            int count = systemList.Count;
+            var il2cppList = new Il2CppSystem.Collections.Generic.List<T>(count);
+            for (int i = 0; i < count; i++) il2cppList.Add(systemList[i]);
+            return il2cppList;
+        }
+
+        public static Il2CppSystem.Collections.Generic.List<SkillModel> GetMultipleSkillModel(this ModularSA modular, Il2CppSystem.Collections.Generic.List<BattleUnitModel> selectedUnitList, string skillTarget)
+        {
+            Il2CppSystem.Collections.Generic.List<SkillModel> selectedSkillList = new Il2CppSystem.Collections.Generic.List<SkillModel>();
+            System.Collections.Generic.List<BattleActionModel> selectedActionList = new System.Collections.Generic.List<BattleActionModel>();
+            string[] splitSkillTarget = (skillTarget.Contains('|')) ? skillTarget.Split('|', System.StringSplitOptions.RemoveEmptyEntries) : new string[] { skillTarget };
+
+            for (int i = 0; i < splitSkillTarget.Length; i++)
+            {
+                int preModularCount = selectedSkillList.Count;
+                try
+                {
+                    if (splitSkillTarget[i].Equals("ModularSkill")) selectedSkillList.Add(modular?.modsa_skillModel);
+                    if (splitSkillTarget[i].Equals("ModularSelfAction")) selectedSkillList.Add(modular?.modsa_selfAction?.Skill);
+                    if (splitSkillTarget[i].Equals("ModularOppoAction")) selectedSkillList.Add(modular?.modsa_oppoAction?.Skill);
+                }
+                catch (System.Exception ex)
+                {
+                    MainClass.Logg.LogError($"GetMultipleSkillModel error for Part-1: {ex}");
+                }
+
+                if (preModularCount < selectedSkillList.Count) continue;
+
+                foreach (BattleUnitModel selectedUnit in selectedUnitList)
+                {
+                    int skillId = 0;
+                    string[] skillIdSplit = new string[1];
+
+                    try
+                    {
+
+                        skillId = 0;
+                        skillIdSplit = (splitSkillTarget[i].Contains('-')) ? splitSkillTarget[i].Substring(1).Split("-") : null;
+
+                        if (splitSkillTarget[i].StartsWith("S", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (skillIdSplit.Length == 2) skillId = selectedUnit.GetSkillIdByTier(modular.GetNumFromParamString(skillIdSplit[0].Substring(1)))[modular.GetNumFromParamString(skillIdSplit[1])];
+                            else skillId = selectedUnit.GetSkillIdByTier(modular.GetNumFromParamString(splitSkillTarget[i].Substring(1)))[0];
+                        }
+                        else if (splitSkillTarget[i].StartsWith("D", System.StringComparison.OrdinalIgnoreCase)) skillId = selectedUnit.GetDefenseSkillIDList()[modular.GetNumFromParamString(splitSkillTarget[i].Substring(1))];
+                        else if (splitSkillTarget[i].StartsWith("Current", System.StringComparison.OrdinalIgnoreCase) && selectedUnit._actionList.Count >= modular.GetNumFromParamString(skillIdSplit[1]) && skillIdSplit != null) skillId = selectedUnit._actionList[modular.GetNumFromParamString(skillIdSplit[1])].GetSkillID();
+
+                        else if (splitSkillTarget[i].StartsWith("ActiveAction", System.StringComparison.OrdinalIgnoreCase) && skillIdSplit.Length >= 2)
+                        {
+                            skillIdSplit[0] = splitSkillTarget[i].Substring("ActiveAction".Length);
+                            if (skillIdSplit[0].Equals("Index", System.StringComparison.OrdinalIgnoreCase) && selectedUnit._actionList.Count >= modular.GetNumFromParamString(skillIdSplit[1])) selectedSkillList.Add(selectedUnit._actionList[modular.GetNumFromParamString(skillIdSplit[1])].Skill);
+                            else if (skillIdSplit[0].Equals("ID", System.StringComparison.OrdinalIgnoreCase)) selectedSkillList.Add(selectedUnit._actionList.ToSystem().Find(x => x.GetSkillID() == modular.GetNumFromParamString(skillIdSplit[1])).Skill);
+                            else if (skillIdSplit[0].Equals("D", System.StringComparison.OrdinalIgnoreCase)) selectedSkillList.Add(selectedUnit._actionList.ToSystem().Find(x => x.GetSkillID() == selectedUnit.GetDefenseSkillIDList()[modular.GetNumFromParamString(skillIdSplit[1].Substring(1))]).Skill);
+                            else if (skillIdSplit[0].Equals("S", System.StringComparison.OrdinalIgnoreCase))
+                            {
+                                if (skillIdSplit.Length == 3) selectedSkillList.Add(selectedUnit._actionList.ToSystem().Find(x => x.GetSkillID() == selectedUnit.GetSkillIdByTier(modular.GetNumFromParamString(skillIdSplit[1].Substring(1)))[modular.GetNumFromParamString(skillIdSplit[2])]).Skill);
+                                else selectedSkillList.Add(selectedUnit._actionList.ToSystem().Find(x => x.GetSkillID() == selectedUnit.GetSkillIdByTier(modular.GetNumFromParamString(splitSkillTarget[i].Substring(1)))[0]).Skill);
+                            }
+                            else if (skillIdSplit[0].Equals("IDALL", System.StringComparison.OrdinalIgnoreCase)) selectedActionList.AddRange(selectedUnit._actionList.ToSystem().FindAll(x => x.GetSkillID() == modular.GetNumFromParamString(skillIdSplit[1])));
+                            else if (skillIdSplit[0].Equals("DALL", System.StringComparison.OrdinalIgnoreCase)) selectedActionList.AddRange(selectedUnit._actionList.ToSystem().FindAll(x => x.GetSkillID() == selectedUnit.GetDefenseSkillIDList()[modular.GetNumFromParamString(skillIdSplit[1].Substring(3))]));
+                            else if (skillIdSplit[0].Equals("SALL", System.StringComparison.OrdinalIgnoreCase))
+                            {
+                                if (skillIdSplit.Length == 3) selectedActionList.AddRange(selectedUnit._actionList.ToSystem().FindAll(x => x.GetSkillID() == selectedUnit.GetSkillIdByTier(modular.GetNumFromParamString(skillIdSplit[1].Substring(3)))[modular.GetNumFromParamString(skillIdSplit[2])]));
+                                else selectedActionList.AddRange(selectedUnit._actionList.ToSystem().FindAll(x => x.GetSkillID() == selectedUnit.GetSkillIdByTier(modular.GetNumFromParamString(splitSkillTarget[i].Substring(3)))[0]));
+                            }
+                        }
+                        else skillId = modular.GetNumFromParamString(splitSkillTarget[i]);
+
+                        if (selectedActionList.Count > 0)
+                        {
+                            foreach (BattleActionModel selectedAction in selectedActionList) selectedSkillList.Add(selectedAction.Skill);
+                            selectedActionList.Clear();
+                        }
+
+                        if (skillId > 0) selectedSkillList.Add(selectedUnit.UnitDataModel.GetSkillModel(skillId));
+                    }
+                    catch (System.Exception ex)
+                    {
+                        MainClass.Logg.LogError($"GetSingleSkillModel error for Part-2: {ex}");
+                    }
+                }
+            }
+
+            return selectedSkillList;
+        }
+
+        public static SkillModel GetSingleSkillModel(this ModularSA modular, BattleUnitModel selectedUnit, string skillTarget)
         {
             SkillModel selectedSkill = null;
 
-            if (unit._actionList.Find(actionPredicate) != null) selectedSkill = unit._actionList.Find(actionPredicate).Skill;
-            else
-                try { selectedSkill = unit._actionList[value].Skill; }
+            try
+            {
+                if (skillTarget.Equals("ModularSkill")) selectedSkill = modular?.modsa_skillModel;
+                if (skillTarget.Equals("ModularSelfAction")) selectedSkill = modular?.modsa_selfAction?.Skill;
+                if (skillTarget.Equals("ModularOppoAction")) selectedSkill = modular?.modsa_oppoAction?.Skill;
+            }
+            catch (System.Exception ex)
+            {
+                MainClass.Logg.LogError($"GetSingleSkillModel error for Part-1: {ex}");
+            }
+
+            if (selectedSkill != null) return selectedSkill;
+
+            int skillId = 0;
+            string[] skillIdSplit = new string[1];
+
+            try
+            {
+
+                skillId = 0;
+                skillIdSplit = (skillTarget.Contains('-')) ? skillTarget.Substring(1).Split("-") : null;
+
+                if (skillTarget.StartsWith("S", System.StringComparison.OrdinalIgnoreCase))
+                {
+                    if (skillIdSplit.Length == 2) skillId = selectedUnit.GetSkillIdByTier(modular.GetNumFromParamString(skillIdSplit[0].Substring(1)))[modular.GetNumFromParamString(skillIdSplit[1])];
+                    else skillId = selectedUnit.GetSkillIdByTier(modular.GetNumFromParamString(skillTarget.Substring(1)))[0];
+                }
+                else if (skillTarget.StartsWith("D", System.StringComparison.OrdinalIgnoreCase)) skillId = selectedUnit.GetDefenseSkillIDList()[modular.GetNumFromParamString(skillTarget.Substring(1))];
+                else if (skillTarget.StartsWith("Current", System.StringComparison.OrdinalIgnoreCase) && selectedUnit._actionList.Count >= modular.GetNumFromParamString(skillIdSplit[1]) && skillIdSplit != null) skillId = selectedUnit._actionList[modular.GetNumFromParamString(skillIdSplit[1])].GetSkillID();
+
+                else if (skillTarget.StartsWith("ActiveAction", System.StringComparison.OrdinalIgnoreCase) && skillIdSplit.Length >= 2)
+                {
+                    skillIdSplit[0] = skillTarget.Substring("ActiveAction".Length);
+                    if (skillIdSplit[0].Equals("Index", System.StringComparison.OrdinalIgnoreCase) && selectedUnit._actionList.Count >= modular.GetNumFromParamString(skillIdSplit[1])) selectedSkill = selectedUnit._actionList[modular.GetNumFromParamString(skillIdSplit[1])].Skill;
+                    else if (skillIdSplit[0].Equals("ID", System.StringComparison.OrdinalIgnoreCase)) selectedSkill = selectedUnit._actionList.ToSystem().Find(x => x.GetSkillID() == modular.GetNumFromParamString(skillIdSplit[1])).Skill;
+                    else if (skillIdSplit[0].Equals("D", System.StringComparison.OrdinalIgnoreCase)) selectedSkill = selectedUnit._actionList.ToSystem().Find(x => x.GetSkillID() == selectedUnit.GetDefenseSkillIDList()[modular.GetNumFromParamString(skillIdSplit[1].Substring(1))]).Skill;
+                    else if (skillIdSplit[0].Equals("S", System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (skillIdSplit.Length == 3) selectedSkill = selectedUnit._actionList.ToSystem().Find(x => x.GetSkillID() == selectedUnit.GetSkillIdByTier(modular.GetNumFromParamString(skillIdSplit[1].Substring(1)))[modular.GetNumFromParamString(skillIdSplit[2])]).Skill;
+                        else selectedSkill = selectedUnit._actionList.ToSystem().Find(x => x.GetSkillID() == selectedUnit.GetSkillIdByTier(modular.GetNumFromParamString(skillTarget.Substring(1)))[0]).Skill;
+                    }
+                }
+
+                else skillId = modular.GetNumFromParamString(skillTarget);
+
+                if (skillId > 0) selectedSkill = selectedUnit.UnitDataModel.GetSkillModel(skillId);
+            }
+            catch (System.Exception ex)
+            {
+                MainClass.Logg.LogError($"GetSingleSkillModel error for Part-2: {ex}");
+            }
+            if (selectedSkill == null) MainClass.Logg.LogError($"selectedSkill is null || skillId={skillId} || skillTarget={skillTarget} || skillIdSplitIsNull={skillIdSplit == null}");
+            return selectedSkill;
+        }
+
+
+
+        public static Il2CppSystem.Collections.Generic.List<CoinModel> GetCoinModelList(this ModularSA modular, SkillModel selectedSkill, string coinTarget, CoinModel selectedSkillCoin = null)
+        {
+            Il2CppSystem.Collections.Generic.List<CoinModel> selectedCoinsList = new Il2CppSystem.Collections.Generic.List<CoinModel>();
+            System.Collections.Generic.List<CoinModel> temporarysCoinsList = new System.Collections.Generic.List<CoinModel>();
+
+            string[] splitCoinTarget = (coinTarget.Contains('|')) ? coinTarget.Split('|', System.StringSplitOptions.RemoveEmptyEntries) : new string[] { coinTarget };
+
+            for (int i = 0; i < splitCoinTarget.Length; i++)
+            {
+
+                int preModularList = selectedCoinsList.Count;
+
+                try
+                {
+                    if (splitCoinTarget[i].StartsWith("SELF", System.StringComparison.OrdinalIgnoreCase) && selectedSkillCoin != null) selectedCoinsList.Add(selectedSkillCoin);
+                    if (splitCoinTarget[i].StartsWith("OTHERS", System.StringComparison.OrdinalIgnoreCase) && selectedSkillCoin != null) foreach (CoinModel modularCoin in selectedSkill.CoinList) if (modularCoin != selectedSkillCoin) selectedCoinsList.Add(modularCoin);
+                    if (splitCoinTarget[i].StartsWith("ALL", System.StringComparison.OrdinalIgnoreCase)) foreach (CoinModel modularCoin in selectedSkill.CoinList) selectedCoinsList.Add(modularCoin);
+                }
                 catch (System.Exception ex)
                 {
-                    Main.Logger.LogError($"SafeGetAbility error: {ex}");
+                    MainClass.Logg.LogError($"GetCoinModelList error at part-1: {ex}");
                 }
-            return selectedSkill;
+
+                if (preModularList < selectedCoinsList.Count) continue;
+
+
+                try
+                {
+                    string[] fragmentedSplitCoinTarget = (splitCoinTarget[i].Contains('-')) ? splitCoinTarget[i].Substring(1).Split("-") : null;
+
+                    if (splitCoinTarget[i].StartsWith("ENDORIGIN", System.StringComparison.OrdinalIgnoreCase) && fragmentedSplitCoinTarget.Length == 2) selectedCoinsList.Add(selectedSkill.GetCoinByIndex(Math.Max(selectedSkill.CoinList.Count - modular.GetNumFromParamString(fragmentedSplitCoinTarget[1]), 0)));
+                    else if (splitCoinTarget[i].StartsWith("STARTREAL", System.StringComparison.OrdinalIgnoreCase) && fragmentedSplitCoinTarget.Length == 2) selectedCoinsList.Add(selectedSkill.GetCoin(modular.GetNumFromParamString(splitCoinTarget[0])));
+                    else if (splitCoinTarget[i].StartsWith("ENDREAL", System.StringComparison.OrdinalIgnoreCase) && fragmentedSplitCoinTarget.Length == 2) selectedCoinsList.Add(selectedSkill.GetCoin(Math.Max(selectedSkill.CoinList.Count - modular.GetNumFromParamString(fragmentedSplitCoinTarget[1]), 0)));
+
+                    else if (splitCoinTarget[i].StartsWith("COLOR", StringComparison.OrdinalIgnoreCase) && Il2CppSystem.Enum.TryParse<COIN_COLOR_TYPE>(fragmentedSplitCoinTarget[1], true, out COIN_COLOR_TYPE parsedColor)) selectedCoinsList.Add(selectedSkill.CoinList.ToSystem().Find(x => x.GetCoinColor() == parsedColor));
+                    else if (splitCoinTarget[i].StartsWith("COLORALL", StringComparison.OrdinalIgnoreCase) && Il2CppSystem.Enum.TryParse<COIN_COLOR_TYPE>(fragmentedSplitCoinTarget[1], true, out COIN_COLOR_TYPE parsedAllColor)) temporarysCoinsList = selectedSkill.CoinList.ToSystem().FindAll(x => x.GetCoinColor() == parsedAllColor);
+
+
+                    if (bool.TryParse(fragmentedSplitCoinTarget[1].ToLower(), out bool parsedBool) && fragmentedSplitCoinTarget.Length == 2)
+                    {
+                        if (splitCoinTarget[i].StartsWith("REROLLED", System.StringComparison.OrdinalIgnoreCase)) selectedCoinsList.Add(selectedSkill.CoinList.ToSystem().Find(x => x.IsReRolled() == parsedBool));
+                        else if (splitCoinTarget[i].StartsWith("HEAD", System.StringComparison.OrdinalIgnoreCase)) selectedCoinsList.Add(selectedSkill.CoinList.ToSystem().Find(x => x.IsHead() == parsedBool));
+                        else if (splitCoinTarget[i].StartsWith("ACTIVE", System.StringComparison.OrdinalIgnoreCase)) selectedCoinsList.Add(selectedSkill.CoinList.ToSystem().Find(x => x.IsActive() == parsedBool));
+                        else if (splitCoinTarget[i].StartsWith("BLOODDINNER", System.StringComparison.OrdinalIgnoreCase)) selectedCoinsList.Add(selectedSkill.CoinList.ToSystem().Find(x => x.IsAddBloodDinner() == parsedBool));
+                        else if (splitCoinTarget[i].StartsWith("CONSUMEBULLET", System.StringComparison.OrdinalIgnoreCase)) selectedCoinsList.Add(selectedSkill.CoinList.ToSystem().Find(x => x.IsConsumeBullet() == parsedBool));
+                        else if (splitCoinTarget[i].StartsWith("USABLEDUEL", System.StringComparison.OrdinalIgnoreCase)) selectedCoinsList.Add(selectedSkill.CoinList.ToSystem().Find(x => x.IsUsableInDuel == parsedBool));
+                        else if (splitCoinTarget[i].StartsWith("DESTROYABLECOIN", System.StringComparison.OrdinalIgnoreCase)) selectedCoinsList.Add(selectedSkill.CoinList.ToSystem().Find(x => x.IsDestroyableCoin(x) == parsedBool));
+
+
+                        else if (splitCoinTarget[i].StartsWith("REROLLLEDALL", System.StringComparison.OrdinalIgnoreCase)) temporarysCoinsList = selectedSkill.CoinList.ToSystem().FindAll(x => x.IsReRolled() == parsedBool);
+                        else if (splitCoinTarget[i].StartsWith("HEADALL", System.StringComparison.OrdinalIgnoreCase)) temporarysCoinsList = selectedSkill.CoinList.ToSystem().FindAll(x => x.IsHead() == parsedBool);
+                        else if (splitCoinTarget[i].StartsWith("ACTIVEALL", System.StringComparison.OrdinalIgnoreCase)) temporarysCoinsList = selectedSkill.CoinList.ToSystem().FindAll(x => x.IsActive() == parsedBool);
+                        else if (splitCoinTarget[i].StartsWith("BLOODDINNERALL", System.StringComparison.OrdinalIgnoreCase)) temporarysCoinsList = selectedSkill.CoinList.ToSystem().FindAll(x => x.IsAddBloodDinner() == parsedBool);
+                        else if (splitCoinTarget[i].StartsWith("CONSUMEBULLETALL", System.StringComparison.OrdinalIgnoreCase)) temporarysCoinsList = selectedSkill.CoinList.ToSystem().FindAll(x => x.IsConsumeBullet() == parsedBool);
+                        else if (splitCoinTarget[i].StartsWith("USABLEDUELALL", System.StringComparison.OrdinalIgnoreCase)) temporarysCoinsList = selectedSkill.CoinList.ToSystem().FindAll(x => x.IsUsableInDuel == parsedBool);
+                        else if (splitCoinTarget[i].StartsWith("DESTROYABLECOINALL", System.StringComparison.OrdinalIgnoreCase)) temporarysCoinsList = selectedSkill.CoinList.ToSystem().FindAll(x => x.IsDestroyableCoin(x) == parsedBool);
+                    }
+                    else selectedCoinsList.Add(selectedSkill.GetCoinByIndex(modular.GetNumFromParamString(splitCoinTarget[0])));
+
+                    if (temporarysCoinsList.Count > 0)
+                    {
+                        foreach (CoinModel tempCoin in temporarysCoinsList) selectedCoinsList.Add(tempCoin);
+                        temporarysCoinsList.Clear();
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    MainClass.Logg.LogError($"GetCoinModelList error at part-2: {ex}");
+                }
+            }
+
+            
+
+            return selectedCoinsList;
         }
 
         public static void TreatCoinAbilities(SkillCoinData coinData, string fullAbility)
@@ -40,14 +255,19 @@ namespace MTCustomScripts
             for (int i = 0; i < stringAbilityArray.Length; i++)
             {
                 AbilityData currentAbility = new AbilityData();
+                currentAbility.buffData = new BuffReferenceData();
+                currentAbility.conditionalData = new ConditionalData();
+                currentAbility.conditionalData.conditionBuffData = new BuffReferenceData();
+                currentAbility.conditionalData.resultBuffData = new BuffReferenceData();
 
-                if (!stringAbilityArray[i].Contains(':'))
+
+                if (!stringAbilityArray[i].Contains(';'))
                 {
                     currentAbility.scriptName = stringAbilityArray[i];
                     continue;
                 }
 
-                string[] fragmentedAbility = stringAbilityArray[i].Split(':');
+                string[] fragmentedAbility = stringAbilityArray[i].Split(';');
 
                 int abilityTurnLimit = 0;
                 int abilityBuffStack = 0;
