@@ -149,20 +149,6 @@ public class Main : BasePlugin
     
     public class TestStuffStorage
     {
-        public static void AddSkill(BattleUnitModel unit, int skillId, int skillAmt)
-        {
-            SkillStaticDataList skillList = Singleton<StaticDataManager>.Instance._skillList;
-            SkillStaticData data = skillList.GetData(skillId);
-            UnitAttribute skillAttribute = new UnitAttribute();
-            skillAttribute.number = skillAmt;
-            skillAttribute.skillId = skillId;
-            SkillModel skillModel = new SkillModel(data, 55, 4);
-
-
-            unit.UnitDataModel._unitAttributeList.Add(skillAttribute);
-            unit.UnitDataModel._skillList.Add(skillModel);
-        }
-
         private static TestStuffStorage _instance;
 
         public static TestStuffStorage Instance
@@ -218,6 +204,8 @@ public class Main : BasePlugin
         MainClass.timingDict.Add("OnOtherLowMorale", 90904);
         MainClass.timingDict.Add("OnRecoverBreak", 90905);
         MainClass.timingDict.Add("OnOtherRecoverBreak", 90906);
+        MainClass.timingDict.Add("OnLoseBuff", 90907);
+        MainClass.timingDict.Add("OnBeforeLoseBuff", 90908);
 
 
         MainClass.luaFunctionDict["jsontolua"] = new MTCustomScripts.LuaFunctions.LuaFunctionJsonDecoder();
@@ -246,6 +234,9 @@ public class Main : BasePlugin
         MainClass.acquirerDict["getmapdata"] = new MTCustomScripts.Acquirers.AcquirerGetMapData();
         MainClass.acquirerDict["getfinal"] = new MTCustomScripts.Acquirers.AcquirerGetFinalPower();
         MainClass.acquirerDict["getpaniclevel"] = new MTCustomScripts.Acquirers.AcquirerGetPanicLevel();
+        MainClass.acquirerDict["getcoinprobadder"] = new MTCustomScripts.Acquirers.AcquirerGetCoinProbAdder();
+        MainClass.acquirerDict["getskilldata"] = new MTCustomScripts.Acquirers.AcquirerGetSkillData();
+        MainClass.acquirerDict["hasskill"] = new MTCustomScripts.Acquirers.AcquirerHasSkill();
 
         MainClass.consequenceDict["ovwatkres"] = new MTCustomScripts.Consequences.ConsequenceOverwriteAtkResist();
         MainClass.consequenceDict["ovwsinres"] = new MTCustomScripts.Consequences.ConsequenceOverwriteSinResist();
@@ -260,6 +251,8 @@ public class Main : BasePlugin
         MainClass.consequenceDict["changepaniclevel"] = new MTCustomScripts.Consequences.ConsequenceChangePanicLevel();
         MainClass.consequenceDict["changepanictype"] = new MTCustomScripts.Consequences.ConsequenceChangePanicType();
         MainClass.consequenceDict["piraterichpresence"] = new MTCustomScripts.Consequences.ConsequenceModifyRichPresence();
+        MainClass.consequenceDict["addskill"] = new MTCustomScripts.Consequences.ConsequenceAddSkill();
+        MainClass.consequenceDict["removeskill"] = new MTCustomScripts.Consequences.ConsequenceRemoveSkill();
         //MainClass.consequenceDict["addcoin"] = new MTCustomScripts.Consequences.ConsequenceAddCoin();
         // MainClass.consequenceDict["test"] = new ConsequenceTest();
         // MainClass.consequenceDict["testthree"] = new ConsequenceTest3();
