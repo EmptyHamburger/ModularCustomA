@@ -17,6 +17,7 @@ public class ConsequenceChangeDefense : IModularConsequence
             long targetPtr = targetModel.Pointer.ToInt64();
             string key = "AbsoluteMTCustomDefenseChangerSkillIdDataCheck";
             string skillKey = "AbsoluteMTCustomDefenseChangerSkillIdData";
+            string debounceCheck = "AbsoluteMTCustomDefenseChangerDebounceCheck";
             var dataKey = new LuaUnitDataKey
             {
                 unitPtr_intlong = targetPtr,
@@ -35,6 +36,13 @@ public class ConsequenceChangeDefense : IModularConsequence
                     dataID = key
                 };
                 LuaUnitDataKey.LuaUnitValues[newDataKey] = true;
+
+                var newDataKey1 = new LuaUnitDataKey
+                {
+                    unitPtr_intlong = targetPtr,
+                    dataID = debounceCheck
+                };
+                LuaUnitDataKey.LuaUnitValues[newDataKey1] = false;
             }
             var dataSkillKey = new LuaUnitDataKey
             {

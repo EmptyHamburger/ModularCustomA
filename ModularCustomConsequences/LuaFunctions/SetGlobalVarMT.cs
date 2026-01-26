@@ -14,6 +14,6 @@ public class LuaFunctionSetGlobalVarMT : IModularLuaFunction
         var val = context.GetArgument(1);
         MTCustomScripts.Main.GlobalLuaValues.Instance.SetGlobalValue(index, val);
 
-        return ValueTask.FromResult(0);
+        return ValueTask.FromResult(1);
     }
 }

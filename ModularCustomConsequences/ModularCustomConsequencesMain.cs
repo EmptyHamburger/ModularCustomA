@@ -170,11 +170,332 @@ public class Main : BasePlugin
         public static System.Collections.Generic.Dictionary<BuffModel, PANIC_TYPE> overrideBuffPanicDict = new System.Collections.Generic.Dictionary<BuffModel, PANIC_TYPE>();
     }
 
+    public class testStuffStorage
+    {
+        public static System.Collections.Generic.Dictionary<BuffModel, PANIC_TYPE> overrideBuffPanicDict = new System.Collections.Generic.Dictionary<BuffModel, PANIC_TYPE>();
+
+        public static void HijackDiscordStatus(string msg)
+        {
+            LetheMain.discordRpcClient.SetPresence(new RichPresence
+            {
+                Type = ActivityType.Watching,
+                Details = msg,
+                Timestamps = Timestamps.Now,
+                State = "Hijacked by Styx",
+                Assets = new Assets
+                {
+                    LargeImageKey = "lethe_icon",
+                    LargeImageUrl = "https://lethelc.site/"
+                }
+            });
+        }
+    }
+
+    public class AcquirerGetPanicLevel : IModularAcquirer
+    {
+        public int ExecuteAcquirer(ModularSA modular, string section, string circledSection, string[] circles)
+        {
+            /*
+             * var_1: target (single)
+             */
+            BattleUnitModel target = modular.GetTargetModel(circles[0]);
+            if (target == null) return -1;
+
+            if (!target.IsLowMorale() && !target.IsPanic()) return 0;
+            else if (target.IsLowMorale() && !target.IsPanic()) return 1;
+            else if (target.IsPanic()) return 2;
+            else
+            {
+                //Add Log here with all above bools (IsLowMorale() and IsPanic())
+                Logger.LogMessage($"IsLowMorale: {target.IsLowMorale()} | IsPanic: {target.IsPanic()}");
+                return -1;
+            }
+        }
+    }
+
+    public class ConsequenceChangePanicType : IModularConsequence
+    {
+        public void ExecuteConsequence(ModularSA modular, string section, string circledSection, string[] circles)
+        {
+            /*
+             * var_1: target (multi)
+             * var_2: panic
+             * var_3: default/cached/buff
+             * opt_4: buff/current
+             */
+
+            Il2CppSystem.Collections.Generic.List<BattleUnitModel> unitList = modular.GetTargetModelList(circles[0]);
+            if (unitList == null || unitList.Count == 0) return;
+            if (!Il2CppSystem.Enum.TryParse<PANIC_TYPE>(circles[1], true, out PANIC_TYPE panic)) return;
+
+            BUFF_UNIQUE_KEYWORD buffKeyword = BUFF_UNIQUE_KEYWORD.None;
+            bool SelectBuff = (circles[2] != null && circles[2] == "buff") && (circles[3] != null && (circles[3] == "current") || Il2CppSystem.Enum.TryParse<BUFF_UNIQUE_KEYWORD>(circles[3], true, out buffKeyword));
+
+            foreach (BattleUnitModel unit in unitList)
+            {
+                if (!SelectBuff)
+                {
+                    if (circles[2] == "default") unit._defaultPanicType = panic;
+                    else if (circles[2] == "cached")
+                    {
+                        unit._cachedPanicType = panic;
+                        if (Il2CppSystem.Enum.TryParse<BUFF_UNIQUE_KEYWORD>(Singleton<StaticDataManager>.Instance.GetBuffData(circles[2]).id, true, out var panicUniqueType))
+                            unit._cachedPanicTypeBuff = panicUniqueType;
+                    }
+                    else return;
+
+                    continue;
+                }
+
+                if (SelectBuff)
+                {
+                    BuffModel selectedBuff = null;
+
+                    if (circles[3] != "current")
+                    {
+                        BUFF_UNIQUE_KEYWORD var1Keyword = CustomBuffs.ParseBuffUniqueKeyword(circles[1]);
+                        if (unit._buffDetail.HasBuff(var1Keyword) == true) selectedBuff = unit._buffDetail.FindActivatedBuff(var1Keyword, true);
+                    }
+                    if (selectedBuff == null) selectedBuff = modular.modsa_buffModel;
+                    if (selectedBuff == null) continue;
+
+                    testStuffStorage.overrideBuffPanicDict[selectedBuff] = panic;
+                }
+            }
+        }
+    }
+
+    public class ConsequenceChangePanicLevel : IModularConsequence
+{
+    public void ExecuteConsequence(ModularSA modular, string section, string circledSection, string[] circles)
+    {
+        /*
+         * var_1: Multi-Target
+         * var_2: Panic-Level
+         */
+
+        Il2CppSystem.Collections.Generic.List<BattleUnitModel> unitList = modular.GetTargetModelList(circles[0]);
+        if (unitList == null || unitList.Count <= 0) return;
+        if (!int.TryParse(circles[1], out int panicLevel)) return;
+        if (panicLevel == 0) return;
+
+        foreach (BattleUnitModel unit in unitList)
+        {
+            if (panicLevel == 1) unit.OnLowMorale(modular.battleTiming);
+            else if (panicLevel == 2) unit.OnPanic(modular.battleTiming);
+
+            unit.OnPanicOrLowMorale((PANIC_LEVEL)panicLevel, modular.battleTiming);
+        }
+    }
+}
+
     public class ConsequenceTest : IModularConsequence
     {
         public void ExecuteConsequence(ModularSA modular, string section, string circledSection, string[] circles)
         {
-            
+            // PatternScript_1341 patternScript_1327 = new PatternScript_1341();
+            // foreach(var appr in patternScript_1327._phaseAppearances.ToArray())
+            // {
+            //     Logger.LogMessage($"Appearance listing: {appr}");
+            // }
+            // CoinAbility newCA = new CoinAbility_OverwriteToSuperCoin();
+            // COIN_COLOR_TYPE cct = COIN_COLOR_TYPE.GOLD;
+            // int grade = 1;
+            // int cindex = modular.GetNumFromParamString(circles[0]);
+            // switch (circles[1])
+            // {
+            //     default:
+            //         cct = COIN_COLOR_TYPE.GOLD;
+            //         grade = 1;
+            //         break;
+            //     case "green":
+            //         cct = COIN_COLOR_TYPE.GREEN;
+            //         grade = 99;
+            //         break;
+            //     case "purple":
+            //         cct = COIN_COLOR_TYPE.PURPLE;
+            //         grade = 2;
+            //         break;
+            //     case "grey":
+            //         cct = COIN_COLOR_TYPE.GREY;
+            //         grade = 2;
+            //         break;
+            // }
+            // newCA.OverwriteCoinColor(out cct);
+            // newCA.OverwriteCoinGrade(out grade);
+
+            // Il2CppSystem.Collections.Generic.List<BattleUnitModel> targetList = modular.GetTargetModelList(circles[0]);
+            // foreach(BattleUnitModel target in targetList)
+            // {
+            //     foreach(CoinModel coinModel in modular.modsa_skillModel.CoinList)
+            //     {
+            //         coinModel._coinAbilityList.Add(newCA);
+            //     }
+            // }
+            // if (string.Equals(circles[0], "all", StringComparison.OrdinalIgnoreCase))
+            // {
+            //     foreach (CoinModel coin in modular.modsa_skillModel.CoinList)
+            //     {
+            //         Singleton<SkillAbility_OverwriteToSuperCoinViaBuffCheck>.Instance.AddScriptToCoin(coin);
+            //     }
+            // }
+            // else
+            // {
+            //     foreach (string circle in circles)
+            //     {
+            //         int idx = modular.GetNumFromParamString(circle);
+            //         if (idx < 0)
+            //         {
+            //             Singleton<SkillAbility_OverwriteToSuperCoinViaBuffCheck>.Instance.AddScriptToCoin(
+            //                 modular.modsa_skillModel.GetCoin(modular.modsa_coinModel.GetOriginCoinIndex()));
+            //             continue;
+            //         }
+
+            //         idx = Math.Min(idx, modular.modsa_skillModel.CoinList.Count - 1);
+            //         Singleton<SkillAbility_OverwriteToSuperCoinViaBuffCheck>.Instance
+            //             .AddScriptToCoin(modular.modsa_skillModel.GetCoin(idx));
+            //     }
+            // }
+
+            Il2CppSystem.Collections.Generic.List<BattleUnitModel> targetList = modular.GetTargetModelList(circles[0]);
+            if (targetList.Count < 1) return;
+            BUFF_UNIQUE_KEYWORD keyword = CustomBuffs.ParseBuffUniqueKeyword(circles[1]);
+            if (keyword.ToString() != circles[1]) keyword = BUFF_UNIQUE_KEYWORD.None;
+            int loseStack = modular.GetNumFromParamString(circles[2]);
+            int loseTurn = modular.GetNumFromParamString(circles[3]);
+            // Il2CppSystem.Nullable<int> limit = null;
+            foreach(BattleUnitModel target in targetList)
+            {
+                target.ForceToActivateBuffEffect(keyword, modular.modsa_unitModel, loseStack, loseTurn, null, modular.battleTiming);
+            }
+        }
+    }
+
+    public class ConsequenceTest1 : IModularConsequence
+    {
+        public void ExecuteConsequence(ModularSA modular, string section, string circledSection, string[] circles)
+        {
+            Il2CppSystem.Collections.Generic.List<BattleUnitModel> targetList = modular.GetTargetModelList(circles[0]);
+            int newMp = modular.GetNumFromParamString(circles[1]);
+            foreach(BattleUnitModel target in targetList)
+            {
+                target.ChangeMp(newMp);
+            }
+        }
+    }
+    
+    public class AcquirerTest : IModularAcquirer
+    {
+        public int ExecuteAcquirer(ModularSA modular, string section, string circledSection, string[] circles)
+        {
+            BattleUnitModel target = modular.GetTargetModel(circles[0]);
+            int skillId = modular.GetNumFromParamString(circles[1]);
+            return target.DidActionPrevTurn(skillId) ? 1 : 0;
+        }
+    }
+
+    public class AcquirerUsedSkillPrevTurn : IModularAcquirer
+    {
+        public int ExecuteAcquirer(ModularSA modular, string section, string circledSection, string[] circles)
+        {
+            BattleUnitModel target = modular.GetTargetModel(circles[0]);
+            int skillId = modular.GetNumFromParamString(circles[1]);
+            return target.DidActionPrevTurn(skillId) ? 1 : 0;
+        }
+    }
+
+    public class LuaFunctionGetAppearanceID : IModularLuaFunction
+    {
+        public ValueTask<int> ExecuteLuaFunction(ModularSA modular, LuaFunctionExecutionContext context, System.Span<LuaValue> buffer, CancellationToken ct)
+        {
+            BattleUnitModel target = modular.GetTargetModel(context.GetArgument(0).Read<string>());
+            if (target == null) return ValueTask.FromResult(0);
+
+            buffer[0] = target.GetAppearanceID();
+            return ValueTask.FromResult(1);
+        }
+    }
+
+    public class LuaFunctionListBreakSectionValue : IModularLuaFunction
+    {
+        public ValueTask<int> ExecuteLuaFunction(ModularSA modular, LuaFunctionExecutionContext context, System.Span<LuaValue> buffer, CancellationToken ct)
+        {
+            BattleUnitModel target = modular.GetTargetModel(context.GetArgument(0).Read<string>());
+            if (target == null) return ValueTask.FromResult(0);
+
+            bool isActiveOnly = modular.GetBoolFromParamString(context.GetArgument(1).Read<string>());
+            Il2CppSystem.Collections.Generic.List<int> breakSectionValue = target.GetBreakSectionValueList(isActiveOnly);
+
+            var table = new LuaTable();
+
+            for (int i = 0; i < breakSectionValue.Count; i++)
+            {
+                table[i + 1] = breakSectionValue[i];
+            }
+
+            buffer[0] = table;
+            return ValueTask.FromResult(1);
+        }
+    }
+
+    public class AcquirerGetBuffStackGainedThisTurn : IModularAcquirer
+    {
+        public int ExecuteAcquirer(ModularSA modular, string section, string circledSection, string[] circles)
+        {
+            BattleUnitModel target = modular.GetTargetModel(circles[0]);
+            BUFF_UNIQUE_KEYWORD keyword = CustomBuffs.ParseBuffUniqueKeyword(circles[1]);
+            if (keyword.ToString() != circles[1]) keyword = BUFF_UNIQUE_KEYWORD.None;
+            return target.GetBuffStackGainedThisTurn(keyword);
+        }
+    }
+
+    public class AcquirerGetCurrentBrokenLevel : IModularAcquirer
+    {
+        public int ExecuteAcquirer(ModularSA modular, string section, string circledSection, string[] circles)
+        {
+            BattleUnitModel target = modular.GetTargetModel(circles[0]);
+            return target.GetCurrentBrokenLevel();
+        }
+    }
+
+    public class LuaFunctionGetRandomBuff : IModularLuaFunction
+    {
+        public ValueTask<int> ExecuteLuaFunction(ModularSA modular, LuaFunctionExecutionContext context, System.Span<LuaValue> buffer, CancellationToken ct)
+        {
+            BattleUnitModel target = modular.GetTargetModel(context.GetArgument(0).Read<string>());
+            if (target == null) return ValueTask.FromResult(0);
+            Enum.TryParse<BUF_TYPE>(context.GetArgument(1).Read<string>(), true, out BUF_TYPE bufType);
+            Il2CppSystem.Nullable<bool> canBeDespelled = context.ArgumentCount > 2 ? new Il2CppSystem.Nullable<bool>(context.GetArgument(2).Read<bool>()) : null; 
+            buffer[0] = target.GetRandomBuff(bufType, canBeDespelled)._name.ToString();
+            return ValueTask.FromResult(1);
+        }
+    }
+
+    // 7
+
+    public class ConsequenceInstantDeath : IModularConsequence
+    {
+        public void ExecuteConsequence(ModularSA modular, string section, string circledSection, string[] circles)
+        {
+            Il2CppSystem.Collections.Generic.List<BattleUnitModel> targetList = modular.GetTargetModelList(circles[0]);
+            if (targetList.Count < 1) return;
+            bool ingoreImmortal = modular.GetBoolFromParamString(circles[1]);
+            Enum.TryParse<DAMAGE_SOURCE_TYPE>(circles[2], true, out DAMAGE_SOURCE_TYPE source);
+            BattleUnitModel killer = circles.Length > 3 ? modular.GetTargetModel(circles[3]) : null;
+            BattleActionModel act = circles.Length > 4 ? (circles[4] == "Self" ? modular.modsa_selfAction : modular.modsa_oppoAction) : null;
+            foreach(BattleUnitModel target in targetList)
+            {
+                if (ingoreImmortal) target.InstantDeathIgnoreImmortal(source, modular.battleTiming, killer, act);
+            }
+        }
+    }
+
+    public class AcquirerIsActionable : IModularAcquirer
+    {
+        public int ExecuteAcquirer(ModularSA modular, string section, string circledSection, string[] circles)
+        {
+            BattleUnitModel target = modular.GetTargetModel(circles[0]);
+            return target.IsActionable() ? 1 : 0;
         }
     }
 
@@ -195,6 +516,8 @@ public class Main : BasePlugin
         harmony.PatchAll(typeof(Modular_Consequence));
         harmony.PatchAll(typeof(BuffModel_OverwritePanic));
         harmony.PatchAll(typeof(PanicOrLowMorale));
+        harmony.PatchAll(typeof(EquipDefenseOperation));
+        harmony.PatchAll(typeof(BuffModelPatch));
 
         // MainClass.timingDict.Add("OnGainBuff", 1337);
         // MainClass.timingDict.Add("OnInflictBuff", 1733);
@@ -217,7 +540,10 @@ public class Main : BasePlugin
         MainClass.luaFunctionDict["gbkeyword"] = new MTCustomScripts.LuaFunctions.LuaFunctionGainBuffKeyword();
         MainClass.luaFunctionDict["getcurrentmapid"] = new MTCustomScripts.LuaFunctions.GetCurrentMapID();
         MainClass.luaFunctionDict["listrelatedkeywords"] = new MTCustomScripts.LuaFunctions.LuaFunctionListRelatedKeywords();
- 
+        MainClass.luaFunctionDict["getappearance"] = new LuaFunctionGetAppearanceID(); //new
+        MainClass.luaFunctionDict["listbreakvalues"] = new LuaFunctionListBreakSectionValue(); //new
+        MainClass.luaFunctionDict["getrandombuff"] = new LuaFunctionGetRandomBuff(); //new
+
         MainClass.acquirerDict["coinoperator"] = new MTCustomScripts.Acquirers.AcquirerCoinOperator();
         MainClass.acquirerDict["bufftype"] = new MTCustomScripts.Acquirers.AcquirerBuffType();
         MainClass.acquirerDict["getatkres"] = new MTCustomScripts.Acquirers.AcquirerAtkResistance();
@@ -237,6 +563,10 @@ public class Main : BasePlugin
         MainClass.acquirerDict["getcoinprobadder"] = new MTCustomScripts.Acquirers.AcquirerGetCoinProbAdder();
         MainClass.acquirerDict["getskilldata"] = new MTCustomScripts.Acquirers.AcquirerGetSkillData();
         MainClass.acquirerDict["hasskill"] = new MTCustomScripts.Acquirers.AcquirerHasSkill();
+        MainClass.acquirerDict["didusedskillprevturn"] = new AcquirerUsedSkillPrevTurn(); //new
+        MainClass.acquirerDict["getbuffstackgainedthisturn"] = new AcquirerGetBuffStackGainedThisTurn(); //new
+        MainClass.acquirerDict["getbreaklevel"] = new AcquirerGetCurrentBrokenLevel(); //new
+        MainClass.acquirerDict["isactionable"] = new AcquirerIsActionable(); //new
 
         MainClass.consequenceDict["ovwatkres"] = new MTCustomScripts.Consequences.ConsequenceOverwriteAtkResist();
         MainClass.consequenceDict["ovwsinres"] = new MTCustomScripts.Consequences.ConsequenceOverwriteSinResist();
@@ -251,6 +581,15 @@ public class Main : BasePlugin
         MainClass.consequenceDict["changepaniclevel"] = new MTCustomScripts.Consequences.ConsequenceChangePanicLevel();
         MainClass.consequenceDict["changepanictype"] = new MTCustomScripts.Consequences.ConsequenceChangePanicType();
         MainClass.consequenceDict["piraterichpresence"] = new MTCustomScripts.Consequences.ConsequenceModifyRichPresence();
+        MainClass.consequenceDict["addcoin"] = new MTCustomScripts.Consequences.ConsequenceAddCoin();
+        MainClass.consequenceDict["clearallunitscript"] = new MTCustomScripts.Consequences.ConsequenceClearUnitScript();
+        MainClass.consequenceDict["changehp"] = new MTCustomScripts.Consequences.ConsequenceChangeHp();
+        MainClass.consequenceDict["changesp"] = new MTCustomScripts.Consequences.ConsequenceChangeSp();
+        MainClass.consequenceDict["instantdeath"] = new ConsequenceInstantDeath(); //new
+
+        MainClass.consequenceDict["test"] = new ConsequenceTest();
+        MainClass.consequenceDict["test1"] = new ConsequenceTest1();
+        MainClass.acquirerDict["test2"] = new AcquirerTest();
         MainClass.consequenceDict["addskill"] = new MTCustomScripts.Consequences.ConsequenceAddSkill();
         MainClass.consequenceDict["removeskill"] = new MTCustomScripts.Consequences.ConsequenceRemoveSkill();
         //MainClass.consequenceDict["addcoin"] = new MTCustomScripts.Consequences.ConsequenceAddCoin();

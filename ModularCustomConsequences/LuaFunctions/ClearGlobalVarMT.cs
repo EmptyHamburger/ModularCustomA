@@ -12,6 +12,6 @@ public class LuaFunctionClearGlobalVarMT : IModularLuaFunction
     {
        MTCustomScripts.Main.GlobalLuaValues.Instance.ClearAllValue();
 
-        return ValueTask.FromResult(0);
+        return ValueTask.FromResult(1);
     }
 }
