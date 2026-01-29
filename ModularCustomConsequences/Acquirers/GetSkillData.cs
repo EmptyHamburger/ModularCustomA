@@ -1,4 +1,4 @@
-﻿using ModularSkillScripts;
+using ModularSkillScripts;
 using System;
 using System.Collections.Generic;
 
@@ -34,8 +34,8 @@ namespace MTCustomScripts.Acquirers
                 case "Scale":
                     result = skill.GetCoinScale();
                     break;
-                case "ScaleAdder":
-                    result = (oppoAction != null) ? skill.GetCoinScaleAdder(oppoAction, selectedCoins[0], oppoAction) : -1;
+                case "CoinScaleAdder":
+                    result = skill.GetCoinScaleAdder(selfAction, selectedCoins[0], oppoAction);
                     break;
                 case "Final":
                     result = (oppoAction != null) ? skill.GetSkillPowerAdder(oppoAction, rollType, selectedCoins) : -1;
