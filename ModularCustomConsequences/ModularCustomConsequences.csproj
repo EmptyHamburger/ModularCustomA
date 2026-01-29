@@ -48,7 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\Downloads\Nope\BepInEx\interop\Assembly-CSharp.dll</HintPath>
+      <HintPath>D:\Random\Nope\BepInEx\interop\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Il2Cppmscorlib">
       <HintPath>..\..\..\..\Downloads\Nope\BepInEx\interop\Il2Cppmscorlib.dll</HintPath>

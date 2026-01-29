@@ -169,124 +169,6 @@ public class Main : BasePlugin
 
         public static System.Collections.Generic.Dictionary<BuffModel, PANIC_TYPE> overrideBuffPanicDict = new System.Collections.Generic.Dictionary<BuffModel, PANIC_TYPE>();
     }
-
-    public class testStuffStorage
-    {
-        public static System.Collections.Generic.Dictionary<BuffModel, PANIC_TYPE> overrideBuffPanicDict = new System.Collections.Generic.Dictionary<BuffModel, PANIC_TYPE>();
-
-        public static void HijackDiscordStatus(string msg)
-        {
-            LetheMain.discordRpcClient.SetPresence(new RichPresence
-            {
-                Type = ActivityType.Watching,
-                Details = msg,
-                Timestamps = Timestamps.Now,
-                State = "Hijacked by Styx",
-                Assets = new Assets
-                {
-                    LargeImageKey = "lethe_icon",
-                    LargeImageUrl = "https://lethelc.site/"
-                }
-            });
-        }
-    }
-
-    public class AcquirerGetPanicLevel : IModularAcquirer
-    {
-        public int ExecuteAcquirer(ModularSA modular, string section, string circledSection, string[] circles)
-        {
-            /*
-             * var_1: target (single)
-             */
-            BattleUnitModel target = modular.GetTargetModel(circles[0]);
-            if (target == null) return -1;
-
-            if (!target.IsLowMorale() && !target.IsPanic()) return 0;
-            else if (target.IsLowMorale() && !target.IsPanic()) return 1;
-            else if (target.IsPanic()) return 2;
-            else
-            {
-                //Add Log here with all above bools (IsLowMorale() and IsPanic())
-                Logger.LogMessage($"IsLowMorale: {target.IsLowMorale()} | IsPanic: {target.IsPanic()}");
-                return -1;
-            }
-        }
-    }
-
-    public class ConsequenceChangePanicType : IModularConsequence
-    {
-        public void ExecuteConsequence(ModularSA modular, string section, string circledSection, string[] circles)
-        {
-            /*
-             * var_1: target (multi)
-             * var_2: panic
-             * var_3: default/cached/buff
-             * opt_4: buff/current
-             */
-
-            Il2CppSystem.Collections.Generic.List<BattleUnitModel> unitList = modular.GetTargetModelList(circles[0]);
-            if (unitList == null || unitList.Count == 0) return;
-            if (!Il2CppSystem.Enum.TryParse<PANIC_TYPE>(circles[1], true, out PANIC_TYPE panic)) return;
-
-            BUFF_UNIQUE_KEYWORD buffKeyword = BUFF_UNIQUE_KEYWORD.None;
-            bool SelectBuff = (circles[2] != null && circles[2] == "buff") && (circles[3] != null && (circles[3] == "current") || Il2CppSystem.Enum.TryParse<BUFF_UNIQUE_KEYWORD>(circles[3], true, out buffKeyword));
-
-            foreach (BattleUnitModel unit in unitList)
-            {
-                if (!SelectBuff)
-                {
-                    if (circles[2] == "default") unit._defaultPanicType = panic;
-                    else if (circles[2] == "cached")
-                    {
-                        unit._cachedPanicType = panic;
-                        if (Il2CppSystem.Enum.TryParse<BUFF_UNIQUE_KEYWORD>(Singleton<StaticDataManager>.Instance.GetBuffData(circles[2]).id, true, out var panicUniqueType))
-                            unit._cachedPanicTypeBuff = panicUniqueType;
-                    }
-                    else return;
-
-                    continue;
-                }
-
-                if (SelectBuff)
-                {
-                    BuffModel selectedBuff = null;
-
-                    if (circles[3] != "current")
-                    {
-                        BUFF_UNIQUE_KEYWORD var1Keyword = CustomBuffs.ParseBuffUniqueKeyword(circles[1]);
-                        if (unit._buffDetail.HasBuff(var1Keyword) == true) selectedBuff = unit._buffDetail.FindActivatedBuff(var1Keyword, true);
-                    }
-                    if (selectedBuff == null) selectedBuff = modular.modsa_buffModel;
-                    if (selectedBuff == null) continue;
-
-                    testStuffStorage.overrideBuffPanicDict[selectedBuff] = panic;
-                }
-            }
-        }
-    }
-
-    public class ConsequenceChangePanicLevel : IModularConsequence
-{
-    public void ExecuteConsequence(ModularSA modular, string section, string circledSection, string[] circles)
-    {
-        /*
-         * var_1: Multi-Target
-         * var_2: Panic-Level
-         */
-
-        Il2CppSystem.Collections.Generic.List<BattleUnitModel> unitList = modular.GetTargetModelList(circles[0]);
-        if (unitList == null || unitList.Count <= 0) return;
-        if (!int.TryParse(circles[1], out int panicLevel)) return;
-        if (panicLevel == 0) return;
-
-        foreach (BattleUnitModel unit in unitList)
-        {
-            if (panicLevel == 1) unit.OnLowMorale(modular.battleTiming);
-            else if (panicLevel == 2) unit.OnPanic(modular.battleTiming);
-
-            unit.OnPanicOrLowMorale((PANIC_LEVEL)panicLevel, modular.battleTiming);
-        }
-    }
 }
 
     public class ConsequenceTest : IModularConsequence
@@ -581,7 +463,8 @@ public class Main : BasePlugin
         MainClass.consequenceDict["changepaniclevel"] = new MTCustomScripts.Consequences.ConsequenceChangePanicLevel();
         MainClass.consequenceDict["changepanictype"] = new MTCustomScripts.Consequences.ConsequenceChangePanicType();
         MainClass.consequenceDict["piraterichpresence"] = new MTCustomScripts.Consequences.ConsequenceModifyRichPresence();
-        MainClass.consequenceDict["addcoin"] = new MTCustomScripts.Consequences.ConsequenceAddCoin();
+        MainClass.consequenceDict["addskill"] = new MTCustomScripts.Consequences.ConsequenceAddSkill();
+        MainClass.consequenceDict["removeskill"] = new MTCustomScripts.Consequences.ConsequenceRemoveSkill();
         MainClass.consequenceDict["clearallunitscript"] = new MTCustomScripts.Consequences.ConsequenceClearUnitScript();
         MainClass.consequenceDict["changehp"] = new MTCustomScripts.Consequences.ConsequenceChangeHp();
         MainClass.consequenceDict["changesp"] = new MTCustomScripts.Consequences.ConsequenceChangeSp();
@@ -590,8 +473,6 @@ public class Main : BasePlugin
         MainClass.consequenceDict["test"] = new ConsequenceTest();
         MainClass.consequenceDict["test1"] = new ConsequenceTest1();
         MainClass.acquirerDict["test2"] = new AcquirerTest();
-        MainClass.consequenceDict["addskill"] = new MTCustomScripts.Consequences.ConsequenceAddSkill();
-        MainClass.consequenceDict["removeskill"] = new MTCustomScripts.Consequences.ConsequenceRemoveSkill();
         //MainClass.consequenceDict["addcoin"] = new MTCustomScripts.Consequences.ConsequenceAddCoin();
         // MainClass.consequenceDict["test"] = new ConsequenceTest();
         // MainClass.consequenceDict["testthree"] = new ConsequenceTest3();
