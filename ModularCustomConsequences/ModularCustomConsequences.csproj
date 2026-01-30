@@ -45,62 +45,11 @@
       <HintPath>%(Identity)</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>D:\Random\Nope\BepInEx\interop\Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2CppMono.Security">
-      <HintPath>D:\Random\Nope\BepInEx\interop\Il2CppMono.Security.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2Cppmscorlib">
-      <HintPath>D:\Random\Nope\BepInEx\interop\Il2Cppmscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2CppSystem">
-      <HintPath>D:\Random\Nope\BepInEx\interop\Il2CppSystem.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2CppSystem.Configuration">
-      <HintPath>D:\Random\Nope\BepInEx\interop\Il2CppSystem.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2CppSystem.Core">
-      <HintPath>D:\Random\Nope\BepInEx\interop\Il2CppSystem.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2CppSystem.Data">
-      <HintPath>D:\Random\Nope\BepInEx\interop\Il2CppSystem.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2CppSystem.IO.Compression">
-      <HintPath>D:\Random\Nope\BepInEx\interop\Il2CppSystem.IO.Compression.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2CppSystem.IO.Compression.FileSystem">
-      <HintPath>D:\Random\Nope\BepInEx\interop\Il2CppSystem.IO.Compression.FileSystem.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2CppSystem.JsonExtensions">
-      <HintPath>D:\Random\Nope\BepInEx\interop\Il2CppSystem.JsonExtensions.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2CppSystem.Net.Http">
-      <HintPath>D:\Random\Nope\BepInEx\interop\Il2CppSystem.Net.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2CppSystem.Numerics">
-      <HintPath>D:\Random\Nope\BepInEx\interop\Il2CppSystem.Numerics.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2CppSystem.Runtime.CompilerServices.Unsafe">
-      <HintPath>D:\Random\Nope\BepInEx\interop\Il2CppSystem.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2CppSystem.Runtime.Serialization">
-      <HintPath>D:\Random\Nope\BepInEx\interop\Il2CppSystem.Runtime.Serialization.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2CppSystem.Text.Encodings.Web">
-      <HintPath>D:\Random\Nope\BepInEx\interop\Il2CppSystem.Text.Encodings.Web.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2CppSystem.Text.Json">
-      <HintPath>D:\Random\Nope\BepInEx\interop\Il2CppSystem.Text.Json.dll</HintPath>
-    </Reference>
     <Reference Include="Merged">
-      <HintPath>D:\Random\Nope\BepInEx\plugins\Lethe.dll</HintPath>
+      <HintPath>$(LimbusCompanyFolder)\BepInEx\plugins\Lethe.dll</HintPath>
     </Reference>
     <Reference Include="ModularSkillScripts">
-      <HintPath>D:\Random\Nope\BepInEx\plugins\ModularSkillScripts.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>D:\Random\Nope\BepInEx\interop\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>"$(LimbusCompanyFolder)\BepInEx\plugins\ModularSkillScripts.dll</HintPath>
     </Reference>
   </ItemGroup>
 
