@@ -41,7 +41,7 @@ public class Main : BasePlugin
 {
     // Edit the below to your own plugin name, version, etc.
     public const string NAME = "MTCustomScripts";
-    public const string VERSION = "8.53.16";
+    public const string VERSION = "8.54.17";
     public const string AUTHOR = "MT";
     public const string GUID = $"{AUTHOR}.{NAME}";
 
@@ -359,7 +359,7 @@ public class Main : BasePlugin
         harmony.PatchAll(typeof(Modular_Consequence));
         harmony.PatchAll(typeof(BuffModel_OverwritePanic));
         harmony.PatchAll(typeof(PanicOrLowMorale));
-        harmony.PatchAll(typeof(LoseAnyBuff));
+        // harmony.PatchAll(typeof(LoseAnyBuff));
         harmony.PatchAll(typeof(EquipDefenseOperation));
         harmony.PatchAll(typeof(BuffModelPatch));
 
