@@ -169,7 +169,11 @@ namespace MTCustomScripts
         {
             Il2CppSystem.Collections.Generic.List<CoinModel> selectedCoinsList = new Il2CppSystem.Collections.Generic.List<CoinModel>();
             System.Collections.Generic.List<CoinModel> temporarysCoinsList = new System.Collections.Generic.List<CoinModel>();
-            if (selectedSkillCoin == null) selectedSkillCoin = selectedSkill.GetCoinByIndex(0);
+            if (selectedSkillCoin == null)
+            {
+                if (modular.modsa_coinModel != null) selectedSkillCoin = modular.modsa_coinModel;
+                else selectedSkillCoin = selectedSkill.GetCoinByIndex(0);
+            }
 
             string[] splitCoinTarget = (coinTarget.Contains('|')) ? coinTarget.Split('|', System.StringSplitOptions.RemoveEmptyEntries) : new string[] { coinTarget };
 
@@ -237,9 +241,24 @@ namespace MTCustomScripts
                 }
             }
 
-            
+
 
             return selectedCoinsList;
+        }
+
+        public static void ProcessEnumOperation<T>(string value, System.Collections.Generic.List<T> list)  where T : unmanaged, Enum
+        {
+            if (string.IsNullOrEmpty(value) || value.Length < 2) return;
+
+            char operation = char.ToLowerInvariant(value[0]);
+            if (operation != 'a' && operation != 'r') return;
+
+            string enumValue = value.Substring(1);
+            if (Il2CppSystem.Enum.TryParse<T>(enumValue, true, out T enumResult))
+            {
+                if (operation == 'r') list.Remove(enumResult);
+                else list.Add(enumResult);
+            }
         }
 
         public static void TreatCoinAbilities(SkillCoinData coinData, string fullAbility)

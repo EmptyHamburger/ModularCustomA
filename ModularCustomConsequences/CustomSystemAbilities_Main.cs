@@ -1,12 +1,13 @@
 ﻿using ModularSkillScripts;
 using Newtonsoft.Json;
+using Il2CppSystem;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
 namespace MTCustomScripts
 {
-    public class CustomSystemAbilities_Main
+    public static class CustomSystemAbilities_Main
     {
         public static bool TryAddCustomSystemAbility(CustomSystemAbility newSystemAbility, out string logging)
         {
@@ -38,8 +39,43 @@ namespace MTCustomScripts
             Main.Logger.LogInfo("Ended the print of customSystemAbilityDict");
         }
 
+
+        public static bool CheckOverwriteAbility(SYSTEM_ABILITY_KEYWORD systemKeyword, out CustomSystemAbility __result)
+        {
+            int newKeywordValue = (int)systemKeyword;
+
+            if (!Il2CppSystem.Enum.IsDefined(SystemAbilityKeywordEnumType, newKeywordValue) && CustomSystemAbilities_Main.customSystemAbilityDict.TryGetValue(newKeywordValue, out CustomSystemAbility customSystemAbility))
+            {
+                Main.Logger.LogInfo($"Succesfully recovered copy of customAbility with ID={customSystemAbility.GetCustomIdentifier()} and name={customSystemAbility.GetCustomNameId()}");
+                __result = customSystemAbility.Copy();
+                return false;
+            }
+
+            __result = null;
+            return true;
+        }
+
+
+        public static bool HasSystemAbility(this SystemAbilityDetail detail, SYSTEM_ABILITY_KEYWORD newKeyword, out SystemAbility systemAbility)
+        {
+            if (CustomSystemAbilities_Main.CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility))
+            {
+                systemAbility = detail._activatedAbilityList.ToSystem().Find(x => (x as CustomSystemAbility).GetCustomIdentifier() == customAbility.GetCustomIdentifier());
+                if (systemAbility == null) systemAbility = detail._nextTurnAbilityList.ToSystem().Find(x => (x as CustomSystemAbility).GetCustomIdentifier() == customAbility.GetCustomIdentifier());
+            }
+            else
+            {
+                systemAbility = detail._activatedAbilityList.ToSystem().Find(x => x.UniqueKeyword == newKeyword);
+                if (systemAbility == null) systemAbility = detail._nextTurnAbilityList.ToSystem().Find(x => x.UniqueKeyword == newKeyword);
+            }
+            if (systemAbility != null) return true;
+            else return false;
+        }
+
+        public static Il2CppSystem.Type SystemAbilityKeywordEnumType = Il2CppSystem.Type.GetType(nameof(SYSTEM_ABILITY_KEYWORD), true);
         public static System.Collections.Generic.Dictionary<int, CustomSystemAbility> customSystemAbilityDict = new System.Collections.Generic.Dictionary<int, CustomSystemAbility>();
     }
+
 
     public class CustomSystemAbility : BattleSystemAbility
     {
@@ -62,13 +98,13 @@ namespace MTCustomScripts
 
 
 
-    [Serializable]
+    [System.Serializable]
     public class ModularSystemAbilityStaticDataList
     {
         public static void Initialize(ModularSystemAbilityStaticDataList instance)
         {
             ModularSystemAbilityStaticDataList._instance = instance;
-            instance._modularSystemAbilityStaticData.Clear();
+            instance.modularAbilityStaticDataList.Clear();
 
             string modsBasePath = Path.Combine(BepInEx.Paths.PluginPath, "Lethe", "mods");
             System.Collections.Generic.List<string> jsonFiles = new System.Collections.Generic.List<string>();
@@ -99,49 +135,49 @@ namespace MTCustomScripts
                         string jsonContent = File.ReadAllText(filePath);
                         ModularSystemAbilityStaticDataList parsedList = JsonConvert.DeserializeObject<ModularSystemAbilityStaticDataList>(jsonContent);
 
-                        if (parsedList != null && parsedList._modularSystemAbilityStaticData != null)
+                        if (parsedList != null && parsedList.modularAbilityStaticDataList != null)
                         {
-                            foreach (ModularSystemAbilityStaticData staticData in parsedList._modularSystemAbilityStaticData)
+                            foreach (ModularSystemAbilityStaticData staticData in parsedList.modularAbilityStaticDataList)
                             {
                                 string modName = Path.GetFileName(Path.GetDirectoryName(Path.GetDirectoryName(filePath)));
                                 staticData.ModFile = modName;
-                                instance._modularSystemAbilityStaticData.Add(staticData);
+                                instance.modularAbilityStaticDataList.Add(staticData);
                             }
 
-                            Main.Logger.LogInfo($"Loaded {parsedList._modularSystemAbilityStaticData.Count} modular system abilities from {Path.GetFileName(filePath)}");
+                            Main.Logger.LogInfo($"Loaded {parsedList.modularAbilityStaticDataList.Count} modular system abilities from {Path.GetFileName(filePath)}");
                         }
                     }
-                    catch (Exception ex)
+                    catch (System.Exception ex)
                     {
                         Main.Logger.LogError($"Failed to load file {Path.GetFileName(filePath)}: {ex.Message}");
                     }
                 }
-                Main.Logger.LogInfo($"Total custom modular system abilities loaded: {instance._modularSystemAbilityStaticData.Count}");
+                Main.Logger.LogInfo($"Total custom modular system abilities loaded: {instance.modularAbilityStaticDataList.Count}");
             }
-            catch (Exception ex) { Main.Logger.LogError($"Fatal error loading modular system abilities: {ex.Message}"); }
+            catch (System.Exception ex) { Main.Logger.LogError($"Fatal error loading modular system abilities: {ex.Message}"); }
         }
 
 
-        public static ModularSystemAbilityStaticData GetData(int id)
+        public ModularSystemAbilityStaticData GetData(int id)
         {
-            ModularSystemAbilityStaticData data = Instance._modularSystemAbilityStaticData.Find(x => x.Id == id);
+            ModularSystemAbilityStaticData data = Instance.modularAbilityStaticDataList.Find(x => x.Id == id);
             return (data == null) ? null : data;
         }
-        public static ModularSystemAbilityStaticData GetData(string name)
+        public ModularSystemAbilityStaticData GetData(string name)
         {
-            ModularSystemAbilityStaticData data = Instance._modularSystemAbilityStaticData.Find(x => x.Name == name);
+            ModularSystemAbilityStaticData data = Instance.modularAbilityStaticDataList.Find(x => x.Name == name);
             return (data == null) ? null : data;
         }
-
-        public static ModularSystemAbilityStaticData GetByMod(string mod)
+        public System.Collections.Generic.List<ModularSystemAbilityStaticData> GetByMod(string mod)
         {
-            ModularSystemAbilityStaticData data = Instance._modularSystemAbilityStaticData.Find(x => x.ModFile == mod);
-            return (data == null) ? null : data;
+            System.Collections.Generic.List<ModularSystemAbilityStaticData> data = Instance.modularAbilityStaticDataList.FindAll(x => x.ModFile == mod);
+            return (data == null || data.Count <= 0) ? new System.Collections.Generic.List<ModularSystemAbilityStaticData>() : data;
         }
 
 
         [JsonProperty]
-        public System.Collections.Generic.List<ModularSystemAbilityStaticData> _modularSystemAbilityStaticData;
+        public System.Collections.Generic.List<ModularSystemAbilityStaticData> modularAbilityStaticDataList;
+
 
 
         public static ModularSystemAbilityStaticDataList Instance
@@ -149,7 +185,7 @@ namespace MTCustomScripts
             get
             {
                 ModularSystemAbilityStaticDataList instance = ModularSystemAbilityStaticDataList._instance;
-                if (instance == null) throw new Exception("Not initialized");
+                if (instance == null) throw new System.Exception("Not initialized");
                 return instance;
             }
         }
@@ -175,9 +211,9 @@ namespace MTCustomScripts
                 finalModular.abilityMode = 2;
                 finalModular.SetupModular(correctedModular);
 
-                string timing = (correctedModular.StartsWith("TIMING:")) ? modular.Split('/', 2, StringSplitOptions.RemoveEmptyEntries)[0].Substring(7) : modular.Split('/', 2, StringSplitOptions.RemoveEmptyEntries)[0];
+                string timing = (correctedModular.StartsWith("TIMING:")) ? modular.Split('/', 2, System.StringSplitOptions.RemoveEmptyEntries)[0].Substring(7) : modular.Split('/', 2, System.StringSplitOptions.RemoveEmptyEntries)[0];
                 if (modularDict.ContainsKey(timing)) modularDict[timing].Add(finalModular);
-                else modularDict[timing] = new List<ModularSA> { finalModular };
+                else modularDict[timing] = new System.Collections.Generic.List<ModularSA> { finalModular };
             }
         }
 
@@ -191,14 +227,44 @@ namespace MTCustomScripts
             return customName;
         }
 
+        private void ClearAllEditedTemporary()
+        {
+            if (editedParamList.Count <= 0) return;
+            Main.Logger.LogInfo($"Starting the cleaning of modular System Ability with ID={this.GetCustomIdentifier()} and Name={this.GetCustomNameId()}");
+            foreach (string key in editedParamList.Keys)
+            {
+                try
+                {
+                    Main.Logger.LogInfo($"Cleaning property with key={key}");
+                    var editedParam = editedParamList[key];
+                    if (editedParam is ModularSystemAbilityStaticData_BundledParam bundledParam)
+                    {
+                        bundledParam.temporaryData = 0;
+                        bundledParam.temporaryBannedBuffKeywordList.Clear();
+                        bundledParam.temporaryBannedSourceTypeList.Clear();
+                    }
+                    else if (editedParam is System.Collections.Generic.Dictionary<System.Enum, int> systEnumDict) systEnumDict.Clear();
+                    else if (editedParam is System.Collections.Generic.Dictionary<Il2CppSystem.Enum, int> cppEnumDict) cppEnumDict.Clear();
+                    else Main.Logger.LogWarning($"Unknown type for key={key} and type={editedParam?.GetType()}");
+                }
+                catch (System.Exception ex) { Main.Logger.LogError($"Unknown error expected for key={key} and type={editedParamList[key]?.GetType()} with error {ex}"); }
+            }
+            Main.Logger.LogInfo($"Finished the cleaning of modular System Ability with ID={this.GetCustomIdentifier()} and Name={this.GetCustomNameId()}");
+        }
+
         //-------------------------------------------------------------------------------------------------------//
         //-------------------------------------------------------------------------------------------------------//
 
         public override void OnRoundStart_After_Event(BATTLE_EVENT_TIMING timing)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "RoundStart";
             int actevent = MainClass.timingDict[stringTiming];
-            foreach (ModularSA modbsa in modularDict[stringTiming]) modbsa.Enact(this.Owner, null, null, null, actevent, timing);
+            foreach (ModularSA modbsa in modularDict[stringTiming])
+            {
+                currentModular = modbsa;
+                modbsa.Enact(this.Owner, null, null, null, actevent, timing);
+            }
         }
 
         //-------------------------------------------------------------------------------------------------------//
@@ -206,9 +272,14 @@ namespace MTCustomScripts
 
         public override void OnBattleStart(BATTLE_EVENT_TIMING timing)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "StartBattle";
             int actevent = MainClass.timingDict[stringTiming];
-            foreach (ModularSA modbsa in modularDict[stringTiming]) modbsa.Enact(this.Owner, null, null, null, actevent, timing);
+            foreach (ModularSA modbsa in modularDict[stringTiming])
+            {
+                currentModular = modbsa;
+                modbsa.Enact(this.Owner, null, null, null, actevent, timing);
+            }
         }
 
         //-------------------------------------------------------------------------------------------------------//
@@ -216,10 +287,12 @@ namespace MTCustomScripts
 
         public override void OnStartTurn_BeforeLog(BattleActionModel action, BATTLE_EVENT_TIMING timing)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "WhenUse";
             int actevent = MainClass.timingDict[stringTiming];
             foreach (ModularSA modbsa in modularDict[stringTiming])
             {
+                currentModular = modbsa;
                 if (action.GetMainTarget() != null)
                 {
                     modbsa.modsa_target_list.Clear();
@@ -235,10 +308,12 @@ namespace MTCustomScripts
 
         public override void OnStartBehaviour(BattleActionModel action, BATTLE_EVENT_TIMING timing)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "OnStartBehaviour";
             int actevent = MainClass.timingDict[stringTiming];
             foreach (ModularSA modbsa in modularDict[stringTiming])
             {
+                currentModular = modbsa;
                 if (action.GetMainTarget() != null)
                 {
                     modbsa.modsa_target_list.Clear();
@@ -254,10 +329,12 @@ namespace MTCustomScripts
 
         public override void OnStartDuel(BattleActionModel ownerAction, BattleActionModel opponentAction)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "StartDuel";
             int actevent = MainClass.timingDict[stringTiming];
             foreach (ModularSA modbsa in modularDict[stringTiming])
             {
+                currentModular = modbsa;
                 modbsa.modsa_target_list.Clear();
                 modbsa.modsa_target_list.Add(opponentAction.Model);
                 modbsa.Enact(ownerAction.Model, ownerAction.Skill, ownerAction, opponentAction, actevent, BATTLE_EVENT_TIMING.ON_START_DUEL);
@@ -269,10 +346,12 @@ namespace MTCustomScripts
 
         public override void OnStartCoin(BattleActionModel action, CoinModel coin, BATTLE_EVENT_TIMING timing)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "OnCoinToss";
             int actevent = MainClass.timingDict[stringTiming];
             foreach (ModularSA modbsa in modularDict[stringTiming])
             {
+                currentModular = modbsa;
                 if (action.GetMainTarget() != null)
                 {
                     modbsa.modsa_target_list.Clear();
@@ -289,10 +368,12 @@ namespace MTCustomScripts
 
         public override void OnWinDuel(BattleActionModel selfAction, BattleActionModel oppoAction, int parryingCount, BATTLE_EVENT_TIMING timing)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "WinDuel";
             int actevent = MainClass.timingDict[stringTiming];
             foreach (ModularSA modbsa in modularDict[stringTiming])
             {
+                currentModular = modbsa;
                 modbsa.modsa_target_list.Clear();
                 modbsa.modsa_target_list.Add(oppoAction.Model);
                 modbsa.Enact(selfAction.Model, selfAction.Skill, selfAction, oppoAction, actevent, BATTLE_EVENT_TIMING.ON_WIN_DUEL);
@@ -304,10 +385,12 @@ namespace MTCustomScripts
 
         public override void OnLoseDuel(BattleActionModel selfAction, BattleActionModel oppoAction)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "DefeatDuel";
             int actevent = MainClass.timingDict[stringTiming];
             foreach (ModularSA modbsa in modularDict[stringTiming])
             {
+                currentModular = modbsa;
                 modbsa.modsa_target_list.Clear();
                 modbsa.modsa_target_list.Add(oppoAction.Model);
                 modbsa.Enact(selfAction.Model, selfAction.Skill, selfAction, oppoAction, actevent, BATTLE_EVENT_TIMING.ON_LOSE_DUEL);
@@ -319,10 +402,12 @@ namespace MTCustomScripts
 
         public override void OnWinParrying(BattleActionModel selfAction, BattleActionModel oppoAction)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "WinParrying";
             int actevent = MainClass.timingDict[stringTiming];
             foreach (ModularSA modbsa in modularDict[stringTiming])
             {
+                currentModular = modbsa;
                 modbsa.modsa_target_list.Clear();
                 modbsa.modsa_target_list.Add(oppoAction.Model);
                 modbsa.Enact(selfAction.Model, selfAction.Skill, selfAction, oppoAction, actevent, BATTLE_EVENT_TIMING.ON_WIN_PARRYING);
@@ -334,10 +419,12 @@ namespace MTCustomScripts
 
         public override void OnLoseParrying(BattleActionModel selfAction, BattleActionModel oppoAction)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "DefeatParrying";
             int actevent = MainClass.timingDict[stringTiming];
             foreach (ModularSA modbsa in modularDict[stringTiming])
             {
+                currentModular = modbsa;
                 modbsa.modsa_target_list.Clear();
                 modbsa.modsa_target_list.Add(oppoAction.Model);
                 modbsa.Enact(selfAction.Model, selfAction.Skill, selfAction, oppoAction, actevent, BATTLE_EVENT_TIMING.ON_LOSE_PARRYING);
@@ -349,10 +436,12 @@ namespace MTCustomScripts
 
         public override void BeforeAttack(BattleActionModel action)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "BSA";
             int actevent = MainClass.timingDict[stringTiming];
             foreach (ModularSA modbsa in modularDict[stringTiming])
             {
+                currentModular = modbsa;
                 if (action.GetMainTarget() != null)
                 {
                     modbsa.modsa_target_list.Clear();
@@ -367,10 +456,12 @@ namespace MTCustomScripts
 
         public override void OnSucceedAttack(BattleActionModel action, CoinModel coin, BattleUnitModel target, int finalDmg, int realDmg, bool isCritical, BATTLE_EVENT_TIMING timing)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "OSA";
             int actevent = MainClass.timingDict[stringTiming];
             foreach (ModularSA modbsa in modularDict[stringTiming])
             {
+                currentModular = modbsa;
                 modbsa.lastFinalDmg = finalDmg;
                 modbsa.lastHpDmg = realDmg;
                 modbsa.wasCrit = isCritical;
@@ -386,10 +477,12 @@ namespace MTCustomScripts
 
         public override void OnSucceedEvade(BattleActionModel evadeAction, BattleActionModel attackAction, BATTLE_EVENT_TIMING timing)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "OnSucceedEvade";
             int actevent = MainClass.timingDict[stringTiming];
             foreach (ModularSA modbsa in modularDict[stringTiming])
             {
+                currentModular = modbsa;
                 modbsa.modsa_target_list.Clear();
                 modbsa.modsa_target_list.Add(attackAction.Model);
                 modbsa.Enact(evadeAction.Model, evadeAction.Skill, evadeAction, attackAction, actevent, timing);
@@ -401,10 +494,12 @@ namespace MTCustomScripts
 
         public override void OnEndAttack(BattleActionModel action, int accumulatedDmg, BATTLE_EVENT_TIMING timing, BattleLog_Duel duelLog = null)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "EndSkill";
             int actevent = MainClass.timingDict[stringTiming];
             foreach (ModularSA modbsa in modularDict[stringTiming])
             {
+                currentModular = modbsa;
                 if (action.GetMainTarget() != null)
                 {
                     modbsa.modsa_target_list.Clear();
@@ -420,10 +515,12 @@ namespace MTCustomScripts
 
         public override void OnEndBehaviour(BattleActionModel action, BATTLE_EVENT_TIMING timing)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "OnEndBehaviour";
             int actevent = MainClass.timingDict[stringTiming];
             foreach (ModularSA modbsa in modularDict[stringTiming])
             {
+                currentModular = modbsa;
                 if (action.GetMainTarget() != null)
                 {
                     modbsa.modsa_target_list.Clear();
@@ -438,10 +535,12 @@ namespace MTCustomScripts
 
         public override void OnDie(BattleUnitModel unit, BattleUnitModel killer, BATTLE_EVENT_TIMING timing)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "OnDie";
             int actevent = MainClass.timingDict[stringTiming];
             foreach (ModularSA modbsa in modularDict[stringTiming])
             {
+                currentModular = modbsa;
                 modbsa.modsa_target_list.Clear();
                 modbsa.modsa_target_list.Add(killer);
                 modbsa.Enact(unit, null, null, null, actevent, timing);
@@ -453,10 +552,12 @@ namespace MTCustomScripts
 
         public override void OnDieOtherUnit(BattleUnitModel killer, BattleUnitModel deadUnit, BATTLE_EVENT_TIMING timing)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "OnOtherDie";
             int actevent = MainClass.timingDict[stringTiming];
             foreach (ModularSA modbsa in modularDict[stringTiming])
             {
+                currentModular = modbsa;
                 modbsa.modsa_target_list.Clear();
                 modbsa.modsa_target_list.Add(deadUnit);
                 modbsa.Enact(this.Owner, null, null, null, actevent, timing);
@@ -468,9 +569,14 @@ namespace MTCustomScripts
 
         public override void OnDiscardSin(UnitSinModel sin, BATTLE_EVENT_TIMING timing)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "OnDiscard";
             int actevent = MainClass.timingDict[stringTiming];
-            foreach (ModularSA modbsa in modularDict[stringTiming]) modbsa.Enact(sin.Model, sin.GetSkill(), null, null, actevent, timing);
+            foreach (ModularSA modbsa in modularDict[stringTiming])
+            {
+                currentModular = modbsa;
+                modbsa.Enact(sin.Model, sin.GetSkill(), null, null, actevent, timing);
+            }
         }
 
         //-------------------------------------------------------------------------------------------------------//
@@ -478,10 +584,12 @@ namespace MTCustomScripts
 
         public override void OnKillTarget(BattleActionModel action, BattleUnitModel target, DAMAGE_SOURCE_TYPE dmgSrcType, BATTLE_EVENT_TIMING timing)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "EnemyKill";
             int actevent = MainClass.timingDict[stringTiming];
             foreach (ModularSA modbsa in modularDict[stringTiming])
             {
+                currentModular = modbsa;
                 modbsa.modsa_target_list.Clear();
                 modbsa.modsa_target_list.Add(target);
                 modbsa.Enact(action.Model, action.Skill, action, null, actevent, timing);
@@ -493,10 +601,12 @@ namespace MTCustomScripts
 
         public override void OnRetreat(BattleUnitModel triggerUnit, BUFF_UNIQUE_KEYWORD retreatKeyword, BATTLE_EVENT_TIMING timing)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "OnRetreat";
             int actevent = MainClass.timingDict[stringTiming];
             foreach (ModularSA modbsa in modularDict[stringTiming])
             {
+                currentModular = modbsa;
                 modbsa.Enact(triggerUnit, null, null, null, actevent, timing);
             }
         }
@@ -506,13 +616,15 @@ namespace MTCustomScripts
 
         public override void RightAfterGetAnyBuff(BattleUnitModel unit, BUFF_UNIQUE_KEYWORD keyword, int stack, int turn, int activeRound, ABILITY_SOURCE_TYPE srcType, BATTLE_EVENT_TIMING timing, BattleUnitModel giverOrNull, BattleActionModel actionOrNull, int overStack, int overTurn)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "OnGainBuff";
             int actevent = MainClass.timingDict[stringTiming];
-            foreach (ModularSA modpa in modularDict[stringTiming])
+            foreach (ModularSA modbsa in modularDict[stringTiming])
             {
-                if (!MTCustomScripts.Main.Instance.keywordTriggerDict.ContainsKey(modpa.Pointer.ToInt64())) continue;
-                BUFF_UNIQUE_KEYWORD trigger = MTCustomScripts.Main.Instance.keywordTriggerDict[modpa.Pointer.ToInt64()];
+                if (!MTCustomScripts.Main.Instance.keywordTriggerDict.ContainsKey(modbsa.Pointer.ToInt64())) continue;
+                BUFF_UNIQUE_KEYWORD trigger = MTCustomScripts.Main.Instance.keywordTriggerDict[modbsa.Pointer.ToInt64()];
                 if ((trigger != BUFF_UNIQUE_KEYWORD.None) && (trigger != keyword)) continue;
+                currentModular = modbsa;
 
                 MainClass.Logg.LogInfo($"Founds modSystemAbility - GainBuff timing: {this.GetCustomIdentifier()} and {this.GetCustomNameId()}");
 
@@ -521,7 +633,7 @@ namespace MTCustomScripts
                 MTCustomScripts.Main.Instance.gainbuff_turn = turn;
                 MTCustomScripts.Main.Instance.gainbuff_activeRound = activeRound;
                 MTCustomScripts.Main.Instance.gainbuff_source = srcType;
-                modpa.Enact(unit, null, null, null, actevent, timing);
+                modbsa.Enact(unit, null, null, null, actevent, timing);
             }
         }
 
@@ -530,21 +642,22 @@ namespace MTCustomScripts
 
         public override void RightBeforeLosingBuff(BUFF_UNIQUE_KEYWORD keyword, int stack, int turn, BATTLE_EVENT_TIMING timing)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "OnBeforeLoseBuff";
             int actevent = MainClass.timingDict[stringTiming];
-            foreach (ModularSA modpa in modularDict[stringTiming])
+            foreach (ModularSA modbsa in modularDict[stringTiming])
             {
-                if (!MTCustomScripts.Main.Instance.keywordTriggerDict.ContainsKey(modpa.Pointer.ToInt64())) continue;
-                BUFF_UNIQUE_KEYWORD trigger = MTCustomScripts.Main.Instance.keywordTriggerDict[modpa.Pointer.ToInt64()];
+                if (!MTCustomScripts.Main.Instance.keywordTriggerDict.ContainsKey(modbsa.Pointer.ToInt64())) continue;
+                BUFF_UNIQUE_KEYWORD trigger = MTCustomScripts.Main.Instance.keywordTriggerDict[modbsa.Pointer.ToInt64()];
                 if ((trigger != BUFF_UNIQUE_KEYWORD.None) && (trigger != keyword)) continue;
-
+                currentModular = modbsa;
                 MainClass.Logg.LogInfo($"Founds modSystemAbility - BeforeLoseBuff timing: {this.GetCustomIdentifier()} and {this.GetCustomNameId()}");
 
                 MTCustomScripts.Main.Instance.gainbuff_keyword = keyword;
                 MTCustomScripts.Main.Instance.gainbuff_stack = stack;
                 MTCustomScripts.Main.Instance.gainbuff_turn = turn;
                 MTCustomScripts.Main.Instance.gainbuff_activeRound = 0;
-                modpa.Enact(this.Owner, null, null, null, actevent, timing);
+                modbsa.Enact(this.Owner, null, null, null, actevent, timing);
             }
         }
 
@@ -553,9 +666,14 @@ namespace MTCustomScripts
 
         public override void OnBreak(BattleUnitModel unit, BATTLE_EVENT_TIMING timing)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "OnBreak";
             int actevent = MainClass.timingDict[stringTiming];
-            foreach (ModularSA modbsa in modularDict[stringTiming]) modbsa.Enact(unit, null, null, null, actevent, timing);
+            foreach (ModularSA modbsa in modularDict[stringTiming])
+            {
+                currentModular = modbsa;
+                modbsa.Enact(unit, null, null, null, actevent, timing);
+            }
         }
 
         //-------------------------------------------------------------------------------------------------------//
@@ -563,10 +681,12 @@ namespace MTCustomScripts
 
         public override void OnEndEnemyAttack(BattleActionModel action, BATTLE_EVENT_TIMING timing)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "EnemyEndSkill";
             int actevent = MainClass.timingDict[stringTiming];
             foreach (ModularSA modbsa in modularDict[stringTiming])
             {
+                currentModular = modbsa;
                 if (action.GetMainTarget() != null)
                 {
                     modbsa.modsa_target_list.Clear();
@@ -581,10 +701,12 @@ namespace MTCustomScripts
 
         public override void OnTakeAttackDamage(BattleActionModel action, BATTLE_EVENT_TIMING timing)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "WH";
             int actevent = MainClass.timingDict[stringTiming];
             foreach (ModularSA modbsa in modularDict[stringTiming])
             {
+                currentModular = modbsa;
                 if (action.GetMainTarget() != null)
                 {
                     modbsa.modsa_target_list.Clear();
@@ -600,10 +722,12 @@ namespace MTCustomScripts
 
         public override void BeforeTakeAttackDamage(BattleActionModel action)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "BWH";
             int actevent = MainClass.timingDict[stringTiming];
             foreach (ModularSA modbsa in modularDict[stringTiming])
             {
+                currentModular = modbsa;
                 if (action.GetMainTarget() != null)
                 {
                     modbsa.modsa_target_list.Clear();
@@ -620,9 +744,14 @@ namespace MTCustomScripts
 
         public override void OnRoundEnd(BATTLE_EVENT_TIMING timing)
         {
+            this.ClearAllEditedTemporary();
             string stringTiming = "EndBattle";
             int actevent = MainClass.timingDict[stringTiming];
-            foreach (ModularSA modbsa in modularDict[stringTiming]) modbsa.Enact(this.Owner, null, null, null, actevent, timing);
+            foreach (ModularSA modbsa in modularDict[stringTiming])
+            {
+                currentModular = modbsa;
+                modbsa.Enact(this.Owner, null, null, null, actevent, timing);
+            }
         }
 
 
@@ -696,7 +825,7 @@ namespace MTCustomScripts
 
         public override bool IgnoreSinBuffHpDamage(BUFF_UNIQUE_KEYWORD keyword, int dmg, bool isForced, BATTLE_EVENT_TIMING timing)
         {
-            if (currentClassInfo.getForcedCoinResult.permanentBannedBuffKeywordList.Contains(keyword) ||currentClassInfo.getForcedCoinResult.temporaryBannedBuffKeywordList.Contains(keyword)) return true;
+            if (currentClassInfo.getForcedCoinResult.permanentBannedBuffKeywordList.Contains(keyword) || currentClassInfo.getForcedCoinResult.temporaryBannedBuffKeywordList.Contains(keyword)) return true;
             return base.IgnoreSinBuffHpDamage(keyword, dmg, isForced, timing);
         }
 
@@ -717,15 +846,15 @@ namespace MTCustomScripts
 
         public override float GetAtkResistAdder(ATK_BEHAVIOUR type)
         {
-            int permanentAtkAdder = (currentClassInfo.permanentAtkAdderDict.ContainsKey(type)) ? currentClassInfo.permanentAtkAdderDict[type] : 0;
-            int temporaryAtkAdder = (currentClassInfo.temporaryAtkAdderDict.ContainsKey(type)) ? currentClassInfo.temporaryAtkAdderDict[type] : 0;
+            int permanentAtkAdder = (currentClassInfo.permanentAtkResistAdderDict.ContainsKey(type)) ? currentClassInfo.permanentAtkResistAdderDict[type] : 0;
+            int temporaryAtkAdder = (currentClassInfo.temporaryAtkResistAdderDict.ContainsKey(type)) ? currentClassInfo.temporaryAtkResistAdderDict[type] : 0;
 
             return permanentAtkAdder + temporaryAtkAdder;
         }
         public override float GetAttributeResistAdder(ATTRIBUTE_TYPE type)
         {
-            int permanentSinAdder = (currentClassInfo.permanentSinAdderDict.ContainsKey(type)) ? currentClassInfo.permanentSinAdderDict[type] : 0;
-            int temporarySinAdder = (currentClassInfo.temporarySinAdderDict.ContainsKey(type)) ? currentClassInfo.temporarySinAdderDict[type] : 0;
+            int permanentSinAdder = (currentClassInfo.permanentSinResistAdderDict.ContainsKey(type)) ? currentClassInfo.permanentSinResistAdderDict[type] : 0;
+            int temporarySinAdder = (currentClassInfo.temporarySinResistAdderDict.ContainsKey(type)) ? currentClassInfo.temporarySinResistAdderDict[type] : 0;
 
             return permanentSinAdder + temporarySinAdder;
         }
@@ -821,16 +950,19 @@ namespace MTCustomScripts
         //-------------------------------------------------------------------------------------------------------------------------------------------------------------//
 
 
+        public static ModularSA currentModular;
         private int customIdentifier;
         private string customName;
         public ModularSystemAbilityStaticData originalClassInfo;
         public ModularSystemAbilityStaticData currentClassInfo;
 
-        public System.Collections.Generic.Dictionary<string, List<ModularSA>> modularDict = new System.Collections.Generic.Dictionary<string, List<ModularSA>>(System.StringComparer.OrdinalIgnoreCase);
+        public System.Collections.Generic.Dictionary<string, object> editedParamList = new System.Collections.Generic.Dictionary<string, object>(System.StringComparer.OrdinalIgnoreCase);
+        public System.Collections.Generic.Dictionary<string, string> dataDictionary = new System.Collections.Generic.Dictionary<string, string>(System.StringComparer.OrdinalIgnoreCase);
+        public System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<ModularSA>> modularDict = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<ModularSA>>(System.StringComparer.OrdinalIgnoreCase);
     }
 
 
-    [Serializable]
+    [System.Serializable]
     public class ModularSystemAbilityStaticData
     {
 
@@ -864,14 +996,12 @@ namespace MTCustomScripts
         //--------------------------------------------------------------------------------//
 
         [JsonProperty]
-        public Dictionary<ATK_BEHAVIOUR, int> permanentAtkAdderDict = new Dictionary<ATK_BEHAVIOUR, int>();
-        [JsonProperty]
-        public Dictionary<ATK_BEHAVIOUR, int> temporaryAtkAdderDict = new Dictionary<ATK_BEHAVIOUR, int>();
+        public System.Collections.Generic.Dictionary<ATK_BEHAVIOUR, int> permanentAtkResistAdderDict = new System.Collections.Generic.Dictionary<ATK_BEHAVIOUR, int>();
+        public System.Collections.Generic.Dictionary<ATK_BEHAVIOUR, int> temporaryAtkResistAdderDict = new System.Collections.Generic.Dictionary<ATK_BEHAVIOUR, int>();
 
         [JsonProperty]
-        public Dictionary<ATTRIBUTE_TYPE, int> permanentSinAdderDict = new Dictionary<ATTRIBUTE_TYPE, int>();
-        [JsonProperty]
-        public Dictionary<ATTRIBUTE_TYPE, int> temporarySinAdderDict = new Dictionary<ATTRIBUTE_TYPE, int>();
+        public System.Collections.Generic.Dictionary<ATTRIBUTE_TYPE, int> permanentSinResistAdderDict = new System.Collections.Generic.Dictionary<ATTRIBUTE_TYPE, int>();
+        public System.Collections.Generic.Dictionary<ATTRIBUTE_TYPE, int> temporarySinResistAdderDict = new System.Collections.Generic.Dictionary<ATTRIBUTE_TYPE, int>();
 
         //--------------------------------------------------------------------------------//
         //--------------------------------------------------------------------------------//
@@ -911,16 +1041,14 @@ namespace MTCustomScripts
 
 
         [JsonProperty]
-        public Dictionary<ATTRIBUTE_TYPE, int> permanentEgoResourceAdderDict = new Dictionary<ATTRIBUTE_TYPE, int>();
-        [JsonProperty]
-        public Dictionary<ATTRIBUTE_TYPE, int> temporaryEgoResourceAdderDict = new Dictionary<ATTRIBUTE_TYPE, int>();
-
+        public System.Collections.Generic.Dictionary<ATTRIBUTE_TYPE, int> permanentEgoResourceAdderDict = new System.Collections.Generic.Dictionary<ATTRIBUTE_TYPE, int>();
+        public System.Collections.Generic.Dictionary<ATTRIBUTE_TYPE, int> temporaryEgoResourceAdderDict = new System.Collections.Generic.Dictionary<ATTRIBUTE_TYPE, int>();
 
         [JsonProperty]
         public System.Collections.Generic.List<string> modularList = new System.Collections.Generic.List<string>();
     }
 
-    [Serializable]
+    [System.Serializable]
     public class ModularSystemAbilityStaticData_BundledParam
     {
         [JsonProperty]
@@ -933,14 +1061,13 @@ namespace MTCustomScripts
 
 
         [JsonProperty]
-        public List<DAMAGE_SOURCE_TYPE> permanentBannedSourceTypeList = new List<DAMAGE_SOURCE_TYPE>();
-        [JsonProperty]
-        public List<DAMAGE_SOURCE_TYPE> temporaryBannedSourceTypeList = new List<DAMAGE_SOURCE_TYPE>();
+        public System.Collections.Generic.List<DAMAGE_SOURCE_TYPE> permanentBannedSourceTypeList = new System.Collections.Generic.List<DAMAGE_SOURCE_TYPE>();
+        public System.Collections.Generic.List<DAMAGE_SOURCE_TYPE> temporaryBannedSourceTypeList = new System.Collections.Generic.List<DAMAGE_SOURCE_TYPE>();
 
 
+
         [JsonProperty]
-        public List<BUFF_UNIQUE_KEYWORD> permanentBannedBuffKeywordList = new List<BUFF_UNIQUE_KEYWORD>();
-        [JsonProperty]
-        public List<BUFF_UNIQUE_KEYWORD> temporaryBannedBuffKeywordList = new List<BUFF_UNIQUE_KEYWORD>();
+        public System.Collections.Generic.List<BUFF_UNIQUE_KEYWORD> permanentBannedBuffKeywordList = new System.Collections.Generic.List<BUFF_UNIQUE_KEYWORD>();
+        public System.Collections.Generic.List<BUFF_UNIQUE_KEYWORD> temporaryBannedBuffKeywordList = new System.Collections.Generic.List<BUFF_UNIQUE_KEYWORD>();
     }
 }

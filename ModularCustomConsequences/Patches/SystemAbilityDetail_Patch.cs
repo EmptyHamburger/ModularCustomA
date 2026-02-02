@@ -27,7 +27,7 @@ namespace MTCustomScripts.Patches
         [HarmonyPrefix, HarmonyPriority(Priority.VeryHigh)]
         public static bool Prefix_SystemAbilityDetail_AddAbilityThisRound(int unitInstanceID, SYSTEM_ABILITY_KEYWORD newKeyword, int stack, int turn, SystemAbilityDetail __instance, ref SystemAbility __result)
         {
-            if (CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
+            if (!CustomSystemAbilities_Main.CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
             customAbility.SetStack(stack, turn);
             customAbility.Init(unitInstanceID);
             __result = customAbility;
@@ -38,7 +38,7 @@ namespace MTCustomScripts.Patches
         [HarmonyPrefix, HarmonyPriority(Priority.VeryHigh)]
         public static bool Prefix_SystemAbilityDetail_AddAbilityNextRound(int unitInstanceID, SYSTEM_ABILITY_KEYWORD newKeyword, int stack, int turn, SystemAbilityDetail __instance, ref SystemAbility __result)
         {
-            if (CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
+            if (!CustomSystemAbilities_Main.CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
             customAbility.SetStack(stack, turn);
             customAbility.Init(unitInstanceID);
             __result = customAbility;
@@ -49,7 +49,7 @@ namespace MTCustomScripts.Patches
         [HarmonyPrefix, HarmonyPriority(Priority.VeryHigh)]
         public static bool Prefix_SystemAbilityDetail_CreateNewSystemAbility(SYSTEM_ABILITY_KEYWORD newKeyword, int stack, int turn, SystemAbilityDetail __instance, ref SystemAbility __result)
         {
-            if (CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
+            if (!CustomSystemAbilities_Main.CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
             customAbility.SetStack(stack, turn);
             __result = customAbility;
             return false;
@@ -59,7 +59,7 @@ namespace MTCustomScripts.Patches
         [HarmonyPrefix, HarmonyPriority(Priority.VeryHigh)]
         public static bool Prefix_SystemAbilityDetail_DestoryAbility(SYSTEM_ABILITY_KEYWORD newKeyword, SystemAbilityDetail __instance)
         {
-            if (CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
+            if (!CustomSystemAbilities_Main.CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
                 SystemAbility currentActiveCustom = __instance._activatedAbilityList.ToSystem().Find(x => (x as CustomSystemAbility).GetCustomIdentifier() == (customAbility as CustomSystemAbility).GetCustomIdentifier());
                 if (currentActiveCustom != null)
                 {
@@ -80,7 +80,7 @@ namespace MTCustomScripts.Patches
         [HarmonyPrefix, HarmonyPriority(Priority.VeryHigh)]
         public static bool Prefix_SystemAbilityDetail_DestroyAbility(SYSTEM_ABILITY_KEYWORD newKeyword, SystemAbilityDetail __instance)
         {
-            if (CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
+            if (!CustomSystemAbilities_Main.CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
                 SystemAbility currentActiveCustom = __instance._activatedAbilityList.ToSystem().Find(x => (x as CustomSystemAbility).GetCustomIdentifier() == (customAbility as CustomSystemAbility).GetCustomIdentifier());
                 if (currentActiveCustom != null)
                 {
@@ -101,7 +101,7 @@ namespace MTCustomScripts.Patches
         [HarmonyPrefix, HarmonyPriority(Priority.VeryHigh)]
         public static bool Prefix_SystemAbilityDetail_FindOrAddAbilityThisRound(int instanceID, SYSTEM_ABILITY_KEYWORD newKeyword, int stack, int turn, SystemAbilityDetail __instance, ref SystemAbility __result)
         {
-            if (CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
+            if (!CustomSystemAbilities_Main.CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
             SystemAbility currentActiveCustom = __instance._activatedAbilityList.ToSystem().Find(x => (x as CustomSystemAbility).GetCustomIdentifier() == (customAbility as CustomSystemAbility).GetCustomIdentifier());
             if (currentActiveCustom != null) __result = currentActiveCustom;
             else
@@ -117,7 +117,7 @@ namespace MTCustomScripts.Patches
         [HarmonyPrefix, HarmonyPriority(Priority.VeryHigh)]
         public static bool Prefix_SystemAbilityDetail_FindOrAddAbilityNextRound(int instanceID, SYSTEM_ABILITY_KEYWORD newKeyword, int stack, int turn, SystemAbilityDetail __instance, ref SystemAbility __result)
         {
-            if (CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
+            if (!CustomSystemAbilities_Main.CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
             SystemAbility nextTurnCustom = __instance._nextTurnAbilityList.ToSystem().Find(x => (x as CustomSystemAbility).GetCustomIdentifier() == (customAbility as CustomSystemAbility).GetCustomIdentifier());
             if (nextTurnCustom != null) __result = nextTurnCustom;
             else
@@ -134,7 +134,7 @@ namespace MTCustomScripts.Patches
         [HarmonyPrefix, HarmonyPriority(Priority.VeryHigh)]
         public static bool Prefix_SystemAbilityDetail_HasAbility(SYSTEM_ABILITY_KEYWORD newKeyword, SystemAbilityDetail __instance, ref bool __result)
         {
-            if (CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
+            if (!CustomSystemAbilities_Main.CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
             SystemAbility currentActiveCustom = __instance._activatedAbilityList.ToSystem().Find(x => (x as CustomSystemAbility).GetCustomIdentifier() == (customAbility as CustomSystemAbility).GetCustomIdentifier());
             if (currentActiveCustom != null) __result = true;
             else
