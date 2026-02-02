@@ -142,6 +142,8 @@ namespace MTCustomScripts
                                 string modName = Path.GetFileName(Path.GetDirectoryName(Path.GetDirectoryName(filePath)));
                                 staticData.ModFile = modName;
                                 instance.modularAbilityStaticDataList.Add(staticData);
+                                CustomSystemAbilities_Main.TryAddCustomSystemAbility(new ModularSystemAbility(staticData), out string addLog);
+                                Main.Logger.LogInfo($"Trying to create custom modular, result: {addLog}");
                             }
 
                             Main.Logger.LogInfo($"Loaded {parsedList.modularAbilityStaticDataList.Count} modular system abilities from {Path.GetFileName(filePath)}");
