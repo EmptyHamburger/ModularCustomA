@@ -7,12 +7,13 @@ namespace MTCustomScripts.Patches
 {
     public class SystemAbilityDetail_Patch
     {
-        public static bool CheckOverwriteAbility(SYSTEM_ABILITY_KEYWORD systemKeyword, out SystemAbility __result)
+        public static bool CheckOverwriteAbility(SYSTEM_ABILITY_KEYWORD systemKeyword, out CustomSystemAbility __result)
         {
             int newKeywordValue = (int)systemKeyword;
 
-            if (!Il2CppSystem.Enum.IsDefined(SystemAbilityKeywordEnumType, newKeywordValue) && Main.TestStuffStorage.customSystemAbilityDict.TryGetValue(newKeywordValue, out SystemAbility customSystemAbility))
+            if (!Il2CppSystem.Enum.IsDefined(SystemAbilityKeywordEnumType, newKeywordValue) && CustomSystemAbilities_Main.customSystemAbilityDict.TryGetValue(newKeywordValue, out CustomSystemAbility customSystemAbility))
             {
+                Main.Logger.LogInfo($"Succesfully recovered copy of customAbility with ID={customSystemAbility.GetCustomIdentifier()} and name={customSystemAbility.GetCustomNameId()}");
                 __result = customSystemAbility.Copy();
                 return false;
             }
@@ -26,7 +27,7 @@ namespace MTCustomScripts.Patches
         [HarmonyPrefix, HarmonyPriority(Priority.VeryHigh)]
         public static bool Prefix_SystemAbilityDetail_AddAbilityThisRound(int unitInstanceID, SYSTEM_ABILITY_KEYWORD newKeyword, int stack, int turn, SystemAbilityDetail __instance, ref SystemAbility __result)
         {
-            if (CheckOverwriteAbility(newKeyword, out SystemAbility customAbility)) return true;
+            if (!CustomSystemAbilities_Main.CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
             customAbility.SetStack(stack, turn);
             customAbility.Init(unitInstanceID);
             __result = customAbility;
@@ -37,7 +38,7 @@ namespace MTCustomScripts.Patches
         [HarmonyPrefix, HarmonyPriority(Priority.VeryHigh)]
         public static bool Prefix_SystemAbilityDetail_AddAbilityNextRound(int unitInstanceID, SYSTEM_ABILITY_KEYWORD newKeyword, int stack, int turn, SystemAbilityDetail __instance, ref SystemAbility __result)
         {
-            if (CheckOverwriteAbility(newKeyword, out SystemAbility customAbility)) return true;
+            if (!CustomSystemAbilities_Main.CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
             customAbility.SetStack(stack, turn);
             customAbility.Init(unitInstanceID);
             __result = customAbility;
@@ -48,7 +49,7 @@ namespace MTCustomScripts.Patches
         [HarmonyPrefix, HarmonyPriority(Priority.VeryHigh)]
         public static bool Prefix_SystemAbilityDetail_CreateNewSystemAbility(SYSTEM_ABILITY_KEYWORD newKeyword, int stack, int turn, SystemAbilityDetail __instance, ref SystemAbility __result)
         {
-            if (CheckOverwriteAbility(newKeyword, out SystemAbility customAbility)) return true;
+            if (!CustomSystemAbilities_Main.CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
             customAbility.SetStack(stack, turn);
             __result = customAbility;
             return false;
@@ -58,23 +59,20 @@ namespace MTCustomScripts.Patches
         [HarmonyPrefix, HarmonyPriority(Priority.VeryHigh)]
         public static bool Prefix_SystemAbilityDetail_DestoryAbility(SYSTEM_ABILITY_KEYWORD newKeyword, SystemAbilityDetail __instance)
         {
-            if (CheckOverwriteAbility(newKeyword, out SystemAbility customAbility)) return true;
-            if (customAbility is Main.TestStuffStorage.CustomSystemAbility)
-            {
-                SystemAbility currentActiveCustom = __instance._activatedAbilityList.ToSystem().Find(x => (x as Main.TestStuffStorage.CustomSystemAbility).getCustomIdentifier() == (customAbility as Main.TestStuffStorage.CustomSystemAbility).getCustomIdentifier());
+            if (!CustomSystemAbilities_Main.CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
+                SystemAbility currentActiveCustom = __instance._activatedAbilityList.ToSystem().Find(x => (x as CustomSystemAbility).GetCustomIdentifier() == (customAbility as CustomSystemAbility).GetCustomIdentifier());
                 if (currentActiveCustom != null)
                 {
                     currentActiveCustom.Destroy();
                     __instance._activatedAbilityList.Remove(currentActiveCustom);
                 }
 
-                SystemAbility currentNextCustom = __instance._nextTurnAbilityList.ToSystem().Find(x => (x as Main.TestStuffStorage.CustomSystemAbility).getCustomIdentifier() == (customAbility as Main.TestStuffStorage.CustomSystemAbility).getCustomIdentifier());
+                SystemAbility currentNextCustom = __instance._nextTurnAbilityList.ToSystem().Find(x => (x as CustomSystemAbility).GetCustomIdentifier() == (customAbility as CustomSystemAbility).GetCustomIdentifier());
                 if (currentNextCustom != null)
                 {
                     currentNextCustom.Destroy();
                     __instance._nextTurnAbilityList.Remove(currentNextCustom);
                 }
-            }
             return false;
         }
 
@@ -82,23 +80,20 @@ namespace MTCustomScripts.Patches
         [HarmonyPrefix, HarmonyPriority(Priority.VeryHigh)]
         public static bool Prefix_SystemAbilityDetail_DestroyAbility(SYSTEM_ABILITY_KEYWORD newKeyword, SystemAbilityDetail __instance)
         {
-            if (CheckOverwriteAbility(newKeyword, out SystemAbility customAbility)) return true;
-            if (customAbility is Main.TestStuffStorage.CustomSystemAbility)
-            {
-                SystemAbility currentActiveCustom = __instance._activatedAbilityList.ToSystem().Find(x => (x as Main.TestStuffStorage.CustomSystemAbility).getCustomIdentifier() == (customAbility as Main.TestStuffStorage.CustomSystemAbility).getCustomIdentifier());
+            if (!CustomSystemAbilities_Main.CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
+                SystemAbility currentActiveCustom = __instance._activatedAbilityList.ToSystem().Find(x => (x as CustomSystemAbility).GetCustomIdentifier() == (customAbility as CustomSystemAbility).GetCustomIdentifier());
                 if (currentActiveCustom != null)
                 {
                     currentActiveCustom.Destroy();
                     __instance._activatedAbilityList.Remove(currentActiveCustom);
                 }
 
-                SystemAbility currentNextCustom = __instance._nextTurnAbilityList.ToSystem().Find(x => (x as Main.TestStuffStorage.CustomSystemAbility).getCustomIdentifier() == (customAbility as Main.TestStuffStorage.CustomSystemAbility).getCustomIdentifier());
+                SystemAbility currentNextCustom = __instance._nextTurnAbilityList.ToSystem().Find(x => (x as CustomSystemAbility).GetCustomIdentifier() == (customAbility as CustomSystemAbility).GetCustomIdentifier());
                 if (currentNextCustom != null)
                 {
                     currentNextCustom.Destroy();
                     __instance._nextTurnAbilityList.Remove(currentNextCustom);
                 }
-            }
             return false;
         }
 
@@ -106,8 +101,8 @@ namespace MTCustomScripts.Patches
         [HarmonyPrefix, HarmonyPriority(Priority.VeryHigh)]
         public static bool Prefix_SystemAbilityDetail_FindOrAddAbilityThisRound(int instanceID, SYSTEM_ABILITY_KEYWORD newKeyword, int stack, int turn, SystemAbilityDetail __instance, ref SystemAbility __result)
         {
-            if (CheckOverwriteAbility(newKeyword, out SystemAbility customAbility)) return true;
-            SystemAbility currentActiveCustom = __instance._activatedAbilityList.ToSystem().Find(x => (x as Main.TestStuffStorage.CustomSystemAbility).getCustomIdentifier() == (customAbility as Main.TestStuffStorage.CustomSystemAbility).getCustomIdentifier());
+            if (!CustomSystemAbilities_Main.CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
+            SystemAbility currentActiveCustom = __instance._activatedAbilityList.ToSystem().Find(x => (x as CustomSystemAbility).GetCustomIdentifier() == (customAbility as CustomSystemAbility).GetCustomIdentifier());
             if (currentActiveCustom != null) __result = currentActiveCustom;
             else
             {
@@ -122,8 +117,8 @@ namespace MTCustomScripts.Patches
         [HarmonyPrefix, HarmonyPriority(Priority.VeryHigh)]
         public static bool Prefix_SystemAbilityDetail_FindOrAddAbilityNextRound(int instanceID, SYSTEM_ABILITY_KEYWORD newKeyword, int stack, int turn, SystemAbilityDetail __instance, ref SystemAbility __result)
         {
-            if (CheckOverwriteAbility(newKeyword, out SystemAbility customAbility)) return true;
-            SystemAbility nextTurnCustom = __instance._nextTurnAbilityList.ToSystem().Find(x => (x as Main.TestStuffStorage.CustomSystemAbility).getCustomIdentifier() == (customAbility as Main.TestStuffStorage.CustomSystemAbility).getCustomIdentifier());
+            if (!CustomSystemAbilities_Main.CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
+            SystemAbility nextTurnCustom = __instance._nextTurnAbilityList.ToSystem().Find(x => (x as CustomSystemAbility).GetCustomIdentifier() == (customAbility as CustomSystemAbility).GetCustomIdentifier());
             if (nextTurnCustom != null) __result = nextTurnCustom;
             else
             {
@@ -139,12 +134,12 @@ namespace MTCustomScripts.Patches
         [HarmonyPrefix, HarmonyPriority(Priority.VeryHigh)]
         public static bool Prefix_SystemAbilityDetail_HasAbility(SYSTEM_ABILITY_KEYWORD newKeyword, SystemAbilityDetail __instance, ref bool __result)
         {
-            if (CheckOverwriteAbility(newKeyword, out SystemAbility customAbility)) return true;
-            SystemAbility currentActiveCustom = __instance._activatedAbilityList.ToSystem().Find(x => (x as Main.TestStuffStorage.CustomSystemAbility).getCustomIdentifier() == (customAbility as Main.TestStuffStorage.CustomSystemAbility).getCustomIdentifier());
+            if (!CustomSystemAbilities_Main.CheckOverwriteAbility(newKeyword, out CustomSystemAbility customAbility)) return true;
+            SystemAbility currentActiveCustom = __instance._activatedAbilityList.ToSystem().Find(x => (x as CustomSystemAbility).GetCustomIdentifier() == (customAbility as CustomSystemAbility).GetCustomIdentifier());
             if (currentActiveCustom != null) __result = true;
             else
             {
-                SystemAbility nextTurnCustom = __instance._nextTurnAbilityList.ToSystem().Find(x => (x as Main.TestStuffStorage.CustomSystemAbility).getCustomIdentifier() == (customAbility as Main.TestStuffStorage.CustomSystemAbility).getCustomIdentifier());
+                SystemAbility nextTurnCustom = __instance._nextTurnAbilityList.ToSystem().Find(x => (x as CustomSystemAbility).GetCustomIdentifier() == (customAbility as CustomSystemAbility).GetCustomIdentifier());
                 if (nextTurnCustom != null) __result = true;
                 else return true;
             }

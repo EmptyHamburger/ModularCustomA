@@ -1,35 +1,10 @@
 ﻿using HarmonyLib;
 using ModularSkillScripts;
 using ModularSkillScripts.Patches;
-using BepInEx.Logging;
 namespace MTCustomScripts.Patches
 {
     internal class RecoverBreak
     {
-        [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitView.StartBehaviourAction))]
-        [HarmonyPrefix, HarmonyPriority(Priority.VeryHigh)]
-        private static void StartBehaviourAction(BattleUnitView __instance)
-        {
-            var skillID = __instance.GetCurrentSkillViewer().curSkillID;
-            MainClass.Logg.Log(LogLevel.Debug, "11");
-            var skillData = Singleton<StaticDataManager>.Instance._skillList.GetData(skillID);
-            MainClass.Logg.Log(LogLevel.Debug, "22");
-            var model = __instance._unitModel.UnitDataModel;
-            MainClass.Logg.LogInfo($"SBA, skill = {skillID}, model level = {model.Level}, model sync level = {model.SyncLevel}");
-
-            var skillModel = new SkillModel(skillData, model.Level, model.SyncLevel);
-            MainClass.Logg.Log(LogLevel.Debug, "33");
-            skillModel.Init(); // needed to get noticed by modular skill timing?
-            long skillmodel_intlong = skillModel.Pointer.ToInt64();
-            MainClass.Logg.Log(LogLevel.Debug, "44");
-            if (!SkillScriptInitPatch.modsaDict.ContainsKey(skillmodel_intlong)) return;
-            foreach (ModularSA modsa in SkillScriptInitPatch.modsaDict[skillmodel_intlong])
-            {
-                modsa.Enact(__instance._unitModel, skillModel, null, null, MainClass.timingDict["StartVisualSkillUse"], BATTLE_EVENT_TIMING.ALL_TIMING);
-                MainClass.Logg.Log(LogLevel.Debug, "55");
-            }
-        }
-
         [HarmonyPatch(typeof(BattleUnitModel), nameof(BattleUnitModel.OnRecoverBreak))]
         [HarmonyPostfix, HarmonyPriority(Priority.VeryHigh)]
         public static void BattleUnitModel_OnRecoverBreak_Postfix(BATTLE_EVENT_TIMING timing, BattleUnitModel __instance)
