@@ -266,7 +266,7 @@ namespace MTCustomScripts
             return selectedCoinsList;
         }
 
-        public static void ProcessEnumOperation<T>(string value, System.Collections.Generic.List<T> list)  where T : unmanaged, Enum
+        public static void ProcessEnumOperation<T>(string value, System.Collections.Generic.List<T> list)  where T : struct, Enum
         {
             if (string.IsNullOrEmpty(value) || value.Length < 2) return;
 

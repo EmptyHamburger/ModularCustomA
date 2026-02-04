@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<PlatformTarget>x64</PlatformTarget>
@@ -45,35 +45,19 @@
 			<HintPath>%(Identity)</HintPath>
 			<Private>false</Private>
 		</Reference>
-		<Reference Include="Assembly-CSharp">
-		  <HintPath>D:\Lethe\BepInEx\interop\Assembly-CSharp.dll</HintPath>
+		<Reference Include="$(LimbusCompanyFolder)\BepInEx\plugins\Lethe.dll">
+			<HintPath>%(Identity)</HintPath>
+			<Private>false</Private>
 		</Reference>
-		<Reference Include="Il2Cppmscorlib">
-		  <HintPath>D:\Lethe\BepInEx\interop\Il2Cppmscorlib.dll</HintPath>
-		</Reference>
-		<Reference Include="Il2CppSystem">
-		  <HintPath>D:\Lethe\BepInEx\interop\Il2CppSystem.dll</HintPath>
-		</Reference>
-		<Reference Include="Il2CppSystem.Core">
-		  <HintPath>D:\Lethe\BepInEx\interop\Il2CppSystem.Core.dll</HintPath>
-		</Reference>
-		<Reference Include="InterfacesLibraryAssembly">
-		  <HintPath>D:\Lethe\BepInEx\interop\InterfacesLibraryAssembly.dll</HintPath>
-		</Reference>
-		<Reference Include="Merged">
-		  <HintPath>D:\Lethe\BepInEx\plugins\Lethe.dll</HintPath>
-		</Reference>
-		<Reference Include="ModularSkillScripts">
-		  <HintPath>D:\Lethe\BepInEx\plugins\ModularSkillScripts.dll</HintPath>
-		</Reference>
-		<Reference Include="UnityEngine">
-		  <HintPath>D:\Lethe\BepInEx\interop\UnityEngine.dll</HintPath>
+		<Reference Include="$(LimbusCompanyFolder)\BepInEx\plugins\ModularSkillScripts.dll">
+			<HintPath>%(Identity)</HintPath>
+			<Private>false</Private>
 		</Reference>
 	</ItemGroup>
 
 	<!-- ~~~~~ Copy to game folder on build ~~~~~ -->
 	<Target Name="CopyToGame" AfterTargets="build">
-		<Message Text="Copying ModularSkillScripts.dll to game..." Importance="high" />
-		<Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFiles="$(LimbusCompanyFolder)\BepInEx\plugins\$(AssemblyName).dll" />
+		<Message Text="Copying ModularSkillScripts.dll to game..." Importance="high"/>
+		<Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFiles="$(LimbusCompanyFolder)\BepInEx\plugins\$(AssemblyName).dll"/>
 	</Target>
 </Project>
