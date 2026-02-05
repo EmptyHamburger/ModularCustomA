@@ -23,23 +23,40 @@ namespace MTCustomScripts.Consequences
             if (unitList.Count <= 0) return;
 
 
+            bool current = false;
             int lookupId = 0;
-            ModularSystemAbilityStaticData modularData = ModularSystemAbilityStaticDataList.Instance.GetData(circles[0]);
-            if (modularData != null) lookupId = modularData.Id;
-            else if (modularData == null)
+            if (circles[1].StartsWith("Current", StringComparison.OrdinalIgnoreCase))
             {
-                modularData = ModularSystemAbilityStaticDataList.Instance.GetData(circles[0]);
-                lookupId = modularData.Id;
+                current = true;
+                circles[1] = circles[1].Substring(7);
             }
-            if (lookupId == 0) return;
+
+            if (current == false)
+            {
+
+                ModularSystemAbilityStaticData modularData = ModularSystemAbilityStaticDataList.Instance.GetData(circles[0]);
+                if (modularData != null) lookupId = modularData.Id;
+                else if (modularData == null)
+                {
+                    modularData = ModularSystemAbilityStaticDataList.Instance.GetData(circles[0]);
+                    lookupId = modularData.Id;
+                }
+                if (lookupId == 0) return;
+            }
+
 
 
             foreach (BattleUnitModel unit in unitList)
             {
                 try
                 {
-                    if (!unit._systemAbilityDetail.HasSystemAbility((SYSTEM_ABILITY_KEYWORD)lookupId, out SystemAbility sa)) continue;
-                    ModularSystemAbility modularAbility = (sa as ModularSystemAbility);
+                    ModularSystemAbility modularAbility;
+                    if (current == false && unit._systemAbilityDetail.HasSystemAbility((SYSTEM_ABILITY_KEYWORD)lookupId, out SystemAbility sa)) modularAbility = (sa as ModularSystemAbility);
+                    else if (current == true && unit._systemAbilityDetail.HasSystemAbility((SYSTEM_ABILITY_KEYWORD)lookupId, out System.Collections.Generic.List<SystemAbility> saList))
+                    {
+                        modularAbility = (ModularSystemAbility)saList.Find(x => (x as ModularSystemAbility).currentModular == modular);
+                    }
+                    else continue;
 
                     if (circles[2] == "SetData")
                     {
@@ -49,28 +66,8 @@ namespace MTCustomScripts.Consequences
 
 
                     object selectedItem = null;
-
-                    string dataCategory = circles[2].ToLower();
-                    if (dataCategory == "skillpoweradder") selectedItem = modularAbility.currentClassInfo.getSkillPowerAdder;
-                    else if (dataCategory == "skillpowerresultadder") selectedItem = modularAbility.currentClassInfo.getSkillPowerResultAdder;
-                    else if (dataCategory == "parryingresultadder") selectedItem = modularAbility.currentClassInfo.getParryingResultAdder;
-                    else if (dataCategory == "coinscaleadder") selectedItem = modularAbility.currentClassInfo.getCoinScaleAdder;
-                    else if (dataCategory == "coinscalemultiplier") selectedItem = modularAbility.currentClassInfo.getCoinScaleMultiplier;
-                    else if (dataCategory == "permanentatkresistadder") selectedItem = modularAbility.currentClassInfo.permanentAtkResistAdderDict;
-                    else if (dataCategory == "temporaryatkresistadder") selectedItem = modularAbility.currentClassInfo.temporaryAtkResistAdderDict;
-                    else if (dataCategory == "permanentsinresistadder") selectedItem = modularAbility.currentClassInfo.permanentSinResistAdderDict;
-                    else if (dataCategory == "temporarysinresistadder") selectedItem = modularAbility.currentClassInfo.temporarySinResistAdderDict;
-                    else if (dataCategory == "attackdmgadder") selectedItem = modularAbility.currentClassInfo.getAttackDmgAdder;
-                    else if (dataCategory == "attackdmgmultiplier") selectedItem = modularAbility.currentClassInfo.getAttackDmgMultiplier;
-                    else if (dataCategory == "takeattackdmgadder") selectedItem = modularAbility.currentClassInfo.getTakeAttackDmgAdder;
-                    else if (dataCategory == "takeattackdmgmultiplier") selectedItem = modularAbility.currentClassInfo.getTakeAttackDmgMultiplier;
-                    else if (dataCategory == "takempdmgadder") selectedItem = modularAbility.currentClassInfo.getTakeMpDmgAdder;
-                    else if (dataCategory == "mentalsystemresultincreaseadder") selectedItem = modularAbility.currentClassInfo.getMentalSystemResultIncreaseAdder;
-                    else if (dataCategory == "mentalsystemresultdecreaseadder") selectedItem = modularAbility.currentClassInfo.getMentalSystemResultDecreaseAdder;
-                    else if (dataCategory == "forcedcoinresult") selectedItem = modularAbility.currentClassInfo.getForcedCoinResult;
-                    else if (dataCategory == "ignoresinbuffhpdamage") selectedItem = modularAbility.currentClassInfo.ignoreSinBuffHpDamage;
-                    else if (dataCategory == "permanentegoresourceadder") selectedItem = modularAbility.currentClassInfo.permanentEgoResourceAdderDict;
-                    else if (dataCategory == "temporaryegoresourceadder") selectedItem = modularAbility.currentClassInfo.temporaryEgoResourceAdderDict;
+                    if (modularAbility.currentClassInfo.lookupDict.TryGetValue(circles[2], out var getter)) selectedItem = getter(modularAbility.currentClassInfo);
+                    if (selectedItem == null) return;
 
                     if (selectedItem is ModularSystemAbilityStaticData_BundledParam dataBundle)
                     {
@@ -108,7 +105,7 @@ namespace MTCustomScripts.Consequences
                         else Main.Logger.LogError($"Fatal error on ENUM end: {enumDict.Values.Any().GetType()}");
                     }
 
-                    modularAbility.editedParamList.Add(dataCategory, selectedItem);
+                    modularAbility.editedParamList.Add(circles[2], selectedItem);
                 }
                 catch (System.Exception ex) { Main.Logger.LogError($"Unexpected error at SystemAbilityModularConsequence: {ex}"); }
             }

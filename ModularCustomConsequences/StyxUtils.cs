@@ -7,6 +7,26 @@ namespace MTCustomScripts
 {
     public static class StyxUtils
     {
+        /*
+        public static int NullableBoolToInt(Il2CppSystem.Nullable<bool> nullableValue)
+        {
+            int nullableResult = -1;
+            if (nullableValue != null)
+            {
+                switch (nullableValue.value)
+                {
+                    case true:
+                        nullableResult = 1;
+                        break;
+                    default:
+                        nullableResult = 0;
+                        break;
+                }
+            }
+            return nullableResult;
+        }
+        */
+
         public static System.Collections.Generic.List<T> ToSystem<T>(this Il2CppSystem.Collections.Generic.List<T> il2cppList)
         {
             var count = il2cppList.Count;
@@ -49,7 +69,7 @@ namespace MTCustomScripts
                 foreach (BattleUnitModel selectedUnit in selectedUnitList)
                 {
                     int skillId = 0;
-                    string[] skillIdSplit = new string[1];
+                    string[] skillIdSplit = new string[5];
 
                     try
                     {
@@ -122,7 +142,7 @@ namespace MTCustomScripts
             if (selectedSkill != null) return selectedSkill;
 
             int skillId = 0;
-            string[] skillIdSplit = new string[1];
+            string[] skillIdSplit = new string[5];
 
             try
             {
@@ -246,7 +266,7 @@ namespace MTCustomScripts
             return selectedCoinsList;
         }
 
-        public static void ProcessEnumOperation<T>(string value, System.Collections.Generic.List<T> list)  where T : unmanaged, Enum
+        public static void ProcessEnumOperation<T>(string value, System.Collections.Generic.List<T> list)  where T : struct, Enum
         {
             if (string.IsNullOrEmpty(value) || value.Length < 2) return;
 

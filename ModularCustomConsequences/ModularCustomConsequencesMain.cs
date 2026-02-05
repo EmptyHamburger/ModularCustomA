@@ -292,7 +292,7 @@ public class Main : BasePlugin
     {
         try
         {
-            harmony.PatchAll(patch);
+            if (harmony != null && patch != null) harmony.PatchAll(patch);
             if (timingList != null && actEvents != null)
             {
                 for (int i = 0; i < timingList.Length; i++) MainClass.timingDict.Add(timingList[i], actEvents[i]);
@@ -313,10 +313,11 @@ public class Main : BasePlugin
         Logger = Log;
 
         Harmony harmony = new Harmony(NAME);
-            AddTiming(harmony, typeof(RightAfterGetAnyBuff), null, null);
-            AddTiming(harmony, typeof(PanicOrLowMorale), new string[] { "OnPanic", "OnotherPanic", "OnLowMorale", "OnOtherLowMorale" }, new int[] { 90901, 90902, 90903, 90904 });
-            AddTiming(harmony, typeof(RecoverBreak), new string[] { "OnRecoverBreak", "OnOtherRecoverBreak" }, new int[] { 90905, 90906 });
-            AddTiming(harmony, typeof(LoseAnyBuff), new string[] { "OnLoseBuff", "OnBeforeLoseBuff" }, new int[] { 90907, 90908 });
+        AddTiming(harmony, typeof(RightAfterGetAnyBuff), null, null);
+        AddTiming(harmony, typeof(PanicOrLowMorale), new string[] { "OnPanic", "OnotherPanic", "OnLowMorale", "OnOtherLowMorale" }, new int[] { 90901, 90902, 90903, 90904 });
+        AddTiming(harmony, typeof(RecoverBreak), new string[] { "OnRecoverBreak", "OnOtherRecoverBreak" }, new int[] { 90905, 90906 });
+        AddTiming(harmony, typeof(LoseAnyBuff), new string[] { "OnLoseBuff", "OnBeforeLoseBuff" }, new int[] { 90907, 90908 });
+        AddTiming(null, null, new string[] { "GiveBuffStack", "GiveBuffTurn", "GainBuffStack", "GainBuffTurn" }, new int[] { 90909, 90910 });
 
         try
         {
