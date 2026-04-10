@@ -275,6 +275,7 @@ public class Main : BasePlugin
         AddTiming(null, null, ["OnTakePiledVibration", "OnOtherTakePiledVibration", "OnTakeSwitchingVibration", "OnOtherTakeSwitchingVibration"], [90907, 90908, 90909, 90910]);
         AddTiming(harmony, typeof(LoseAnyBuff), ["OnLoseBuff", "OnBeforeLoseBuff"], [90911, 90912]);
         AddTiming(harmony, typeof(ChangeSP), ["OnChangeSP", "OnOtherChangeSP", "OnTakeSPDamage", "OnOtherTakeSPDamage"], [90913, 90914, 90915, 90916]);
+        AddTiming(harmony, typeof(OnUnOpposed), ["OnUnOpposed"], [90917]);
 
         try
         {
