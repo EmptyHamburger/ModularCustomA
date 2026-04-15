@@ -276,6 +276,7 @@ public class Main : BasePlugin
         AddTiming(harmony, typeof(LoseAnyBuff), ["OnLoseBuff", "OnBeforeLoseBuff"], [90911, 90912]);
         AddTiming(harmony, typeof(ChangeSP), ["OnChangeSP", "OnOtherChangeSP", "OnTakeSPDamage", "OnOtherTakeSPDamage"], [90913, 90914, 90915, 90916]);
         AddTiming(harmony, typeof(OnUnOpposed), ["OnUnOpposed"], [90917]);
+        AddTiming(harmony, typeof(OnEquipDefense), ["OnEquipDefense"], [90918]);
 
         try
         {
@@ -284,6 +285,7 @@ public class Main : BasePlugin
             harmony.PatchAll(typeof(Modular_EnactConsequence));
             harmony.PatchAll(typeof(BuffModel_OverwritePanic));
             harmony.PatchAll(typeof(EquipDefenseOperation));
+            harmony.PatchAll(typeof(CustomPatch_Mellohi));
             // harmony.PatchAll(typeof(CoinSlotUI_UpdateCoinColor));
             // harmony.PatchAll(typeof(StyxPatch));
             // harmony.PatchAll(typeof(SystemAbilityDetail_Patch));
@@ -348,7 +350,9 @@ public class Main : BasePlugin
             MainClass.acquirerDict["getchangespvalue"] = new MTCustomScripts.Acquirers.AcquirerGetChangedSPValue();
             MainClass.acquirerDict["getmtdata"] = new MTCustomScripts.Acquirers.AcquirerGetMTData();
             MainClass.acquirerDict["getuptielevel"] = new MTCustomScripts.Acquirers.AcquirerGetUptieLevel();
-        } catch (System.Exception ex) { Main.Logger.LogError("Error when loading Acquirers: " + ex); }
+			MainClass.acquirerDict["getskillslotindex"] = new MTCustomScripts.Acquirers.AcquirerGetSkillSlotIndex();
+			MainClass.acquirerDict["issinnerfielded"] = new MTCustomScripts.Acquirers.AcquirerIsSinnerFielded();
+		} catch (System.Exception ex) { Main.Logger.LogError("Error when loading Acquirers: " + ex); }
 
         try
         {
@@ -392,7 +396,12 @@ public class Main : BasePlugin
             MainClass.consequenceDict["setmaxhp"] = new MTCustomScripts.Consequences.ConsequenceSetMaxHp();
             MainClass.consequenceDict["addcoinabilitybasicbuff"] = new MTCustomScripts.Consequences.ConsequenceAddCoinAbilityBasicBuff();
             MainClass.consequenceDict["setmtdata"] = new MTCustomScripts.Consequences.ConsequenceSetMTData();
-        } catch (System.Exception ex) { Main.Logger.LogError("Error when loading Consequences: " + ex); }
+			MainClass.consequenceDict["addkeyword"] = new MTCustomScripts.Consequences.ConsequenceAddKeyword();
+			MainClass.consequenceDict["clearskillscript"] = new MTCustomScripts.Consequences.ConsequenceClearSkillScript();
+			MainClass.consequenceDict["replaceallaffinity"] = new MTCustomScripts.Consequences.ConsequenceReplaceAllAffinity();
+			MainClass.consequenceDict["replaceskillondashboard"] = new MTCustomScripts.Consequences.ConsequenceReplaceSkillOnDashboard();
+			MainClass.consequenceDict["upgradeskillondashboard"] = new MTCustomScripts.Consequences.ConsequenceUpgradeSkillOnDashboard();
+		} catch (System.Exception ex) { Main.Logger.LogError("Error when loading Consequences: " + ex); }
 
         try
         {
