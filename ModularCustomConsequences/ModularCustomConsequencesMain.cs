@@ -397,7 +397,7 @@ public class Main : BasePlugin
             MainClass.consequenceDict["addcoinabilitybasicbuff"] = new MTCustomScripts.Consequences.ConsequenceAddCoinAbilityBasicBuff();
             MainClass.consequenceDict["setmtdata"] = new MTCustomScripts.Consequences.ConsequenceSetMTData();
 			MainClass.consequenceDict["addkeyword"] = new MTCustomScripts.Consequences.ConsequenceAddKeyword();
-			MainClass.consequenceDict["clearskillscript"] = new MTCustomScripts.Consequences.ConsequenceClearSkillScript();
+			MainClass.consequenceDict["clearalltempskillabilities"] = new MTCustomScripts.Consequences.ConsequenceClearAllTempSkillAbilities();
 			MainClass.consequenceDict["replaceallaffinity"] = new MTCustomScripts.Consequences.ConsequenceReplaceAllAffinity();
 			MainClass.consequenceDict["replaceskillondashboard"] = new MTCustomScripts.Consequences.ConsequenceReplaceSkillOnDashboard();
 			MainClass.consequenceDict["upgradeskillondashboard"] = new MTCustomScripts.Consequences.ConsequenceUpgradeSkillOnDashboard();
