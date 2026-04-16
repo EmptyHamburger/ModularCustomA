@@ -9,13 +9,13 @@ public class ConsequenceReplaceSkillOnDashboard : IModularConsequence
 {
 	public void ExecuteConsequence(ModularSA modular, string section, string circledSection, string[] circles)
 	{
-		BattleUnitModel unitModel = modular.modsa_unitModel;
+		BattleUnitModel unitModel = modular.GetTargetModel(circles[0]);
 		if (unitModel == null) return;
 
-		int sinActionIndex = modular.GetNumFromParamString(circles[0]);
-		int unitSinModelIndex = modular.GetNumFromParamString(circles[1]);
-		int[] skillIDList = new int[circles.Length - 2];
-		for (int i = 2; i < circles.Length; i++) skillIDList[i - 2] = modular.GetNumFromParamString(circles[i]);
+		int sinActionIndex = modular.GetNumFromParamString(circles[1]);
+		int unitSinModelIndex = modular.GetNumFromParamString(circles[2]);
+		int[] skillIDList = new int[circles.Length - 3];
+		for (int i = 3; i < circles.Length; i++) skillIDList[i - 3] = modular.GetNumFromParamString(circles[i]);
 
 		if (sinActionIndex < 0 || unitSinModelIndex < 0)
 		{

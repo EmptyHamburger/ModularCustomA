@@ -7,18 +7,21 @@ public class ConsequenceAddKeyword : IModularConsequence
 {
 	public void ExecuteConsequence(ModularSA modular, string section, string circledSection, string[] circles)
 	{
-		BattleUnitModel targetModel = modular.GetTargetModel(circles[0]);
-		if (targetModel == null) return;
+		Il2CppSystem.Collections.Generic.List<BattleUnitModel> targetList = modular.GetTargetModelList(circles[0]);
+		if (targetList.Count < 1) return;
 
 		if (Enum.TryParse(circles[1], out UNIT_KEYWORD keyword))
 		{
-			if (circles.Length > 2 && !targetModel.AssociationList.Contains(keyword))
+			foreach(BattleUnitModel unit in targetList)
 			{
-				targetModel.AddAssociation(keyword);
-			}
-			else if (!targetModel.HasUnitKeyword(keyword))
-			{
-				targetModel.AddUnitKeyword(keyword);
+				if (circles.Length > 2 && !unit.AssociationList.Contains(keyword))
+				{
+					unit.AddAssociation(keyword);
+				}
+				else if (!unit.HasUnitKeyword(keyword))
+				{
+					unit.AddUnitKeyword(keyword);
+				}
 			}
 		}
 	}

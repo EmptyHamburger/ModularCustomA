@@ -6,13 +6,17 @@ internal class ConsequenceClearAllTempSkillAbilities : IModularConsequence
 {
 	public void ExecuteConsequence(ModularSA modular, string section, string circledSection, string[] circles)
 	{
-		if (modular.modsa_unitModel == null) return;
+		Il2CppSystem.Collections.Generic.List<BattleUnitModel> targetList = modular.GetTargetModelList(circles[0]);
+		if (targetList.Count < 1) return;
 
-		foreach (SinActionModel sinslot in modular.modsa_unitModel.GetSinActionList())
+		foreach (BattleUnitModel unit in targetList)
 		{
-			foreach (UnitSinModel sinModel in sinslot.currentSinList)
+			foreach (SinActionModel sinslot in unit.GetSinActionList())
 			{
-				sinModel.GetSkill().ClearTemporarySkillAbility();
+				foreach (UnitSinModel sinModel in sinslot.currentSinList)
+				{
+					sinModel.GetSkill().ClearTemporarySkillAbility();
+				}
 			}
 		}
 	}
