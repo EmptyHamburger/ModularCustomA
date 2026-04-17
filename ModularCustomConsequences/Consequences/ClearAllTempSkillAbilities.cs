@@ -16,6 +16,10 @@ internal class ConsequenceClearAllTempSkillAbilities : IModularConsequence
 				foreach (UnitSinModel sinModel in sinslot.currentSinList)
 				{
 					sinModel.GetSkill().ClearTemporarySkillAbility();
+					if (sinModel.GetSkill().IsDefense())
+					{
+						sinslot.GetReplacedSinByDefenseSkill()?.GetSkill().ClearTemporarySkillAbility();
+					}
 				}
 			}
 		}

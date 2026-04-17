@@ -31,7 +31,7 @@ public class ConsequenceReplaceAllAffinity : IModularConsequence
 						skillModel.AddTemporarySkillAbility(replaceAffinityAbility);
 						if(skillModel.IsDefense())
 						{
-							sinSlot.GetReplacedSinByDefenseSkill()?.GetSkill().AddTemporarySkillAbility(replaceAffinityAbility);
+							sinSlot.GetReplacedSinByDefenseSkill().GetSkill().AddTemporarySkillAbility(replaceAffinityAbility);
 						}
 					}
 				}
