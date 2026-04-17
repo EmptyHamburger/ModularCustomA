@@ -1,5 +1,4 @@
 ﻿using ModularSkillScripts;
-using Spine.Unity;
 
 namespace MTCustomScripts.Consequences;
 
@@ -16,16 +15,15 @@ public class ConsequenceUpgradeSkillOnDashboard : IModularConsequence
 		{
 			for (int i = 0; i < sinSlot.currentSinList.Count; i++)
 			{
-				UnitSinModel newSinModel = new(upgradedID, unitModel, sinSlot, true);
 				SkillModel skillModel = sinSlot.currentSinList[i].GetSkill();
 				if (skillModel.GetID() == skillID)
 				{
-					sinSlot.currentSinList[i] = newSinModel;
+					sinSlot.currentSinList[i] = new(upgradedID, unitModel, sinSlot, true);
 					goto End;
 				}
-				else if(skillModel.IsDefense() && skillModel.GetID() == sinSlot.GetReplacedSinByDefenseSkill().GetSkill().GetID())
+				else if(skillModel.IsDefense())
 				{
-					sinSlot._replacedSinByDefenseSkill = newSinModel;
+					sinSlot.ChangeReplacedSinByDefenseSkillAtoB(skillID, upgradedID);
 					goto End;
 				}
 			}

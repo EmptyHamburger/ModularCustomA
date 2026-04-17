@@ -13,19 +13,26 @@ public class ConsequenceReplaceAllAffinity : IModularConsequence
 
 		if (Enum.TryParse(circles[1], out ATTRIBUTE_TYPE attribute))
 		{
-			foreach(BattleUnitModel unit in targetList)
+			SkillAbility_1021305UpgradeAttribute replaceAffinityAbility = new();
+			replaceAffinityAbility.OnReplace(attribute);
+
+			foreach (BattleUnitModel unit in targetList)
 			{
-				foreach (SinActionModel sinSlot in modular.modsa_unitModel.GetSinActionList())
+				foreach (SinActionModel sinSlot in unit.GetSinActionList())
 				{
 					foreach (UnitSinModel sinModel in sinSlot.currentSinList)
 					{
 						SkillModel skillModel = sinModel.GetSkill();
-						if (!includeEgo && skillModel.IsEgoSkill()) continue;
-
-						SkillAbility_1021305UpgradeAttribute replaceAffinityAbility = new();
-						replaceAffinityAbility.OnReplace(attribute);
+						if (!includeEgo && skillModel.IsEgoSkill())
+						{
+							continue;
+						}
 
 						skillModel.AddTemporarySkillAbility(replaceAffinityAbility);
+						if(skillModel.IsDefense())
+						{
+							sinSlot.GetReplacedSinByDefenseSkill().GetSkill().AddTemporarySkillAbility(replaceAffinityAbility);
+						}
 					}
 				}
 			}
