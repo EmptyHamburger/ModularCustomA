@@ -2,14 +2,13 @@ using ModularSkillScripts;
 
 namespace MTCustomScripts.Acquirers;
 
-/*
-public class AcquirerGainBuffSource : IModularAcquirer
+public class AcquirerLoseBuffSource : IModularAcquirer
 {
     public int ExecuteAcquirer(ModularSA modular, string section, string circledSection, string[] circles)
     {
         if (modular.modsa_passiveModel == null) return -1;
 
-        switch (MTCustomScripts.Main.Instance.gainbuff_source)
+        switch (MTCustomScripts.Main.Instance.losebuff_source)
         {
             case ABILITY_SOURCE_TYPE.NONE: return 0;
             case ABILITY_SOURCE_TYPE.SKILL: return 1;
@@ -25,4 +24,3 @@ public class AcquirerGainBuffSource : IModularAcquirer
         }
     }
 }
-*/

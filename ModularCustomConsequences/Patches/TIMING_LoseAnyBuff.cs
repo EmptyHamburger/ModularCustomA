@@ -22,10 +22,10 @@ internal class LoseAnyBuff
 
         int actevent = MainClass.timingDict["OnLoseBuff"];
 
-        MTCustomScripts.Main.Instance.gainbuff_keyword = loseBuffInfo.GetKeyword();
-        MTCustomScripts.Main.Instance.gainbuff_stack = loseStack;
-        MTCustomScripts.Main.Instance.gainbuff_turn = loseTurn;
-        MTCustomScripts.Main.Instance.gainbuff_activeRound = loseBuffInfo._activeRound;
+        MTCustomScripts.Main.Instance.losebuff_keyword = loseBuffInfo.GetKeyword();
+        MTCustomScripts.Main.Instance.losebuff_stack = loseStack;
+        MTCustomScripts.Main.Instance.losebuff_turn = loseTurn;
+        MTCustomScripts.Main.Instance.losebuff_activeRound = loseBuffInfo._activeRound;
 
         foreach (PassiveModel passiveModel in __instance._passiveDetail.PassiveList)
         {
@@ -95,10 +95,10 @@ internal class LoseAnyBuff
 
         int actevent = MainClass.timingDict["OnBeforeLoseBuff"];
 
-        MTCustomScripts.Main.Instance.gainbuff_keyword = keyword;
-        MTCustomScripts.Main.Instance.gainbuff_stack = stack;
-        MTCustomScripts.Main.Instance.gainbuff_turn = turn;
-        MTCustomScripts.Main.Instance.gainbuff_activeRound = (__instance._buffDetail.GetActivatedBuff(keyword) != null) ? __instance._buffDetail.GetActivatedBuff(keyword)._activeRound : __instance._buffDetail.GetReadyBuff(keyword)._activeRound;
+        MTCustomScripts.Main.Instance.losebuff_keyword = keyword;
+        MTCustomScripts.Main.Instance.losebuff_stack = stack;
+        MTCustomScripts.Main.Instance.losebuff_turn = turn;
+        MTCustomScripts.Main.Instance.losebuff_activeRound = (__instance._buffDetail.GetActivatedBuff(keyword) != null) ? __instance._buffDetail.GetActivatedBuff(keyword)._activeRound : __instance._buffDetail.GetReadyBuff(keyword)._activeRound;
 
         foreach (PassiveModel passiveModel in __instance._passiveDetail.PassiveList)
         {

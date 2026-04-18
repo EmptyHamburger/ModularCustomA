@@ -52,15 +52,20 @@ public class Main : BasePlugin
     public int special_slotindex = -11;
 
     public System.Collections.Generic.Dictionary<long, BUFF_UNIQUE_KEYWORD> keywordTriggerDict = [];
-    // public BUFF_UNIQUE_KEYWORD keywordTrigger = BUFF_UNIQUE_KEYWORD.None;
-    public BUFF_UNIQUE_KEYWORD gainbuff_keyword = BUFF_UNIQUE_KEYWORD.None;
-    public int gainbuff_stack = 0;
-    public int gainbuff_turn = 0;
-    public int gainbuff_activeRound = 0;
-    public ABILITY_SOURCE_TYPE gainbuff_source = ABILITY_SOURCE_TYPE.NONE;
+	// public BUFF_UNIQUE_KEYWORD keywordTrigger = BUFF_UNIQUE_KEYWORD.None;
+	//public BUFF_UNIQUE_KEYWORD gainbuff_keyword = BUFF_UNIQUE_KEYWORD.None;
+	//public int gainbuff_stack = 0;
+	//public int gainbuff_turn = 0;
+	//public int gainbuff_activeRound = 0;
+	//public ABILITY_SOURCE_TYPE gainbuff_source = ABILITY_SOURCE_TYPE.NONE;
+	public BUFF_UNIQUE_KEYWORD losebuff_keyword = BUFF_UNIQUE_KEYWORD.None;
+	public int losebuff_stack = 0;
+	public int losebuff_turn = 0;
+	public int losebuff_activeRound = 0;
+	public ABILITY_SOURCE_TYPE losebuff_source = ABILITY_SOURCE_TYPE.NONE;
 
 
-    public System.Collections.Generic.Dictionary<BattleUnitModel, int[]> changeMpDict = []; 
+	public System.Collections.Generic.Dictionary<BattleUnitModel, int[]> changeMpDict = []; 
 
 
     public class GlobalLuaValues
@@ -267,7 +272,7 @@ public class Main : BasePlugin
         Logger = Log;
 
         Harmony harmony = new Harmony(NAME);
-        AddTiming(harmony, typeof(RightAfterGetAnyBuff), null, null);
+        //AddTiming(harmony, typeof(RightAfterGetAnyBuff), null, null);
         AddTiming(harmony, typeof(GetSkillIdsPatch), null, null);
 
         AddTiming(harmony, typeof(RecoverSwitchPanic), ["OnPanic", "OnOtherPanic", "OnLowMorale", "OnOtherLowMorale"], [90901, 90902, 90903, 90904]);
@@ -305,16 +310,17 @@ public class Main : BasePlugin
             MainClass.luaFunctionDict["setgdata"] = new MTCustomScripts.LuaFunctions.LuaFunctionSetGlobalVarMT();
             MainClass.luaFunctionDict["getgdata"] = new MTCustomScripts.LuaFunctions.LuaFunctionGetGlobalVarMT();
             MainClass.luaFunctionDict["clearallgdata"] = new MTCustomScripts.LuaFunctions.LuaFunctionClearGlobalVarMT();
-            MainClass.luaFunctionDict["gbkeyword"] = new MTCustomScripts.LuaFunctions.LuaFunctionGainBuffKeyword();
+            //MainClass.luaFunctionDict["gbkeyword"] = new MTCustomScripts.LuaFunctions.LuaFunctionGainBuffKeyword();
             MainClass.luaFunctionDict["getcurrentmapid"] = new MTCustomScripts.LuaFunctions.GetCurrentMapID();
             MainClass.luaFunctionDict["listrelatedkeywords"] = new MTCustomScripts.LuaFunctions.LuaFunctionListRelatedKeywords();
             MainClass.luaFunctionDict["getappearanceid"] = new MTCustomScripts.LuaFunctions.LuaFunctionGetAppearanceID();
             MainClass.luaFunctionDict["listbreakvalues"] = new MTCustomScripts.LuaFunctions.LuaFunctionListBreakSectionValue();
             MainClass.luaFunctionDict["listegoskillids"] = new MTCustomScripts.LuaFunctions.LuaFunctionListEgoSkillIDs();
             MainClass.luaFunctionDict["listskillkeywords"] = new MTCustomScripts.LuaFunctions.LuaFunctionListSkillKeywordList();
-            // MainClass.luaFunctionDict["getrandombuff"] = new LuaFunctionGetRandomBuff(); //Object reference not set to an instance of an object
-            // MainClass.luaFunctionDict["listskilltargets"] = new MTCustomScripts.LuaFunctions.LuaFunctionListSkillTargets();
-        }
+			// MainClass.luaFunctionDict["getrandombuff"] = new LuaFunctionGetRandomBuff(); //Object reference not set to an instance of an object
+			// MainClass.luaFunctionDict["listskilltargets"] = new MTCustomScripts.LuaFunctions.LuaFunctionListSkillTargets();
+			MainClass.luaFunctionDict["lbkeyword"] = new MTCustomScripts.LuaFunctions.LuaFunctionLoseBuffKeyword();
+		}
         catch (System.Exception ex) { Main.Logger.LogError("Error when loading LUA functions: " + ex); }
 
         try
@@ -326,10 +332,10 @@ public class Main : BasePlugin
             MainClass.acquirerDict["useddefaction"] = new MTCustomScripts.Acquirers.AcquirerIfUsedDefenseActionThisTurn();
             MainClass.acquirerDict["unitfaction"] = new MTCustomScripts.Acquirers.AcquirerUnitFaction();
             MainClass.acquirerDict["saslotindex"] = new MTCustomScripts.Acquirers.AcquirerSpecialActionSlotIndex();
-            MainClass.acquirerDict["gbstack"] = new MTCustomScripts.Acquirers.AcquirerGainBuffStack();
-            MainClass.acquirerDict["gbturn"] = new MTCustomScripts.Acquirers.AcquirerGainBuffTurn();
-            MainClass.acquirerDict["gbactiveround"] = new MTCustomScripts.Acquirers.AcquirerGainBuffActiveRound();
-            MainClass.acquirerDict["gbsource"] = new MTCustomScripts.Acquirers.AcquirerGainBuffSource();
+            //MainClass.acquirerDict["gbstack"] = new MTCustomScripts.Acquirers.AcquirerGainBuffStack();
+            //MainClass.acquirerDict["gbturn"] = new MTCustomScripts.Acquirers.AcquirerGainBuffTurn();
+            //MainClass.acquirerDict["gbactiveround"] = new MTCustomScripts.Acquirers.AcquirerGainBuffActiveRound();
+            //MainClass.acquirerDict["gbsource"] = new MTCustomScripts.Acquirers.AcquirerGainBuffSource();
             MainClass.acquirerDict["comparer"] = new MTCustomScripts.Acquirers.AcquirerGetComparerResult();
             MainClass.acquirerDict["hasbuffkeyword"] = new MTCustomScripts.Acquirers.AcquirerHasBuffKeyword();
             MainClass.acquirerDict["getmapdata"] = new MTCustomScripts.Acquirers.AcquirerGetMapData();
@@ -352,7 +358,12 @@ public class Main : BasePlugin
             MainClass.acquirerDict["getuptielevel"] = new MTCustomScripts.Acquirers.AcquirerGetUptieLevel();
 			MainClass.acquirerDict["getskillslotindex"] = new MTCustomScripts.Acquirers.AcquirerGetSkillSlotIndex();
 			MainClass.acquirerDict["issinnerfielded"] = new MTCustomScripts.Acquirers.AcquirerIsSinnerFielded();
-		} catch (System.Exception ex) { Main.Logger.LogError("Error when loading Acquirers: " + ex); }
+			MainClass.acquirerDict["lbstack"] = new MTCustomScripts.Acquirers.AcquirerLoseBuffStack();
+			MainClass.acquirerDict["lbturn"] = new MTCustomScripts.Acquirers.AcquirerLoseBuffTurn();
+			MainClass.acquirerDict["lbactiveround"] = new MTCustomScripts.Acquirers.AcquirerLoseBuffActiveRound();
+			MainClass.acquirerDict["lbsource"] = new MTCustomScripts.Acquirers.AcquirerLoseBuffSource();
+		}
+		catch (System.Exception ex) { Main.Logger.LogError("Error when loading Acquirers: " + ex); }
 
         try
         {

@@ -6,6 +6,7 @@ using Lua;
 
 namespace MTCustomScripts.LuaFunctions;
 
+/*
 public class LuaFunctionGainBuffKeyword : IModularLuaFunction
 {
     public ValueTask<int> ExecuteLuaFunction(ModularSA modular, LuaFunctionExecutionContext context, System.Span<LuaValue> buffer, CancellationToken ct)
@@ -15,3 +16,4 @@ public class LuaFunctionGainBuffKeyword : IModularLuaFunction
         return ValueTask.FromResult(1);
     }
 }
+*/
