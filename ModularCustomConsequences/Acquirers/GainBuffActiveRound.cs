@@ -2,7 +2,6 @@ using ModularSkillScripts;
 
 namespace MTCustomScripts.Acquirers;
 
-/*
 public class AcquirerGainBuffActiveRound : IModularAcquirer
 {
     public int ExecuteAcquirer(ModularSA modular, string section, string circledSection, string[] circles)
@@ -11,4 +10,3 @@ public class AcquirerGainBuffActiveRound : IModularAcquirer
         return -1;
     }
 }
-*/
