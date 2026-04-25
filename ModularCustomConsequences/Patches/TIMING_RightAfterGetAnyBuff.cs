@@ -11,7 +11,8 @@ internal class RightAfterGetAnyBuff
 {
     [HarmonyPatch(typeof(BattleUnitModel), nameof(BattleUnitModel.RightAfterGetAnyBuff))]
 	[HarmonyPostfix]
-	private static void Postfix_BattleUnitModel_RightAfterGetAnyBuff(BUFF_UNIQUE_KEYWORD keyword, int stack, int turn, int activeRound, ABILITY_SOURCE_TYPE srcType, BATTLE_EVENT_TIMING timing, BattleUnitModel giverOrNull, BattleActionModel actionOrNull, int overStack, int overTurn, BattleUnitModel __instance)
+    [HarmonyPriority(Priority.High)]
+	private static void Postfix_BattleUnitModel_RightAfterGetAnyBuffMT(BUFF_UNIQUE_KEYWORD keyword, int stack, int turn, int activeRound, ABILITY_SOURCE_TYPE srcType, BATTLE_EVENT_TIMING timing, BattleUnitModel giverOrNull, BattleActionModel actionOrNull, int overStack, int overTurn, BattleUnitModel __instance)
     {
         // MainClass.Logg.LogInfo("Patch timing: RightAfterGetAnyBuff");
 
