@@ -249,7 +249,11 @@ public class Main : BasePlugin
             if (harmony != null && patch != null) harmony.PatchAll(patch);
             if (timingList != null && actEvents != null)
             {
-                for (int i = 0; i < timingList.Length; i++) MainClass.timingDict.Add(timingList[i], actEvents[i]);
+                for (int i = 0; i < timingList.Length; i++) 
+                {
+                    if (!MainClass.timingDict.TryGetValue(timingList[i], out int timingId))
+                    MainClass.timingDict.Add(timingList[i], actEvents[i]);
+                }
             }
         }
         catch (System.Exception ex) { Main.Logger.LogError($"Error on timing with names = {string.Join('/', timingList)}\n{ex}"); }
@@ -267,7 +271,13 @@ public class Main : BasePlugin
         Logger = Log;
 
         Harmony harmony = new Harmony(NAME);
-        AddTiming(harmony, typeof(RightAfterGetAnyBuff), null, null);
+        AddTiming(harmony, typeof(RightAfterGetAnyBuff), ["OnGainBuff"], [7331]);
+        harmony.Unpatch(typeof(BattleUnitModel).GetMethod(
+            "RightAfterGetAnyBuff",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic),
+            HarmonyPatchType.Postfix,
+            "ModularSkillScripts");
+
         AddTiming(harmony, typeof(GetSkillIdsPatch), null, null);
 
         AddTiming(harmony, typeof(RecoverSwitchPanic), ["OnPanic", "OnOtherPanic", "OnLowMorale", "OnOtherLowMorale"], [90901, 90902, 90903, 90904]);
