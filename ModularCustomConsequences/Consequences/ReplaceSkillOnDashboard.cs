@@ -58,15 +58,20 @@ public class ConsequenceReplaceSkillOnDashboard : IModularConsequence
 			{
 				return 1;
 			}
-			else if (x.Item3 == y.Item3)
+
+			if (x.Item1 < y.Item1)
 			{
-				if (x.Item1 < y.Item1)
+				return -1;
+			}
+			else if (x.Item1 == y.Item1)
+			{
+				if (x.Item2 < y.Item2)
 				{
 					return -1;
 				}
-				return 0;
 			}
-			return -1;
+
+			return 0;
 		}
 	}
 }
