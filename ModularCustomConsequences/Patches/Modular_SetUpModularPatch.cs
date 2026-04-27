@@ -55,7 +55,7 @@ internal class Modular_SetupModular
                 //     MainClass.Logg.LogInfo("SpecialAction with no parsed key, default to LeftControl");
                 }
 
-                if (circle_0 == "OnGainBuff")
+                else if (circle_0 == "OnGainBuff")
                 {
                     Main.Instance.keywordTriggerDict[__instance.Pointer.ToInt64()] = BUFF_UNIQUE_KEYWORD.None;
                 }
