@@ -362,6 +362,7 @@ public class Main : BasePlugin
             MainClass.acquirerDict["getuptielevel"] = new MTCustomScripts.Acquirers.AcquirerGetUptieLevel();
 			MainClass.acquirerDict["getskillslotindex"] = new MTCustomScripts.Acquirers.AcquirerGetSkillSlotIndex();
 			MainClass.acquirerDict["issinnerfielded"] = new MTCustomScripts.Acquirers.AcquirerIsSinnerFielded();
+            MainClass.acquirerDict["hasskillondashboard"] = new MTCustomScripts.Acquirers.AcquirerHasSkillOnDashboard();
 		} catch (System.Exception ex) { Main.Logger.LogError("Error when loading Acquirers: " + ex); }
 
         try

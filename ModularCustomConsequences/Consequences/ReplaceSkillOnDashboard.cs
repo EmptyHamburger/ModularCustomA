@@ -1,7 +1,5 @@
 ﻿using ModularSkillScripts;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace MTCustomScripts.Consequences;
 
@@ -14,8 +12,7 @@ public class ConsequenceReplaceSkillOnDashboard : IModularConsequence
 
 		int sinActionIndex = modular.GetNumFromParamString(circles[1]);
 		int unitSinModelIndex = modular.GetNumFromParamString(circles[2]);
-		int[] skillIDList = new int[circles.Length - 3];
-		for (int i = 3; i < circles.Length; i++) skillIDList[i - 3] = modular.GetNumFromParamString(circles[i]);
+		int skillID = modular.GetNumFromParamString(circles[3]);
 
 		if (sinActionIndex < 0 || unitSinModelIndex < 0)
 		{
@@ -25,18 +22,7 @@ public class ConsequenceReplaceSkillOnDashboard : IModularConsequence
 				for (int i = 0; i < sinSlot.currentSinList.Count; i++)
 				{
 					SkillModel skillModel = sinSlot.currentSinList[i].GetSkill();
-					if (skillIDList.Contains(skillModel.GetID()))
-					{
-						goto SkipEverything;
-					}
-
-					if (skillModel.IsDefense() && skillIDList.Contains(sinSlot.GetReplacedSinByDefenseSkill().GetSkill().GetID()))
-					{
-						goto SkipEverything;
-					}
-
-					if (skillModel.IsEgoSkill()) continue;
-
+					if (skillModel.IsDefense() || skillModel.IsEgoSkill()) continue;
 					skillSlotList.Add(new(sinSlot.GetSlotIndex(), i, skillModel.GetSkillTier()));
 				}
 			}
@@ -46,8 +32,7 @@ public class ConsequenceReplaceSkillOnDashboard : IModularConsequence
 		}
 
 		SinActionModel targetAction = unitModel.GetSinActionList()[sinActionIndex];
-		targetAction.currentSinList[unitSinModelIndex] = new(skillIDList[0], unitModel, targetAction, true);
-	SkipEverything: return;
+		targetAction.currentSinList[unitSinModelIndex] = new(skillID, unitModel, targetAction, true);
 	}
 
 	private class SkillComparer : IComparer<(int, int, int)>
