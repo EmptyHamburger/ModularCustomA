@@ -16,14 +16,14 @@ public class ConsequenceReplaceSkillOnDashboard : IModularConsequence
 
 		if (sinActionIndex < 0 || unitSinModelIndex < 0)
 		{
-			List<(int, int, int)> skillSlotList = [];
+			List<(int, int)> skillSlotList = [];
 			foreach (SinActionModel sinSlot in unitModel.GetSinActionList())
 			{
 				for (int i = 0; i < sinSlot.currentSinList.Count; i++)
 				{
 					SkillModel skillModel = sinSlot.currentSinList[i].GetSkill();
 					if (skillModel.IsDefense() || skillModel.IsEgoSkill()) continue;
-					skillSlotList.Add(new(sinSlot.GetSlotIndex(), i, skillModel.GetSkillTier()));
+					skillSlotList.Add(new(sinSlot.GetSlotIndex(), i));
 				}
 			}
 			skillSlotList.Sort(new SkillComparer());
@@ -35,9 +35,9 @@ public class ConsequenceReplaceSkillOnDashboard : IModularConsequence
 		targetAction.currentSinList[unitSinModelIndex] = new(skillID, unitModel, targetAction, true);
 	}
 
-	private class SkillComparer : IComparer<(int, int, int)>
+	private class SkillComparer : IComparer<(int, int)>
 	{
-		public int Compare((int, int, int) x, (int, int, int) y)
+		public int Compare((int, int) x, (int, int) y)
 		{
 			if (x.Item1 < y.Item1)
 			{
