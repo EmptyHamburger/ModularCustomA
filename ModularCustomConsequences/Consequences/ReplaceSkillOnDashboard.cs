@@ -39,11 +39,6 @@ public class ConsequenceReplaceSkillOnDashboard : IModularConsequence
 	{
 		public int Compare((int, int, int) x, (int, int, int) y)
 		{
-			if (x.Item3 == 3 && x.Item3 > y.Item3)
-			{
-				return 1;
-			}
-
 			if (x.Item1 < y.Item1)
 			{
 				return -1;
@@ -55,7 +50,6 @@ public class ConsequenceReplaceSkillOnDashboard : IModularConsequence
 					return -1;
 				}
 			}
-
 			return 0;
 		}
 	}
