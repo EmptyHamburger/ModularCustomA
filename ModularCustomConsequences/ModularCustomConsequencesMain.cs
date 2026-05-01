@@ -40,7 +40,7 @@ public class Main : BasePlugin
 {
     // Edit the below to your own plugin name, version, etc.
     public const string NAME = "MTCustomScripts";
-    public const string VERSION = "17.80.3.39";
+    public const string VERSION = "17.83.3.39";
     public const string AUTHOR = "MT";
     public const string GUID = $"{AUTHOR}.{NAME}";
 
@@ -362,6 +362,7 @@ public class Main : BasePlugin
             MainClass.acquirerDict["getuptielevel"] = new MTCustomScripts.Acquirers.AcquirerGetUptieLevel();
 			MainClass.acquirerDict["getskillslotindex"] = new MTCustomScripts.Acquirers.AcquirerGetSkillSlotIndex();
 			MainClass.acquirerDict["issinnerfielded"] = new MTCustomScripts.Acquirers.AcquirerIsSinnerFielded();
+            MainClass.acquirerDict["getworldpos"] = new MTCustomScripts.Acquirers.AcquirerGetWorldPosition();
 		} catch (System.Exception ex) { Main.Logger.LogError("Error when loading Acquirers: " + ex); }
 
         try
@@ -411,6 +412,9 @@ public class Main : BasePlugin
 			MainClass.consequenceDict["replaceallaffinity"] = new MTCustomScripts.Consequences.ConsequenceReplaceAllAffinity();
 			MainClass.consequenceDict["replaceskillondashboard"] = new MTCustomScripts.Consequences.ConsequenceReplaceSkillOnDashboard();
 			MainClass.consequenceDict["upgradeskillondashboard"] = new MTCustomScripts.Consequences.ConsequenceUpgradeSkillOnDashboard();
+            MainClass.consequenceDict["addduel"] = new MTCustomScripts.Consequences.ConsequenceAddDuel();
+            MainClass.consequenceDict["changemaintarget"] = new MTCustomScripts.Consequences.ConsequenceChangeMainTarget();
+            MainClass.consequenceDict["setworldpos"] = new MTCustomScripts.Consequences.ConsequenceSetWorldPosition();
 		} catch (System.Exception ex) { Main.Logger.LogError("Error when loading Consequences: " + ex); }
 
         try
