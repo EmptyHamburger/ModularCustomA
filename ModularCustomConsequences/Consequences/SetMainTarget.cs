@@ -10,29 +10,33 @@ public class ConsequenceSetMainTarget : IModularConsequence
 
         if (mode == "Pre")
         {
-            BattleUnitModel attacker = modular.GetTargetModel(circles[1]);
+            Il2CppSystem.Collections.Generic.List<BattleUnitModel> attackers = modular.GetTargetModelList(circles[1]);
             BattleUnitModel target = modular.GetTargetModel(circles[2]);
             int SkillID = modular.GetNumFromParamString(circles[3]);
             int Count = 99;
             if(circles.Length > 4) Count = modular.GetNumFromParamString(circles[4]);
 
-            if (attacker == null || target == null) return;
+            if (attackers == null || target == null) return;
 
             if (target.GetSinActionList().Count < 1) return;
 
-            foreach(SinActionModel sam in attacker.GetSinActionList())
+            foreach(BattleUnitModel unit in attackers)
             {
-                if (sam.CurrentBattleAction.Skill.GetID() == SkillID && Count > 0)
+                foreach(SinActionModel sam in unit.GetSinActionList())
                 {
-                    SinActionModel targetSam = target.GetSinActionList()[0];
-                    BattleActionModel attackerAction = sam.CurrentBattleAction;                
-                    BattleActionModel targetAction = targetSam.CurrentBattleAction;
-                    
-                    attackerAction.ChangeMainTargetSinAction(targetSam, targetAction, true);
+                    if (sam.CurrentBattleAction.Skill.GetID() == SkillID && Count > 0)
+                    {
+                        SinActionModel targetSam = target.GetSinActionList()[0];
+                        BattleActionModel attackerAction = sam.CurrentBattleAction;                
+                        BattleActionModel targetAction = targetSam.CurrentBattleAction;
+                        
+                        attackerAction.ChangeMainTargetSinAction(targetSam, targetAction, true);
 
-                    Count-=1;
+                        Count-=1;
+                    }
                 }
             }
+
             SingletonBehavior<BattleUIRoot>.Instance?.NewOperationController?.UpdateAllSlotForNormal();
             SingletonBehavior<BattleUIRoot>.Instance?.ShowAllCharacterTargetArrows();
         }
