@@ -20,8 +20,21 @@ public class ConsequenceChangeMainTarget: IModularConsequence
         {
             if (sam.CurrentBattleAction.Skill.GetID() == SkillID)
             {
-                sam.CurrentBattleAction.ChangeMainTargetSinAction(target.GetSinActionList()[0], target.GetSinActionList()[0].CurrentBattleAction, true);
-                sam.CurrentBattleAction.RecheckTargetList();
+                SinActionModel targetSam = target.GetSinActionList()[0];
+                BattleActionModel attackerAction = sam.CurrentBattleAction;                
+                BattleActionModel targetAction = targetSam.CurrentBattleAction;
+                
+                attackerAction.ChangeMainTargetSinAction(targetSam, targetAction, true);
+
+                // var bamManager = Singleton<BattleActionModelManager>.Instance;
+                // if (bamManager != null && targetAction != null)
+                // {
+                //     bamManager.RemoveDuel(attackerAction);
+                //     bamManager.RemoveDuel(targetAction);
+
+                //     if (BattleActionModel.CanDuelBoth(attackerAction, targetAction))
+                //     bamManager.AddDuel(attackerAction, targetAction);
+                // }
             }
         }
         SingletonBehavior<BattleUIRoot>.Instance?.NewOperationController?.UpdateAllSlotForNormal();
