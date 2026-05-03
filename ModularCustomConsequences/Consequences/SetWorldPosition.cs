@@ -14,13 +14,13 @@ public class ConsequenceSetWorldPosition: IModularConsequence
 	{
         Il2CppSystem.Collections.Generic.List<BattleUnitModel> units = modular.GetTargetModelList(circles[0]);
         if (units.Count < 1) return;
-        MTCustomScripts.Main.Logger.LogFatal(circles[0]);
-        MTCustomScripts.Main.Logger.LogFatal(circles[1]);
+        // MTCustomScripts.Main.Logger.LogFatal(circles[0]);
+        // MTCustomScripts.Main.Logger.LogFatal(circles[1]);
         
-        MTCustomScripts.Main.Logger.LogFatal(section);
-        MTCustomScripts.Main.Logger.LogFatal(circledSection);
+        // MTCustomScripts.Main.Logger.LogFatal(section);
+        // MTCustomScripts.Main.Logger.LogFatal(circledSection);
 
-        MTCustomScripts.Main.Logger.LogFatal(circles);
+        // MTCustomScripts.Main.Logger.LogFatal(circles);
 
         string circle1 = circles[1].Replace(" ", "");
 
@@ -32,11 +32,11 @@ public class ConsequenceSetWorldPosition: IModularConsequence
 
             foreach(Match match in newTween)
             {
-                MTCustomScripts.Main.Logger.LogFatal(match.Value);
-                MTCustomScripts.Main.Logger.LogFatal(match.Groups[1].Value);
-                MTCustomScripts.Main.Logger.LogFatal(match.Groups[2].Value);
-                MTCustomScripts.Main.Logger.LogFatal(match.Groups[3].Value);
-                MTCustomScripts.Main.Logger.LogFatal(match.Groups[4].Value);
+                // MTCustomScripts.Main.Logger.LogFatal(match.Value);
+                // MTCustomScripts.Main.Logger.LogFatal(match.Groups[1].Value);
+                // MTCustomScripts.Main.Logger.LogFatal(match.Groups[2].Value);
+                // MTCustomScripts.Main.Logger.LogFatal(match.Groups[3].Value);
+                // MTCustomScripts.Main.Logger.LogFatal(match.Groups[4].Value);
                 if (match.Groups[5].Success) MTCustomScripts.Main.Logger.LogFatal(match.Groups[5].Value);
 
                 // float x = int.Parse(match.Groups[1].Value) / 100f;
