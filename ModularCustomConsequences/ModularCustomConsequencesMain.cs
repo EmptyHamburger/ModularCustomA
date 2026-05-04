@@ -360,10 +360,11 @@ public class Main : BasePlugin
             MainClass.acquirerDict["getchangespvalue"] = new MTCustomScripts.Acquirers.AcquirerGetChangedSPValue();
             MainClass.acquirerDict["getmtdata"] = new MTCustomScripts.Acquirers.AcquirerGetMTData();
             MainClass.acquirerDict["getuptielevel"] = new MTCustomScripts.Acquirers.AcquirerGetUptieLevel();
-			      MainClass.acquirerDict["getskillslotindex"] = new MTCustomScripts.Acquirers.AcquirerGetSkillSlotIndex();
-			      MainClass.acquirerDict["issinnerfielded"] = new MTCustomScripts.Acquirers.AcquirerIsSinnerFielded();
+			MainClass.acquirerDict["getskillslotindex"] = new MTCustomScripts.Acquirers.AcquirerGetSkillSlotIndex();
+			MainClass.acquirerDict["issinnerfielded"] = new MTCustomScripts.Acquirers.AcquirerIsSinnerFielded();
             MainClass.acquirerDict["hasskillondashboard"] = new MTCustomScripts.Acquirers.AcquirerHasSkillOnDashboard();
             MainClass.acquirerDict["getworldpos"] = new MTCustomScripts.Acquirers.AcquirerGetWorldPosition();
+            MainClass.acquirerDict["isunitpartofreson"] = new MTCustomScripts.Acquirers.AcquirerIsUnitPartOfReson();
 		} catch (System.Exception ex) { Main.Logger.LogError("Error when loading Acquirers: " + ex); }
 
         try
@@ -416,6 +417,7 @@ public class Main : BasePlugin
             MainClass.consequenceDict["addduel"] = new MTCustomScripts.Consequences.ConsequenceAddDuel();
             MainClass.consequenceDict["changemaintarget"] = new MTCustomScripts.Consequences.ConsequenceChangeMainTarget();
             MainClass.consequenceDict["setworldpos"] = new MTCustomScripts.Consequences.ConsequenceSetWorldPosition();
+            MainClass.consequenceDict["activateegopassive"] = new MTCustomScripts.Consequences.ConsequenceActivateEGOPassive();
 		} catch (System.Exception ex) { Main.Logger.LogError("Error when loading Consequences: " + ex); }
 
         try
