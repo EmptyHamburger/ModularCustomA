@@ -49,11 +49,14 @@ internal class Modular_SetupModular
                     }
                     Main.Instance.keywordTriggerDict[__instance.Pointer.ToInt64()] = parsedKeyword;
                     MainClass.Logg.LogInfo("Parsed keyword trigger for OnGainBuff: " + parsedKeyword.ToString());
-                // }
-                // if (circle_0 == "SpecialAction")
-                // {
-                //     MainClass.Logg.LogInfo("SpecialAction with no parsed key, default to LeftControl");
-                }
+
+					if (!bool.TryParse(hitArgs, out bool result)) result = false;
+					Main.Instance.equipdefense_refreshslotview = result;
+					// }
+					// if (circle_0 == "SpecialAction")
+					// {
+					//     MainClass.Logg.LogInfo("SpecialAction with no parsed key, default to LeftControl");
+				}
 
                 else if (circle_0 == "OnGainBuff")
                 {

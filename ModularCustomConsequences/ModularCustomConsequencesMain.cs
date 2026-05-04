@@ -60,8 +60,9 @@ public class Main : BasePlugin
     public ABILITY_SOURCE_TYPE gainbuff_source = ABILITY_SOURCE_TYPE.NONE;
 
 
-    public System.Collections.Generic.Dictionary<BattleUnitModel, int[]> changeMpDict = []; 
+    public System.Collections.Generic.Dictionary<BattleUnitModel, int[]> changeMpDict = [];
 
+    public bool equipdefense_refreshslotview = false;
 
     public class GlobalLuaValues
     {
