@@ -58,33 +58,36 @@ public class OnEquipDefense
 				}
 			}
 
-			NewOperationSinActionSlot newOperationSinActionSlot = null;
-			foreach (NewOperationSinActionSlot slot in __instance._sinActionSlotList)
+			if (Main.Instance.equipdefense_refreshslotview)
 			{
-				if (slot.SinAction == sinAction)
+				NewOperationSinActionSlot newOperationSinActionSlot = null;
+				foreach (NewOperationSinActionSlot slot in __instance._sinActionSlotList)
 				{
-					newOperationSinActionSlot = slot;
-					break;
+					if (slot.SinAction == sinAction)
+					{
+						newOperationSinActionSlot = slot;
+						break;
+					}
 				}
-			}
-			if (newOperationSinActionSlot != null)
-			{
-				newOperationSinActionSlot.SetData(sinAction, SingletonBehavior<BattleObjectManager>.Instance.GetView(sinAction.UnitModel), false);
-				if (!Singleton<StageController>.Instance.IsAbnormalityBattle())
+				if (newOperationSinActionSlot != null)
 				{
-					__instance.UpdateAllSlotForNormal(false);
+					newOperationSinActionSlot.SetData(sinAction, SingletonBehavior<BattleObjectManager>.Instance.GetView(sinAction.UnitModel), false);
+					if (!Singleton<StageController>.Instance.IsAbnormalityBattle())
+					{
+						__instance.UpdateAllSlotForNormal(false);
+					}
+					NewOperationSinSlot defSlot = newOperationSinActionSlot.GetDefSlot();
+					defSlot?.RevelEquipedDefEffect();
 				}
-				NewOperationSinSlot defSlot = newOperationSinActionSlot.GetDefSlot();
-				defSlot?.RevelEquipedDefEffect();
-			}
 
-			if (sinAction.IsPrevSlotEgoBySwapDefense())
-			{
-				SingletonBehavior<BattleUIRoot>.Instance.UpdateEvilStockByCommand();
-				List<NewOperationSinActionSlot> aliveSinActionSlotList = __instance.GetAliveSinActionSlotList();
-				for (int i = 0; i < aliveSinActionSlotList.Count; i++)
+				if (sinAction.IsPrevSlotEgoBySwapDefense())
 				{
-					aliveSinActionSlotList[i].UpdatePortraitSimpleEgo();
+					SingletonBehavior<BattleUIRoot>.Instance.UpdateEvilStockByCommand();
+					List<NewOperationSinActionSlot> aliveSinActionSlotList = __instance.GetAliveSinActionSlotList();
+					for (int i = 0; i < aliveSinActionSlotList.Count; i++)
+					{
+						aliveSinActionSlotList[i].UpdatePortraitSimpleEgo();
+					}
 				}
 			}
 		}

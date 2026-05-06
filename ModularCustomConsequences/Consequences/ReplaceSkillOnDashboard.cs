@@ -1,7 +1,5 @@
 ﻿using ModularSkillScripts;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace MTCustomScripts.Consequences;
 
@@ -14,30 +12,18 @@ public class ConsequenceReplaceSkillOnDashboard : IModularConsequence
 
 		int sinActionIndex = modular.GetNumFromParamString(circles[1]);
 		int unitSinModelIndex = modular.GetNumFromParamString(circles[2]);
-		int[] skillIDList = new int[circles.Length - 3];
-		for (int i = 3; i < circles.Length; i++) skillIDList[i - 3] = modular.GetNumFromParamString(circles[i]);
+		int skillID = modular.GetNumFromParamString(circles[3]);
 
 		if (sinActionIndex < 0 || unitSinModelIndex < 0)
 		{
-			List<(int, int, int)> skillSlotList = [];
+			List<(int, int)> skillSlotList = [];
 			foreach (SinActionModel sinSlot in unitModel.GetSinActionList())
 			{
 				for (int i = 0; i < sinSlot.currentSinList.Count; i++)
 				{
 					SkillModel skillModel = sinSlot.currentSinList[i].GetSkill();
-					if (skillIDList.Contains(skillModel.GetID()))
-					{
-						goto SkipEverything;
-					}
-
-					if (skillModel.IsDefense() && skillIDList.Contains(sinSlot.GetReplacedSinByDefenseSkill().GetSkill().GetID()))
-					{
-						goto SkipEverything;
-					}
-
-					if (skillModel.IsEgoSkill()) continue;
-
-					skillSlotList.Add(new(sinSlot.GetSlotIndex(), i, skillModel.GetSkillTier()));
+					if (skillModel.IsDefense() || skillModel.IsEgoSkill()) continue;
+					skillSlotList.Add(new(sinSlot.GetSlotIndex(), i));
 				}
 			}
 			skillSlotList.Sort(new SkillComparer());
@@ -46,27 +32,25 @@ public class ConsequenceReplaceSkillOnDashboard : IModularConsequence
 		}
 
 		SinActionModel targetAction = unitModel.GetSinActionList()[sinActionIndex];
-		targetAction.currentSinList[unitSinModelIndex] = new(skillIDList[0], unitModel, targetAction, true);
-	SkipEverything: return;
+		targetAction.currentSinList[unitSinModelIndex] = new(skillID, unitModel, targetAction, true);
 	}
 
-	private class SkillComparer : IComparer<(int, int, int)>
+	private class SkillComparer : IComparer<(int, int)>
 	{
-		public int Compare((int, int, int) x, (int, int, int) y)
+		public int Compare((int, int) x, (int, int) y)
 		{
-			if (x.Item3 > y.Item3)
+			if (x.Item1 < y.Item1)
 			{
-				return 1;
+				return -1;
 			}
-			else if (x.Item3 == y.Item3)
+			else if (x.Item1 == y.Item1)
 			{
-				if (x.Item1 < y.Item1)
+				if (x.Item2 < y.Item2)
 				{
 					return -1;
 				}
-				return 0;
 			}
-			return -1;
+			return 0;
 		}
 	}
 }
