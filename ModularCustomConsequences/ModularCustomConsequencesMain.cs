@@ -40,7 +40,7 @@ public class Main : BasePlugin
 {
     // Edit the below to your own plugin name, version, etc.
     public const string NAME = "MTCustomScripts";
-    public const string VERSION = "17.83.3.39";
+    public const string VERSION = "19.88.3.39";
     public const string AUTHOR = "MT";
     public const string GUID = $"{AUTHOR}.{NAME}";
 
@@ -59,6 +59,7 @@ public class Main : BasePlugin
     public int gainbuff_activeRound = 0;
     public ABILITY_SOURCE_TYPE gainbuff_source = ABILITY_SOURCE_TYPE.NONE;
 
+    public int customParryingMaxCount = 99;
 
     public System.Collections.Generic.Dictionary<BattleUnitModel, int[]> changeMpDict = [];
 
@@ -204,7 +205,7 @@ public class Main : BasePlugin
     {
         public void ExecuteConsequence(ModularSA modular, string section, string circledSection, string[] circles)
         {
-            
+            Singleton<BattleActionModelManager>.Instance.CanParryingContinue(null, null, new ParryingStatus(), 1);
         }
     }
 
@@ -289,6 +290,8 @@ public class Main : BasePlugin
         AddTiming(harmony, typeof(OnUnOpposed), ["OnUnOpposed"], [90917]);
         AddTiming(harmony, typeof(OnEquipDefense), ["OnEquipDefense"], [90918]);
 
+        MainClass.timingDict.Add("SortAction", 73310);
+
         try
         {
             harmony.PatchAll(typeof(Patch_DefenseChange));
@@ -297,6 +300,7 @@ public class Main : BasePlugin
             harmony.PatchAll(typeof(BuffModel_OverwritePanic));
             harmony.PatchAll(typeof(EquipDefenseOperation));
             harmony.PatchAll(typeof(CustomPatch_Mellohi));
+            harmony.PatchAll(typeof(BattleActionModelManager_Patches));
             // harmony.PatchAll(typeof(CoinSlotUI_UpdateCoinColor));
             // harmony.PatchAll(typeof(StyxPatch));
             // harmony.PatchAll(typeof(SystemAbilityDetail_Patch));
@@ -420,6 +424,7 @@ public class Main : BasePlugin
             MainClass.consequenceDict["changemaintarget"] = new MTCustomScripts.Consequences.ConsequenceChangeMainTarget();
             MainClass.consequenceDict["setworldpos"] = new MTCustomScripts.Consequences.ConsequenceSetWorldPosition();
             MainClass.consequenceDict["activateegopassive"] = new MTCustomScripts.Consequences.ConsequenceActivateEGOPassive();
+            MainClass.consequenceDict["setactionindex"] = new MTCustomScripts.Consequences.ConsequenceSetActionIndex();
 		} catch (System.Exception ex) { Main.Logger.LogError("Error when loading Consequences: " + ex); }
 
         try
