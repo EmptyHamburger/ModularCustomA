@@ -48,9 +48,7 @@ public class Main : BasePlugin
     public Regex replaceStringRegex = new Regex(@"\[([^:\[\]]+)(?::([^\[\]]+))?\]", RegexOptions.Compiled);
     public System.Collections.Generic.Dictionary<long, System.Collections.Generic.List<MTModData>> storedMTDataDict = [];
     public System.Collections.Generic.HashSet<int> storedRemoveSkillHash = [];
-
     public int special_slotindex = -11;
-
     public System.Collections.Generic.Dictionary<long, BUFF_UNIQUE_KEYWORD> keywordTriggerDict = [];
     // public BUFF_UNIQUE_KEYWORD keywordTrigger = BUFF_UNIQUE_KEYWORD.None;
     public BUFF_UNIQUE_KEYWORD gainbuff_keyword = BUFF_UNIQUE_KEYWORD.None;
@@ -58,12 +56,11 @@ public class Main : BasePlugin
     public int gainbuff_turn = 0;
     public int gainbuff_activeRound = 0;
     public ABILITY_SOURCE_TYPE gainbuff_source = ABILITY_SOURCE_TYPE.NONE;
-
-    public int customParryingMaxCount = 99;
-
     public System.Collections.Generic.Dictionary<BattleUnitModel, int[]> changeMpDict = [];
-
     public bool equipdefense_refreshslotview = false;
+    public LuaTable actionListDatas = new LuaTable();
+    public ParryingStatus currentParryingStatus;
+    public BattleLog_Parrying currentBattleLog_Parrying;
 
     public class GlobalLuaValues
     {
@@ -181,6 +178,22 @@ public class Main : BasePlugin
         else storedMTDataDict.Add(unit_longptr, [new MTModData(dataID, dataValue, dataSource)]);
     }
 
+    public static void GetDatasFromActionListForAcquirers(Il2CppSystem.Collections.Generic.List<BattleActionModel> actionList)
+    {
+        LuaTable actionListDatas = new LuaTable();
+        int index = 1;
+        foreach(BattleActionModel battleActionModel in actionList)
+        {
+            LuaTable newDict = new LuaTable();
+
+            newDict["SkillID"] = battleActionModel.GetSkillID();
+            newDict["InstID"] = battleActionModel.Model.InstanceID;
+
+            actionListDatas.Insert(index, newDict);
+            index++;
+        }
+    }
+
     public class TestStuffStorage
     {
         private static TestStuffStorage _instance;
@@ -290,7 +303,8 @@ public class Main : BasePlugin
         AddTiming(harmony, typeof(OnUnOpposed), ["OnUnOpposed"], [90917]);
         AddTiming(harmony, typeof(OnEquipDefense), ["OnEquipDefense"], [90918]);
 
-        MainClass.timingDict.Add("SortAction", 73310);
+        MainClass.timingDict.Add("SortAction", 7332);
+        MainClass.timingDict.Add("Parrying", 7333);
 
         try
         {
@@ -327,6 +341,7 @@ public class Main : BasePlugin
             MainClass.luaFunctionDict["listbreakvalues"] = new MTCustomScripts.LuaFunctions.LuaFunctionListBreakSectionValue();
             MainClass.luaFunctionDict["listegoskillids"] = new MTCustomScripts.LuaFunctions.LuaFunctionListEgoSkillIDs();
             MainClass.luaFunctionDict["listskillkeywords"] = new MTCustomScripts.LuaFunctions.LuaFunctionListSkillKeywordList();
+            MainClass.luaFunctionDict["listbattleactions"] = new MTCustomScripts.LuaFunctions.LuaFunctionListBattleActions();
             // MainClass.luaFunctionDict["getrandombuff"] = new LuaFunctionGetRandomBuff(); //Object reference not set to an instance of an object
             // MainClass.luaFunctionDict["listskilltargets"] = new MTCustomScripts.LuaFunctions.LuaFunctionListSkillTargets();
         }
@@ -425,6 +440,7 @@ public class Main : BasePlugin
             MainClass.consequenceDict["setworldpos"] = new MTCustomScripts.Consequences.ConsequenceSetWorldPosition();
             MainClass.consequenceDict["activateegopassive"] = new MTCustomScripts.Consequences.ConsequenceActivateEGOPassive();
             MainClass.consequenceDict["setactionindex"] = new MTCustomScripts.Consequences.ConsequenceSetActionIndex();
+            MainClass.consequenceDict["forceendclash"] = new MTCustomScripts.Consequences.ConsequenceForceEndClash();
 		} catch (System.Exception ex) { Main.Logger.LogError("Error when loading Consequences: " + ex); }
 
         try

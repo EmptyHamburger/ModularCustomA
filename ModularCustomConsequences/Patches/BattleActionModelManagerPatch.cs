@@ -12,13 +12,68 @@ namespace MTCustomScripts.Patches;
 
 public class BattleActionModelManager_Patches
 {
-	// [HarmonyPatch(typeof(BattleActionModelManager), nameof(BattleActionModelManager.Parrying))]
-	// [HarmonyPostfix]
-	// public static void BattleActionModelManager_Parrying_Postfix(BattleActionModel actorAction, BattleActionModel oppoAction, BattleLog_Parrying parryingLog, ref ParryingStatus parryingStatus)
-	// {
-	// 	// parryingStatus.actorParryingLife = 99;
-    //     // parryingStatus.opponentParryingLife = 99;
-	// }
+	[HarmonyPatch(typeof(BattleActionModelManager), nameof(BattleActionModelManager.Parrying))]
+	[HarmonyPostfix]
+	public static void BattleActionModelManager_Parrying_Postfix(BattleActionModel actorAction, BattleActionModel oppoAction, BattleLog_Parrying parryingLog, ref ParryingStatus parryingStatus)
+	{
+		MTCustomScripts.Main.Logger.LogMessage("!!! Parrying PATCH RAN !!!");
+
+		MTCustomScripts.Main.Instance.currentParryingStatus = parryingStatus;
+		MTCustomScripts.Main.Instance.currentBattleLog_Parrying = parryingLog;
+
+		int actevent = MainClass.timingDict["Parrying"];
+
+		BattleUnitModel unit = actorAction.Model;
+
+		SkillModel skillModel = actorAction._skill;
+		long skillmodel_intlong = skillModel.Pointer.ToInt64();
+
+		if (SkillScriptInitPatch.modsaDict.ContainsKey(skillmodel_intlong))
+		{
+			foreach (ModularSA modsa in SkillScriptInitPatch.modsaDict[skillmodel_intlong])
+			{
+				modsa.Enact(unit, skillModel, actorAction, oppoAction, actevent, BATTLE_EVENT_TIMING.NONE);
+			}
+		}
+
+		foreach(PassiveModel passiveModel in unit._passiveDetail.PassiveList)
+		{
+			if (!passiveModel.CheckActiveCondition()) continue;
+			long passiveModel_intlong = passiveModel.Pointer.ToInt64();
+			if (!SkillScriptInitPatch.modpaDict.ContainsKey(passiveModel_intlong)) continue;
+
+			foreach(ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong])
+			{
+				modpa.Enact(unit, skillModel, actorAction, oppoAction, actevent, BATTLE_EVENT_TIMING.NONE);
+			}
+		}
+
+		foreach(PassiveModel passiveModel in unit._passiveDetail.EgoPassiveList)
+		{
+			if (!passiveModel.CheckActiveCondition()) continue;
+			long passiveModel_intlong = passiveModel.Pointer.ToInt64();
+			if (!SkillScriptInitPatch.modpaDict.ContainsKey(passiveModel_intlong)) continue;
+
+			foreach(ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong])
+			{
+				modpa.Enact(unit, skillModel, actorAction, oppoAction, actevent, BATTLE_EVENT_TIMING.NONE);
+			}
+		}
+
+		foreach (BuffModel buffModel in unit._buffDetail.GetActivatedBuffModelAll())
+		{
+			long buffmodel_intlong = buffModel.Pointer.ToInt64();
+			if (!SkillScriptInitPatch.modbaDict.ContainsKey(buffmodel_intlong)) continue;
+
+			foreach (ModularSA modba in SkillScriptInitPatch.modbaDict[buffmodel_intlong])
+			{
+				modba.modsa_buffModel = buffModel;
+				modba.Enact(unit, skillModel, actorAction, oppoAction, actevent, BATTLE_EVENT_TIMING.NONE);
+			}
+		}
+		// parryingStatus.actorParryingLife = 0;
+        // parryingStatus.opponentParryingLife = 0;
+	}
 
 	// [HarmonyPostfix]
 	// static void Postfix(BattleActionModel action, BattleActionModel oppoAction, ParryingStatus parryingStatus, int parryingMaxCount, ref bool __result)
@@ -65,6 +120,8 @@ public class BattleActionModelManager_Patches
 	{
 		MTCustomScripts.Main.Logger.LogMessage("!!! SortAction PATCH RAN !!!");
 		Il2CppSystem.Collections.Generic.List<BattleActionModel> actionList = __instance._actionList;
+
+		MTCustomScripts.Main.GetDatasFromActionListForAcquirers(actionList);
 
 		int actevent = MainClass.timingDict["SortAction"];
 
@@ -124,5 +181,7 @@ public class BattleActionModelManager_Patches
 				}
 			}
 		}
+
+		MTCustomScripts.Main.GetDatasFromActionListForAcquirers(actionList);
 	}
 }
