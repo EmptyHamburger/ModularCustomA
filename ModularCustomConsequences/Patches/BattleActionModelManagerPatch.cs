@@ -20,17 +20,6 @@ public class BattleActionModelManager_Patches
     //     // parryingStatus.opponentParryingLife = 99;
 	// }
 
-	// [HarmonyTargetMethods]
-	// static System.Collections.Generic.IEnumerable<MethodBase> TargetMethods()
-	// {
-	// 	yield return AccessTools.Method(typeof(BattleActionModelManager), "CanParryingContinue", new[] { 
-    //         typeof(BattleActionModel), 
-    //         typeof(BattleActionModel), 
-    //         typeof(ParryingStatus), 
-    //         typeof(int) 
-    //     });
-	// }
-
 	// [HarmonyPostfix]
 	// static void Postfix(BattleActionModel action, BattleActionModel oppoAction, ParryingStatus parryingStatus, int parryingMaxCount, ref bool __result)
 	// {
@@ -77,17 +66,61 @@ public class BattleActionModelManager_Patches
 		MTCustomScripts.Main.Logger.LogMessage("!!! SortAction PATCH RAN !!!");
 		Il2CppSystem.Collections.Generic.List<BattleActionModel> actionList = __instance._actionList;
 
+		int actevent = MainClass.timingDict["SortAction"];
+
+		System.Collections.Generic.List<IntPtr> unitPtrIntList = new();
+
 		foreach(BattleActionModel bam in actionList)
 		{
 			SkillModel skillModel = bam._skill;
 			long skillmodel_intlong = skillModel.Pointer.ToInt64();
 
-			int actevent = MainClass.timingDict["SortAction"];
 			if (SkillScriptInitPatch.modsaDict.ContainsKey(skillmodel_intlong))
 			{
 				foreach (ModularSA modsa in SkillScriptInitPatch.modsaDict[skillmodel_intlong])
 				{
-					modsa.Enact(bam.Model, skillModel, bam, null, actevent, BATTLE_EVENT_TIMING.NONE);
+					modsa.Enact(bam.Model, skillModel, bam, bam.GetMainTargetSinAction()._currentBattleAction, actevent, BATTLE_EVENT_TIMING.NONE);
+				}
+			}
+
+			BattleUnitModel unit = bam._model;
+			if (unitPtrIntList.Contains(unit.Pointer)) continue;
+
+			unitPtrIntList.Add(unit.Pointer);
+
+			foreach(PassiveModel passiveModel in unit._passiveDetail.PassiveList)
+			{
+				if (!passiveModel.CheckActiveCondition()) continue;
+				long passiveModel_intlong = passiveModel.Pointer.ToInt64();
+				if (!SkillScriptInitPatch.modpaDict.ContainsKey(passiveModel_intlong)) continue;
+
+				foreach(ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong])
+				{
+					modpa.Enact(unit, skillModel, bam, bam.GetMainTargetSinAction()._currentBattleAction, actevent, BATTLE_EVENT_TIMING.NONE);
+				}
+			}
+
+			foreach(PassiveModel passiveModel in unit._passiveDetail.EgoPassiveList)
+			{
+				if (!passiveModel.CheckActiveCondition()) continue;
+				long passiveModel_intlong = passiveModel.Pointer.ToInt64();
+				if (!SkillScriptInitPatch.modpaDict.ContainsKey(passiveModel_intlong)) continue;
+
+				foreach(ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong])
+				{
+					modpa.Enact(unit, skillModel, bam, bam.GetMainTargetSinAction()._currentBattleAction, actevent, BATTLE_EVENT_TIMING.NONE);
+				}
+			}
+
+			foreach (BuffModel buffModel in unit._buffDetail.GetActivatedBuffModelAll())
+			{
+				long buffmodel_intlong = buffModel.Pointer.ToInt64();
+				if (!SkillScriptInitPatch.modbaDict.ContainsKey(buffmodel_intlong)) continue;
+
+				foreach (ModularSA modba in SkillScriptInitPatch.modbaDict[buffmodel_intlong])
+				{
+					modba.modsa_buffModel = buffModel;
+					modba.Enact(unit, skillModel, bam, bam.GetMainTargetSinAction()._currentBattleAction, actevent, BATTLE_EVENT_TIMING.NONE);
 				}
 			}
 		}
