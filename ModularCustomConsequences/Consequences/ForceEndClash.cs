@@ -4,15 +4,12 @@ using MTCustomScripts;
 
 namespace MTCustomScripts.Consequences;
 
-public class ConsequenceForceEndClash : IModularConsequence
+public class ConsequenceForceEndDuel : IModularConsequence
 {
     public void ExecuteConsequence(ModularSA modular, string section, string circledSection, string[] circles)
     {
-        ParryingStatus parryingStatus = MTCustomScripts.Main.Instance.currentParryingStatus;
+        MTCustomScripts.Main.Instance.forceEndDuel = true;
         BattleLog_Parrying battleLog_Parrying = MTCustomScripts.Main.Instance.currentBattleLog_Parrying;
-
-        parryingStatus.actorParryingLife = 0;
-        parryingStatus.opponentParryingLife = 0;
 
         string Get(int index) => (circles != null && index < circles.Length) ? circles[index] : null;
 

@@ -59,7 +59,7 @@ public class Main : BasePlugin
     public System.Collections.Generic.Dictionary<BattleUnitModel, int[]> changeMpDict = [];
     public bool equipdefense_refreshslotview = false;
     public LuaTable actionListDatas = new LuaTable();
-    public ParryingStatus currentParryingStatus;
+    public bool forceEndDuel = false;
     public BattleLog_Parrying currentBattleLog_Parrying;
 
     public class GlobalLuaValues
@@ -180,7 +180,7 @@ public class Main : BasePlugin
 
     public static void GetDatasFromActionListForAcquirers(Il2CppSystem.Collections.Generic.List<BattleActionModel> actionList)
     {
-        LuaTable actionListDatas = new LuaTable();
+        Main.Instance.actionListDatas = new LuaTable();
         int index = 1;
         foreach(BattleActionModel battleActionModel in actionList)
         {
@@ -189,7 +189,7 @@ public class Main : BasePlugin
             newDict["SkillID"] = battleActionModel.GetSkillID();
             newDict["InstID"] = battleActionModel.Model.InstanceID;
 
-            actionListDatas.Insert(index, newDict);
+            Main.Instance.actionListDatas.Insert(index, newDict);
             index++;
         }
     }
@@ -440,7 +440,7 @@ public class Main : BasePlugin
             MainClass.consequenceDict["setworldpos"] = new MTCustomScripts.Consequences.ConsequenceSetWorldPosition();
             MainClass.consequenceDict["activateegopassive"] = new MTCustomScripts.Consequences.ConsequenceActivateEGOPassive();
             MainClass.consequenceDict["setactionindex"] = new MTCustomScripts.Consequences.ConsequenceSetActionIndex();
-            MainClass.consequenceDict["forceendclash"] = new MTCustomScripts.Consequences.ConsequenceForceEndClash();
+            MainClass.consequenceDict["forceendduel"] = new MTCustomScripts.Consequences.ConsequenceForceEndDuel();
 		} catch (System.Exception ex) { Main.Logger.LogError("Error when loading Consequences: " + ex); }
 
         try
