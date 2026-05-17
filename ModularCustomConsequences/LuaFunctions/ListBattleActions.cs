@@ -13,7 +13,19 @@ public class LuaFunctionListBattleActions : IModularLuaFunction
 {
     public ValueTask<int> ExecuteLuaFunction(ModularSA modular, LuaFunctionExecutionContext context, System.Span<LuaValue> buffer, CancellationToken ct)
     {
-        buffer[0] = MTCustomScripts.Main.Instance.actionListDatas;
+        LuaTable table = new LuaTable();
+        int index = 1;
+        foreach(BattleActionModel battleActionModel in Singleton<BattleActionModelManager>.Instance._actionList)
+        {
+            LuaTable newDict = new LuaTable();
+
+            newDict["SkillID"] = battleActionModel.GetSkillID();
+            newDict["InstID"] = battleActionModel.Model.InstanceID;
+
+            table[index] = newDict;
+            index++;
+        }
+        buffer[0] = table;
         return ValueTask.FromResult(1);
     }
 }

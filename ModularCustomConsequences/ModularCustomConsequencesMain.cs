@@ -58,7 +58,6 @@ public class Main : BasePlugin
     public ABILITY_SOURCE_TYPE gainbuff_source = ABILITY_SOURCE_TYPE.NONE;
     public System.Collections.Generic.Dictionary<BattleUnitModel, int[]> changeMpDict = [];
     public bool equipdefense_refreshslotview = false;
-    public LuaTable actionListDatas = new LuaTable();
     public bool forceEndDuel = false;
     public BattleLog_Parrying currentBattleLog_Parrying;
 
@@ -178,22 +177,6 @@ public class Main : BasePlugin
         else storedMTDataDict.Add(unit_longptr, [new MTModData(dataID, dataValue, dataSource)]);
     }
 
-    public static void GetDatasFromActionListForAcquirers(Il2CppSystem.Collections.Generic.List<BattleActionModel> actionList)
-    {
-        Main.Instance.actionListDatas = new LuaTable();
-        int index = 1;
-        foreach(BattleActionModel battleActionModel in actionList)
-        {
-            LuaTable newDict = new LuaTable();
-
-            newDict["SkillID"] = battleActionModel.GetSkillID();
-            newDict["InstID"] = battleActionModel.Model.InstanceID;
-
-            Main.Instance.actionListDatas.Insert(index, newDict);
-            index++;
-        }
-    }
-
     public class TestStuffStorage
     {
         private static TestStuffStorage _instance;
@@ -305,7 +288,7 @@ public class Main : BasePlugin
 
         MainClass.timingDict.Add("SortAction", 7332);
         MainClass.timingDict.Add("Parrying", 7333);
-
+        MainClass.timingDict.Add("BeforeRoundStart", 7334);
         try
         {
             harmony.PatchAll(typeof(Patch_DefenseChange));
@@ -315,6 +298,7 @@ public class Main : BasePlugin
             harmony.PatchAll(typeof(EquipDefenseOperation));
             harmony.PatchAll(typeof(CustomPatch_Mellohi));
             harmony.PatchAll(typeof(BattleActionModelManager_Patches));
+            harmony.PatchAll(typeof(PassiveDetail_Patches));
             // harmony.PatchAll(typeof(CoinSlotUI_UpdateCoinColor));
             // harmony.PatchAll(typeof(StyxPatch));
             // harmony.PatchAll(typeof(SystemAbilityDetail_Patch));
@@ -410,7 +394,7 @@ public class Main : BasePlugin
             MainClass.consequenceDict["changesp"] = new MTCustomScripts.Consequences.ConsequenceChangeSp();
             MainClass.consequenceDict["instantdeath"] = new MTCustomScripts.Consequences.ConsequenceInstantDeath();
             // MainClass.consequenceDict["changetakebuffdmg"] = new MTCustomScripts.Consequences.ConsequenceChangeTakeBuffDamage(); //doesnt work
-            MainClass.consequenceDict["lbreak"] = new MTCustomScripts.Consequences.ConsequenceLBreak();
+            MainClass.consequenceDict["lbreak"] = new ModularSkillScripts.Consequence.ConsequenceBreak();
             MainClass.consequenceDict["addcoin"] = new MTCustomScripts.Consequences.ConsequenceAddCoin();
             MainClass.consequenceDict["removecoin"] = new MTCustomScripts.Consequences.ConsequenceRemoveCoin();
             MainClass.consequenceDict["changecolor"] = new MTCustomScripts.Consequences.ConsequenceChangeCoinType();

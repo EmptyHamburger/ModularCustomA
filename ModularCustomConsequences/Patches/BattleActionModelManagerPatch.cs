@@ -33,6 +33,12 @@ public class BattleActionModelManager_Patches
 	// 		foreach (ModularSA modsa in SkillScriptInitPatch.modsaDict[skillmodel_intlong].ToArray())
 	// 		{
 	// 			modsa.Enact(unit, skillModel, actorAction, oppoAction, actevent, BATTLE_EVENT_TIMING.NONE);
+	// 			if (MTCustomScripts.Main.Instance.forceEndDuel)
+	// 			{
+	// 				parryingStatus.actorParryingLife = 0;
+	// 				parryingStatus.opponentParryingLife = 0;
+	// 				MTCustomScripts.Main.Instance.forceEndDuel = false;
+	// 			}
 	// 		}
 	// 	}
 
@@ -45,6 +51,12 @@ public class BattleActionModelManager_Patches
 	// 		foreach(ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong].ToArray())
 	// 		{
 	// 			modpa.Enact(unit, skillModel, actorAction, oppoAction, actevent, BATTLE_EVENT_TIMING.NONE);
+	// 			if (MTCustomScripts.Main.Instance.forceEndDuel)
+	// 			{
+	// 				parryingStatus.actorParryingLife = 0;
+	// 				parryingStatus.opponentParryingLife = 0;
+	// 				MTCustomScripts.Main.Instance.forceEndDuel = false;
+	// 			}
 	// 		}
 	// 	}
 
@@ -57,6 +69,12 @@ public class BattleActionModelManager_Patches
 	// 		foreach(ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong].ToArray())
 	// 		{
 	// 			modpa.Enact(unit, skillModel, actorAction, oppoAction, actevent, BATTLE_EVENT_TIMING.NONE);
+	// 			if (MTCustomScripts.Main.Instance.forceEndDuel)
+	// 			{
+	// 				parryingStatus.actorParryingLife = 0;
+	// 				parryingStatus.opponentParryingLife = 0;
+	// 				MTCustomScripts.Main.Instance.forceEndDuel = false;
+	// 			}
 	// 		}
 	// 	}
 
@@ -69,63 +87,22 @@ public class BattleActionModelManager_Patches
 	// 		{
 	// 			modba.modsa_buffModel = buffModel;
 	// 			modba.Enact(unit, skillModel, actorAction, oppoAction, actevent, BATTLE_EVENT_TIMING.NONE);
+	// 			if (MTCustomScripts.Main.Instance.forceEndDuel)
+	// 			{
+	// 				parryingStatus.actorParryingLife = 0;
+	// 				parryingStatus.opponentParryingLife = 0;
+	// 				MTCustomScripts.Main.Instance.forceEndDuel = false;
+	// 			}
 	// 		}
 	// 	}
-		
-	// 	if (MTCustomScripts.Main.Instance.forceEndDuel)
-	// 	{
-	// 		parryingStatus.actorParryingLife = 0;
-    //     	parryingStatus.opponentParryingLife = 0;
-	// 	}
-	// }
-
-	// [HarmonyPostfix]
-	// static void Postfix(BattleActionModel action, BattleActionModel oppoAction, ParryingStatus parryingStatus, int parryingMaxCount, ref bool __result)
-	// {
-	// 	MTCustomScripts.Main.Logger.LogMessage("!!! CanParryingContinue TARGETMETHODS PATCH RAN !!!");
-	// 	bool flag = true;
-
-	// 	if (!action.Model.IsActionable(action) || 
-	// 		!oppoAction.Model.IsActionable(oppoAction) || 
-	// 		parryingStatus.actorParryingLife <= 0 || 
-	// 		parryingStatus.opponentParryingLife <= 0 || 
-	// 		parryingMaxCount >= 999)
-	// 	{
-	// 		flag = false;
-	// 	}
-
-	// 	__result = flag;
-	// }
-
-	// [HarmonyPatch(typeof(BattleActionModelManager), "CanParryingContinue")]
-	// [HarmonyPrefix]
-	// public static bool BattleActionModelManager_CanParryingContinue(BattleActionModelManager __instance, BattleActionModel action, BattleActionModel oppoAction, ParryingStatus parryingStatus, int parryingMaxCount, ref bool __result)
-	// {
-	// 	MTCustomScripts.Main.Logger.LogMessage("!!! CanParryingContinue PATCH RAN !!!");
-	// 	bool flag = true;
-
-	// 	if (!action.Model.IsActionable(action) || 
-	// 		!oppoAction.Model.IsActionable(oppoAction) || 
-	// 		parryingStatus.actorParryingLife <= 0 || 
-	// 		parryingStatus.opponentParryingLife <= 0 || 
-	// 		parryingMaxCount >= 999)
-	// 	{
-	// 		flag = false;
-	// 	}
-
-	// 	__result = flag;
-
-	// 	return false;
 	// }
 
 	[HarmonyPatch(typeof(BattleActionModelManager), "SortActions")]
 	[HarmonyPostfix]
 	public static void BattleActionModelManager_SortActions(BattleActionModelManager __instance)
 	{
-		MTCustomScripts.Main.Logger.LogMessage("!!! SortAction PATCH RAN !!!");
+		// MTCustomScripts.Main.Logger.LogMessage("!!! SortAction PATCH RAN !!!");
 		Il2CppSystem.Collections.Generic.List<BattleActionModel> actionList = __instance._actionList;
-
-		MTCustomScripts.Main.GetDatasFromActionListForAcquirers(actionList);
 
 		int actevent = MainClass.timingDict["SortAction"];
 
@@ -185,7 +162,5 @@ public class BattleActionModelManager_Patches
 				}
 			}
 		}
-
-		MTCustomScripts.Main.GetDatasFromActionListForAcquirers(actionList);
 	}
 }
