@@ -11,19 +11,9 @@ public class ConsequenceOverwriteAtkResist : IModularConsequence
         if (modelList.Count < 1) return;
 
         int rest = modular.GetNumFromParamString(circles[2]);
-        bool Meth = false;
-        if (circles.Length < 4)
-        {
-            if (rest < 0 || rest > 200)
-            {
-                MainClass.Logg.LogError("Invalid 3rd argument for ovwatkres");
-                return;
-            }
-        }
-        else
-        {
-            Meth = true;
-        }
+        bool Meth = modular.GetBoolFromParamString(circles[3]);
+        bool defaultLimit = false;
+        if (circles.Length > 4) defaultLimit = true;
 
         ATK_BEHAVIOUR atkType;
         Enum.TryParse(circles[1], true, out atkType);
@@ -39,12 +29,14 @@ public class ConsequenceOverwriteAtkResist : IModularConsequence
                 if (res.Type == atkType)
                 {
                     if (Meth)
+                    res.value += resist;
+                    else res.value = resist;
+
+                    if (defaultLimit)
                     {
-                        res.value += resist;
                         if (res.value < 0f) res.value = 0f;
                         if (res.value > 2f) res.value = 2f;
                     }
-                    else res.value = resist;
                     break;
                 }
             }
