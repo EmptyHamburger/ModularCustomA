@@ -64,7 +64,13 @@ public class ConsequenceBetterSkillSend : IModularConsequence
 				fromAction_new.ChangeMainTargetSinAction(targetSinActionList.ToArray()[0], null, true);
 			}
 
-            if (circles.Length > 3) Singleton<BattleActionModelManager>.Instance._actionList.Insert(modular.GetNumFromParamString(circles[3]), fromAction_new);
+            if (circles.Length > 3)
+			{
+				int index = modular.GetNumFromParamString(circles[3]);
+				if (index < 0) index = 0;
+				if (index > Singleton<BattleActionModelManager>.Instance._actionList.Count) index = Singleton<BattleActionModelManager>.Instance._actionList.Count;
+				Singleton<BattleActionModelManager>.Instance._actionList.Insert(index, fromAction_new);
+			}
             else fromUnit.CutInAction(fromAction_new);
 		}
     }
