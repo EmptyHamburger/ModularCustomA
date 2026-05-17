@@ -425,6 +425,7 @@ public class Main : BasePlugin
             MainClass.consequenceDict["activateegopassive"] = new MTCustomScripts.Consequences.ConsequenceActivateEGOPassive();
             MainClass.consequenceDict["setactionindex"] = new MTCustomScripts.Consequences.ConsequenceSetActionIndex();
             MainClass.consequenceDict["forceendduel"] = new MTCustomScripts.Consequences.ConsequenceForceEndDuel();
+            MainClass.consequenceDict["betterskillsend"] = new MTCustomScripts.Consequences.ConsequenceBetterSkillSend();
 		} catch (System.Exception ex) { Main.Logger.LogError("Error when loading Consequences: " + ex); }
 
         try
