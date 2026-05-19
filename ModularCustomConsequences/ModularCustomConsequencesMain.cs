@@ -29,6 +29,8 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Utils;
 using View;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace MTCustomScripts;
 
@@ -299,6 +301,7 @@ public class Main : BasePlugin
             harmony.PatchAll(typeof(CustomPatch_Mellohi));
             harmony.PatchAll(typeof(BattleActionModelManager_Patches));
             harmony.PatchAll(typeof(PassiveDetail_Patches));
+            harmony.PatchAll(typeof(BuffModel_Patches));
             // harmony.PatchAll(typeof(CoinSlotUI_UpdateCoinColor));
             // harmony.PatchAll(typeof(StyxPatch));
             // harmony.PatchAll(typeof(SystemAbilityDetail_Patch));
