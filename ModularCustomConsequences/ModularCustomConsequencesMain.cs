@@ -372,7 +372,8 @@ public class Main : BasePlugin
             MainClass.acquirerDict["hasskillondashboard"] = new MTCustomScripts.Acquirers.AcquirerHasSkillOnDashboard();
             MainClass.acquirerDict["getworldpos"] = new MTCustomScripts.Acquirers.AcquirerGetWorldPosition();
             MainClass.acquirerDict["isunitpartofreson"] = new MTCustomScripts.Acquirers.AcquirerIsUnitPartOfReson();
-            MainClass.acquirerDict["isreusedskill"] = new MTCustomScripts .Acquirers.AcquirerIsReusedSkill();
+            MainClass.acquirerDict["isreusedskill"] = new MTCustomScripts.Acquirers.AcquirerIsReusedSkill();
+            MainClass.acquirerDict["getspeedadder"] = new MTCustomScripts.Acquirers.AcquirerGetSpeedAdder();
 		} catch (System.Exception ex) { Main.Logger.LogError("Error when loading Acquirers: " + ex); }
 
         try
