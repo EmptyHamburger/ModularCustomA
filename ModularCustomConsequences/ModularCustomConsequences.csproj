@@ -10,8 +10,6 @@
 		<LangVersion>10.0</LangVersion>
 		<IsPublishable>True</IsPublishable>
 		<TargetFramework>net6.0</TargetFramework>
-		<Platforms>x64</Platforms>
-		<Configurations>BIE</Configurations>
 		<RunAnalyzersDuringBuild>False</RunAnalyzersDuringBuild>
 		<OutputPath>.\Release</OutputPath>
 		<NoWarn>1701;1702;2211;CA2211;IDE1006;IDE0060</NoWarn>
