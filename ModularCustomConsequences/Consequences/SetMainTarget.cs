@@ -47,7 +47,7 @@ public class ConsequenceSetMainTarget : IModularConsequence
             if (target == null) return;
             Il2CppSystem.Collections.Generic.List<SinActionModel> actionList = Singleton<SinManager>.Instance.GetActionListByUnit(target);
             if (actionList.Count < 1) return;
-            modular.modsa_selfAction._targetDataDetail.GetCurrentTargetSet()._mainTarget = new TargetSinActionData(actionList[1]);
+            modular.modsa_selfAction._targetDataDetail.GetCurrentTargetSet()._mainTarget = new TargetSinActionData(actionList[0]);
         }
     }
 }
