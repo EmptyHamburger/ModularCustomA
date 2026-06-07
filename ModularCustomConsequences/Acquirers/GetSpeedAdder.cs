@@ -9,7 +9,7 @@ public class AcquirerGetSpeedAdder : IModularAcquirer
 		BattleUnitModel target = modular.GetTargetModel(circles[0]);
 		if (target == null) return -1;
 
-		if (circles[1] != null)
+		if (circles.Length >= 2)
 		{
 			if (circles[1] == "min") return target.GetMinSpeedAdder();
 			else if (circles[1] == "max") return target.GetMaxSpeedAdder();
