@@ -47,7 +47,7 @@ internal class RightAfterGetAnyBuff
 
                 modpa.modsa_passiveModel = passiveModel;
                 // modpa.Enact(__instance, null, null, actionOrNull, actevent, timing);
-                modpa.Enact(__instance, actionOrNull.Skill, null, actionOrNull, actevent, timing);
+                modpa.Enact(__instance, null, null, actionOrNull, actevent, timing);
             }
         }
 
@@ -67,7 +67,7 @@ internal class RightAfterGetAnyBuff
                 
                 modpa.modsa_passiveModel = passiveModel;
                 // modpa.Enact(__instance, null, null, actionOrNull, actevent, timing);
-                modpa.Enact(__instance, actionOrNull.Skill, null, actionOrNull, actevent, timing);
+                modpa.Enact(__instance, null, null, actionOrNull, actevent, timing);
             }
         }
 
@@ -79,7 +79,7 @@ internal class RightAfterGetAnyBuff
             foreach (ModularSA modba in SkillScriptInitPatch.modbaDict[buffmodel_intlong])
             {
                 modba.modsa_buffModel = buffModel;
-                modba.Enact(__instance, actionOrNull.Skill, null, actionOrNull, actevent, timing);
+                modba.Enact(__instance, null, null, actionOrNull, actevent, timing);
             }
         }
     }
