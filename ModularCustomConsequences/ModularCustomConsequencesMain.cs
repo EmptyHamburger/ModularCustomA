@@ -287,8 +287,9 @@ public class Main : BasePlugin
         AddTiming(harmony, typeof(ChangeSP), ["OnChangeSP", "OnOtherChangeSP", "OnTakeSPDamage", "OnOtherTakeSPDamage"], [90913, 90914, 90915, 90916]);
         AddTiming(harmony, typeof(OnUnOpposed), ["OnUnOpposed"], [90917]);
         AddTiming(harmony, typeof(OnEquipDefense), ["OnEquipDefense"], [90918]);
+		AddTiming(harmony, typeof(OnUseBuff), ["OnUseBuff"], [90919]);
 
-        MainClass.timingDict.Add("SortAction", 7332);
+		MainClass.timingDict.Add("SortAction", 7332);
         MainClass.timingDict.Add("Parrying", 7333);
         MainClass.timingDict.Add("BeforeRoundStart", 7334);
         try
