@@ -423,6 +423,12 @@ public class Main : BasePlugin
             HarmonyPatchType.Postfix,
             "ModularSkillScripts");
 
+        harmony.Unpatch(typeof(BattleUnitModel).GetMethod(
+            "OnUseBuff",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic),
+            HarmonyPatchType.Postfix,
+            "ModularSkillScripts");
+
         AddTiming(harmony, typeof(GetSkillIdsPatch), null, null);
 
         AddTiming(harmony, typeof(RecoverSwitchPanic), ["OnPanic", "OnOtherPanic", "OnLowMorale", "OnOtherLowMorale"], [90901, 90902, 90903, 90904]);
