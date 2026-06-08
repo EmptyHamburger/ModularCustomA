@@ -423,11 +423,11 @@ public class Main : BasePlugin
             HarmonyPatchType.Postfix,
             "ModularSkillScripts");
 
-        harmony.Unpatch(typeof(BattleUnitModel).GetMethod(
-            "OnUseBuff",
-            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic),
-            HarmonyPatchType.Postfix,
-            "ModularSkillScripts");
+        // harmony.Unpatch(typeof(BattleUnitModel).GetMethod(
+        //     "OnUseBuff",
+        //     System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic),
+        //     HarmonyPatchType.Postfix,
+        //     "ModularSkillScripts");
 
         AddTiming(harmony, typeof(GetSkillIdsPatch), null, null);
 
@@ -438,7 +438,7 @@ public class Main : BasePlugin
         AddTiming(harmony, typeof(ChangeSP), ["OnChangeSP", "OnOtherChangeSP", "OnTakeSPDamage", "OnOtherTakeSPDamage"], [90913, 90914, 90915, 90916]);
         AddTiming(harmony, typeof(OnUnOpposed), ["OnUnOpposed"], [90917]);
         AddTiming(harmony, typeof(OnEquipDefense), ["OnEquipDefense"], [90918]);
-		AddTiming(harmony, typeof(OnUseBuff), ["OnUseBuff"], [90919]);
+		// AddTiming(harmony, typeof(OnUseBuff), ["OnUseBuff"], [90919]);
 
 		MainClass.timingDict.Add("SortAction", 7332);
         MainClass.timingDict.Add("Parrying", 7333);
