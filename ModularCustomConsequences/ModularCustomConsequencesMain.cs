@@ -31,6 +31,7 @@ using Utils;
 using View;
 using System.Diagnostics;
 using System.Reflection;
+using System.Text;
 
 namespace MTCustomScripts;
 
@@ -62,6 +63,7 @@ public class Main : BasePlugin
     public bool equipdefense_refreshslotview = false;
     public bool forceEndDuel = false;
     public BattleLog_Parrying currentBattleLog_Parrying;
+    public static System.Collections.Generic.Dictionary<BuffModel, System.Collections.Generic.HashSet<string>> dl_activePathsDict = new ();
 
     public class GlobalLuaValues
     {
@@ -145,6 +147,149 @@ public class Main : BasePlugin
                     return LuaValue.Nil;
             }
         }
+    }
+
+    public static void DynamicLocale_ActivatePath(BuffModel buffModel, params string[] path)
+    {
+        if (path == null || path.Length == 0) return;
+
+        if (!dl_activePathsDict.ContainsKey(buffModel))
+        dl_activePathsDict[buffModel] = new System.Collections.Generic.HashSet<string>();
+
+        string currentPath = "";
+        for (int i = 0; i < path.Length; i++)
+        {
+            currentPath += (i == 0? "" : "-") + path[i];
+            dl_activePathsDict[buffModel].Add(currentPath);
+        }
+    }
+
+    public static void DynamicLocale_DeactivtePath(BuffModel buffModel, params string[] path)
+    {
+        if (path == null || path.Length == 0) return;
+
+        if (!dl_activePathsDict.TryGetValue(buffModel, out System.Collections.Generic.HashSet<string> activePaths)) return;
+
+        string targetPath = "";
+        for (int i = 0; i < path.Length; i++)
+        targetPath += (i == 0 ? "" : "-") + path[i];
+
+        activePaths.Remove(targetPath);
+
+        string subPathIndicator = targetPath + "-";
+        activePaths.RemoveWhere(path => path.StartsWith(subPathIndicator));
+    }
+
+    public static void DynamicLocale_ClearOneActivePaths(BuffModel buffModel)
+    {
+        if (dl_activePathsDict.ContainsKey(buffModel))
+        dl_activePathsDict[buffModel].Clear();
+    }
+
+    public static string DynamicLocale_ParseActivePaths(string origin, ref int stringIndex, string parentPath, System.Collections.Generic.HashSet<string> activePaths)
+    {
+        StringBuilder parsedStr_Builder = new StringBuilder();
+
+        while (stringIndex < origin.Length)
+        {
+            if (origin[stringIndex] == '[')
+            {
+                int closeBlockIndex = origin.IndexOf(']', stringIndex);
+                
+                if (closeBlockIndex != -1 && closeBlockIndex + 1 < origin.Length && origin[closeBlockIndex + 1] == '(')
+                {
+                    string strPathIndex = origin.Substring(stringIndex + 1, closeBlockIndex - stringIndex - 1);
+                    
+                    if (int.TryParse(strPathIndex, out int nextPathIndex))
+                    {
+                        string currentPath = string.IsNullOrEmpty(parentPath) ? nextPathIndex.ToString() : $"{parentPath}-{nextPathIndex}";
+                        bool isActive = activePaths.Contains(currentPath);
+
+                        stringIndex = closeBlockIndex + 2;
+
+                        if (isActive)
+                        {
+                            string subPathContent = DynamicLocale_ParseActivePaths(origin, ref stringIndex, currentPath, activePaths);
+                            parsedStr_Builder.Append(subPathContent);
+                        }
+                        else
+                        {
+                            int nestedContentCount = 1;
+                            while (stringIndex < origin.Length && nestedContentCount > 0)
+                            {
+                                if (origin[stringIndex] == '[')
+                                {
+                                    int closeBlockIndex2 = origin.IndexOf(']', stringIndex);
+                                    if (closeBlockIndex2 != -1 && closeBlockIndex2 + 1 < origin.Length && origin[closeBlockIndex2 + 1] == '(') //[](
+                                    {
+                                        nestedContentCount++;
+                                        stringIndex = closeBlockIndex2 + 2;
+                                        continue;
+                                    }
+                                }
+                                else if (origin[stringIndex] == ')') nestedContentCount--;
+
+                                stringIndex++;
+                            }
+                        }
+                        continue; 
+                    }
+                }
+            }
+            else if (origin[stringIndex] == ')')
+            {
+                stringIndex++; 
+                return parsedStr_Builder.ToString(); 
+            }
+
+            parsedStr_Builder.Append(origin[stringIndex]);
+            stringIndex++;
+        }
+
+        return parsedStr_Builder.ToString();
+    }
+
+    public static string DynamicLocale_ParseCustomProperties(BuffModel buffModel, string origin)
+    {
+        if (!Regex.IsMatch(origin, @"<!([^>]+)>")) return origin;
+
+        return Regex.Replace(origin, @"<!([^>]+)>", match =>
+        {
+            string propertyName = match.Groups[1].Value;
+            string modelName = "";
+            
+            if (propertyName.StartsWith("inst") && int.TryParse(propertyName.Substring(4), out int instID))
+            {
+                modelName = SingletonBehavior<BattleObjectManager>.Instance.GetModel(instID).GetName().Replace("\n", " ");
+            }
+
+            if (modelName != "") return modelName;
+            
+            return propertyName switch
+            {
+                "POTENCY0" => buffModel.GetStack(0).ToString(),
+                "POTENCY1" => buffModel.GetStack(1).ToString(),
+                "POTENCY2" => buffModel.GetAllStack().ToString(),
+                "COUNT0" => buffModel.GetTurn(0).ToString(),
+                "COUNT1" => buffModel.GetTurn(1).ToString(),
+                "COUNT2" => buffModel.GetAllTurn().ToString(),
+                "NAME" => buffModel.GetName(),
+                _ => propertyName
+            };
+        });
+    }
+
+    public static string DynamicLocale_GetModifiedLocale(BuffModel buffModel, string vanillaLocale)
+    {
+        if (string.IsNullOrEmpty(vanillaLocale)) return vanillaLocale;
+
+        System.Collections.Generic.HashSet<string> activePaths = dl_activePathsDict.ContainsKey(buffModel) ? dl_activePathsDict[buffModel] : new System.Collections.Generic.HashSet<string>();
+
+        int stringIndex = 0;
+        string finalResult = DynamicLocale_ParseActivePaths(vanillaLocale, ref stringIndex, "", activePaths);
+        finalResult = DynamicLocale_ParseCustomProperties(buffModel, finalResult);
+
+        return finalResult;
     }
 
     public static string GetCustomMTData(long unit_longptr, string dataID, string dataSource = null)
@@ -302,6 +447,7 @@ public class Main : BasePlugin
             harmony.PatchAll(typeof(BattleActionModelManager_Patches));
             harmony.PatchAll(typeof(PassiveDetail_Patches));
             harmony.PatchAll(typeof(BuffModel_Patches));
+            harmony.PatchAll(typeof(StageModel_Patch));
             // harmony.PatchAll(typeof(CoinSlotUI_UpdateCoinColor));
             // harmony.PatchAll(typeof(StyxPatch));
             // harmony.PatchAll(typeof(SystemAbilityDetail_Patch));
@@ -430,6 +576,10 @@ public class Main : BasePlugin
             MainClass.consequenceDict["setactionindex"] = new MTCustomScripts.Consequences.ConsequenceSetActionIndex();
             MainClass.consequenceDict["forceendduel"] = new MTCustomScripts.Consequences.ConsequenceForceEndDuel();
             MainClass.consequenceDict["betterskillsend"] = new MTCustomScripts.Consequences.ConsequenceBetterSkillSend();
+
+            MainClass.consequenceDict["dlactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleActivatePath();
+            MainClass.consequenceDict["dldeactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleDeactivatePath();
+            MainClass.consequenceDict["dlclearallactivepaths"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleClearOneActivePaths();
 		} catch (System.Exception ex) { Main.Logger.LogError("Error when loading Consequences: " + ex); }
 
         try
