@@ -227,6 +227,7 @@ public class Main : BasePlugin
                                         continue;
                                     }
                                 }
+                                else if (origin[stringIndex] == '(') nestedContentCount++;
                                 else if (origin[stringIndex] == ')') nestedContentCount--;
 
                                 stringIndex++;
@@ -235,6 +236,22 @@ public class Main : BasePlugin
                         continue; 
                     }
                 }
+            }
+            else if (origin[stringIndex] == '(')
+            {
+                parsedStr_Builder.Append(origin[stringIndex]);
+                stringIndex++;
+
+                int closeBracketCountRemain = 1;
+                while (stringIndex < origin.Length && closeBracketCountRemain > 0)
+                {
+                    if (origin[stringIndex] == '(') closeBracketCountRemain++;
+                    if (origin[stringIndex] == ')') closeBracketCountRemain--;
+
+                    parsedStr_Builder.Append(origin[stringIndex]);
+                    stringIndex++;
+                }
+                continue;
             }
             else if (origin[stringIndex] == ')')
             {
