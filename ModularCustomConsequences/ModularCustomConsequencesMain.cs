@@ -43,7 +43,7 @@ public class Main : BasePlugin
 {
     // Edit the below to your own plugin name, version, etc.
     public const string NAME = "MTCustomScripts";
-    public const string VERSION = "21.94.4.39";
+    public const string VERSION = "21.94.4";
     public const string AUTHOR = "MT";
     public const string GUID = $"{AUTHOR}.{NAME}";
 
@@ -63,7 +63,7 @@ public class Main : BasePlugin
     public bool equipdefense_refreshslotview = false;
     public bool forceEndDuel = false;
     public BattleLog_Parrying currentBattleLog_Parrying;
-    public static System.Collections.Generic.Dictionary<BuffModel, System.Collections.Generic.HashSet<string>> dl_activePathsDict = new ();
+    public static System.Collections.Generic.Dictionary<BuffModel, System.Collections.Generic.HashSet<string>> dl_activePathsDict = new();
 
     public class GlobalLuaValues
     {
@@ -100,7 +100,7 @@ public class Main : BasePlugin
             gvars = new System.Collections.Generic.Dictionary<string, LuaValue>();
         }
     }
-    
+
     public static class Decode
 
     {
@@ -154,12 +154,12 @@ public class Main : BasePlugin
         if (path == null || path.Length == 0) return;
 
         if (!dl_activePathsDict.ContainsKey(buffModel))
-        dl_activePathsDict[buffModel] = new System.Collections.Generic.HashSet<string>();
+            dl_activePathsDict[buffModel] = new System.Collections.Generic.HashSet<string>();
 
         string currentPath = "";
         for (int i = 0; i < path.Length; i++)
         {
-            currentPath += (i == 0? "" : "-") + path[i];
+            currentPath += (i == 0 ? "" : "-") + path[i];
             dl_activePathsDict[buffModel].Add(currentPath);
         }
     }
@@ -172,7 +172,7 @@ public class Main : BasePlugin
 
         string targetPath = "";
         for (int i = 0; i < path.Length; i++)
-        targetPath += (i == 0 ? "" : "-") + path[i];
+            targetPath += (i == 0 ? "" : "-") + path[i];
 
         activePaths.Remove(targetPath);
 
@@ -183,7 +183,7 @@ public class Main : BasePlugin
     public static void DynamicLocale_ClearOneActivePaths(BuffModel buffModel)
     {
         if (dl_activePathsDict.ContainsKey(buffModel))
-        dl_activePathsDict[buffModel].Clear();
+            dl_activePathsDict[buffModel].Clear();
     }
 
     public static string DynamicLocale_ParseActivePaths(string origin, ref int stringIndex, string parentPath, System.Collections.Generic.HashSet<string> activePaths)
@@ -195,11 +195,11 @@ public class Main : BasePlugin
             if (origin[stringIndex] == '[')
             {
                 int closeBlockIndex = origin.IndexOf(']', stringIndex);
-                
+
                 if (closeBlockIndex != -1 && closeBlockIndex + 1 < origin.Length && origin[closeBlockIndex + 1] == '(')
                 {
                     string strPathIndex = origin.Substring(stringIndex + 1, closeBlockIndex - stringIndex - 1);
-                    
+
                     if (int.TryParse(strPathIndex, out int nextPathIndex))
                     {
                         string currentPath = string.IsNullOrEmpty(parentPath) ? nextPathIndex.ToString() : $"{parentPath}-{nextPathIndex}";
@@ -233,7 +233,7 @@ public class Main : BasePlugin
                                 stringIndex++;
                             }
                         }
-                        continue; 
+                        continue;
                     }
                 }
             }
@@ -255,8 +255,8 @@ public class Main : BasePlugin
             }
             else if (origin[stringIndex] == ')')
             {
-                stringIndex++; 
-                return parsedStr_Builder.ToString(); 
+                stringIndex++;
+                return parsedStr_Builder.ToString();
             }
 
             parsedStr_Builder.Append(origin[stringIndex]);
@@ -274,14 +274,14 @@ public class Main : BasePlugin
         {
             string propertyName = match.Groups[1].Value;
             string modelName = "";
-            
+
             if (propertyName.StartsWith("inst") && int.TryParse(propertyName.Substring(4), out int instID))
             {
                 modelName = SingletonBehavior<BattleObjectManager>.Instance.GetModel(instID).GetName().Replace("\n", " ");
             }
 
             if (modelName != "") return modelName;
-            
+
             return propertyName switch
             {
                 "POTENCY0" => buffModel.GetStack(0).ToString(),
@@ -374,13 +374,13 @@ public class Main : BasePlugin
         public void ExecuteConsequence(ModularSA modular, string section, string circledSection, string[] circles)
         {
             CoinSlotListUI coinList = UnityEngine.Object.FindObjectOfType<CoinSlotListUI>();
-            foreach(CoinSlotUI coinSlotUI in coinList._slots)
+            foreach (CoinSlotUI coinSlotUI in coinList._slots)
             {
                 coinSlotUI.UpdateCoinColor(new Color(0f, 0.5f, 0.5f));
             }
         }
     }
-    
+
     public class AcquirerTest : IModularAcquirer
     {
         public int ExecuteAcquirer(ModularSA modular, string section, string circledSection, string[] circles)
@@ -398,7 +398,7 @@ public class Main : BasePlugin
             BattleUnitModel target = modular.GetTargetModel(context.GetArgument(0).Read<string>());
             if (target == null) return ValueTask.FromResult(0);
             Enum.TryParse<BUF_TYPE>(context.GetArgument(1).Read<string>(), true, out BUF_TYPE bufType);
-            Il2CppSystem.Nullable<bool> canBeDespelled = context.ArgumentCount > 2 ? new Il2CppSystem.Nullable<bool>(context.GetArgument(2).Read<bool>()) : null; 
+            Il2CppSystem.Nullable<bool> canBeDespelled = context.ArgumentCount > 2 ? new Il2CppSystem.Nullable<bool>(context.GetArgument(2).Read<bool>()) : null;
             buffer[0] = target.GetRandomBuff(bufType, canBeDespelled)._name.ToString();
             return ValueTask.FromResult(1);
         }
@@ -411,17 +411,17 @@ public class Main : BasePlugin
             if (harmony != null && patch != null) harmony.PatchAll(patch);
             if (timingList != null && actEvents != null)
             {
-                for (int i = 0; i < timingList.Length; i++) 
+                for (int i = 0; i < timingList.Length; i++)
                 {
                     if (!MainClass.timingDict.TryGetValue(timingList[i], out int timingId))
-                    MainClass.timingDict.Add(timingList[i], actEvents[i]);
+                        MainClass.timingDict.Add(timingList[i], actEvents[i]);
                 }
             }
         }
         catch (System.Exception ex) { Main.Logger.LogError($"Error on timing with names = {string.Join('/', timingList)}\n{ex}"); }
     }
-    
-    
+
+
 
     public static Main Instance;
 
@@ -455,9 +455,9 @@ public class Main : BasePlugin
         AddTiming(harmony, typeof(ChangeSP), ["OnChangeSP", "OnOtherChangeSP", "OnTakeSPDamage", "OnOtherTakeSPDamage"], [90913, 90914, 90915, 90916]);
         AddTiming(harmony, typeof(OnUnOpposed), ["OnUnOpposed"], [90917]);
         AddTiming(harmony, typeof(OnEquipDefense), ["OnEquipDefense"], [90918]);
-		// AddTiming(harmony, typeof(OnUseBuff), ["OnUseBuff"], [90919]);
+        // AddTiming(harmony, typeof(OnUseBuff), ["OnUseBuff"], [90919]);
 
-		MainClass.timingDict.Add("SortAction", 7332);
+        MainClass.timingDict.Add("SortAction", 7332);
         MainClass.timingDict.Add("Parrying", 7333);
         MainClass.timingDict.Add("BeforeRoundStart", 7334);
         try
@@ -476,7 +476,7 @@ public class Main : BasePlugin
             // harmony.PatchAll(typeof(StyxPatch));
             // harmony.PatchAll(typeof(SystemAbilityDetail_Patch));
             // harmony.PatchAll(typeof(RightAfterGiveBuffBySkill));
-            
+
             // harmony.PatchAll(typeof(RightAfterGetAnyBuff));
             // MainClass.timingDict.Add("OnGainBuff", 1337);
             // MainClass.timingDict.Add("OnInflictBuff", 1733);
@@ -537,14 +537,15 @@ public class Main : BasePlugin
             MainClass.acquirerDict["getchangespvalue"] = new MTCustomScripts.Acquirers.AcquirerGetChangedSPValue();
             MainClass.acquirerDict["getmtdata"] = new MTCustomScripts.Acquirers.AcquirerGetMTData();
             MainClass.acquirerDict["getuptielevel"] = new MTCustomScripts.Acquirers.AcquirerGetUptieLevel();
-			MainClass.acquirerDict["getskillslotindex"] = new MTCustomScripts.Acquirers.AcquirerGetSkillSlotIndex();
-			MainClass.acquirerDict["issinnerfielded"] = new MTCustomScripts.Acquirers.AcquirerIsSinnerFielded();
+            MainClass.acquirerDict["getskillslotindex"] = new MTCustomScripts.Acquirers.AcquirerGetSkillSlotIndex();
+            MainClass.acquirerDict["issinnerfielded"] = new MTCustomScripts.Acquirers.AcquirerIsSinnerFielded();
             MainClass.acquirerDict["hasskillondashboard"] = new MTCustomScripts.Acquirers.AcquirerHasSkillOnDashboard();
             MainClass.acquirerDict["getworldpos"] = new MTCustomScripts.Acquirers.AcquirerGetWorldPosition();
             MainClass.acquirerDict["isunitpartofreson"] = new MTCustomScripts.Acquirers.AcquirerIsUnitPartOfReson();
             MainClass.acquirerDict["isreusedskill"] = new MTCustomScripts.Acquirers.AcquirerIsReusedSkill();
             MainClass.acquirerDict["getspeedadder"] = new MTCustomScripts.Acquirers.AcquirerGetSpeedAdder();
-		} catch (System.Exception ex) { Main.Logger.LogError("Error when loading Acquirers: " + ex); }
+        }
+        catch (System.Exception ex) { Main.Logger.LogError("Error when loading Acquirers: " + ex); }
 
         try
         {
@@ -588,11 +589,11 @@ public class Main : BasePlugin
             MainClass.consequenceDict["setmaxhp"] = new MTCustomScripts.Consequences.ConsequenceSetMaxHp();
             MainClass.consequenceDict["addcoinabilitybasicbuff"] = new MTCustomScripts.Consequences.ConsequenceAddCoinAbilityBasicBuff();
             MainClass.consequenceDict["setmtdata"] = new MTCustomScripts.Consequences.ConsequenceSetMTData();
-			MainClass.consequenceDict["addkeyword"] = new MTCustomScripts.Consequences.ConsequenceAddKeyword();
-			MainClass.consequenceDict["clearalltempskillabilities"] = new MTCustomScripts.Consequences.ConsequenceClearAllTempSkillAbilities();
-			MainClass.consequenceDict["replaceallaffinity"] = new MTCustomScripts.Consequences.ConsequenceReplaceAllAffinity();
-			MainClass.consequenceDict["replaceskillondashboard"] = new MTCustomScripts.Consequences.ConsequenceReplaceSkillOnDashboard();
-			MainClass.consequenceDict["upgradeskillondashboard"] = new MTCustomScripts.Consequences.ConsequenceUpgradeSkillOnDashboard();
+            MainClass.consequenceDict["addkeyword"] = new MTCustomScripts.Consequences.ConsequenceAddKeyword();
+            MainClass.consequenceDict["clearalltempskillabilities"] = new MTCustomScripts.Consequences.ConsequenceClearAllTempSkillAbilities();
+            MainClass.consequenceDict["replaceallaffinity"] = new MTCustomScripts.Consequences.ConsequenceReplaceAllAffinity();
+            MainClass.consequenceDict["replaceskillondashboard"] = new MTCustomScripts.Consequences.ConsequenceReplaceSkillOnDashboard();
+            MainClass.consequenceDict["upgradeskillondashboard"] = new MTCustomScripts.Consequences.ConsequenceUpgradeSkillOnDashboard();
             MainClass.consequenceDict["addduel"] = new MTCustomScripts.Consequences.ConsequenceAddDuel();
             MainClass.consequenceDict["changemaintarget"] = new MTCustomScripts.Consequences.ConsequenceChangeMainTarget();
             MainClass.consequenceDict["setworldpos"] = new MTCustomScripts.Consequences.ConsequenceSetWorldPosition();
@@ -604,7 +605,8 @@ public class Main : BasePlugin
             MainClass.consequenceDict["dlactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleActivatePath();
             MainClass.consequenceDict["dldeactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleDeactivatePath();
             MainClass.consequenceDict["dlclearallactivepaths"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleClearOneActivePaths();
-		} catch (System.Exception ex) { Main.Logger.LogError("Error when loading Consequences: " + ex); }
+        }
+        catch (System.Exception ex) { Main.Logger.LogError("Error when loading Consequences: " + ex); }
 
         try
         {
@@ -614,6 +616,7 @@ public class Main : BasePlugin
             // MainClass.consequenceDict["test"] = new ConsequenceTest();
             // MainClass.consequenceDict["testthree"] = new ConsequenceTest3();
             // MainClass.consequenceDict["reload"] = new ConsequenceReload();
-        } catch (System.Exception ex) { Main.Logger.LogError("Error when loading Test Consequences/Acquirers: " + ex); }
+        }
+        catch (System.Exception ex) { Main.Logger.LogError("Error when loading Test Consequences/Acquirers: " + ex); }
     }
 }
