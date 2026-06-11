@@ -24,7 +24,7 @@ public class AcquirerHasBuffKeyword : IModularAcquirer
         if (circles[1] != "current")
         {
             BUFF_UNIQUE_KEYWORD var1Keyword = CustomBuffs.ParseBuffUniqueKeyword(circles[1]);
-            if (bum._buffDetail.HasBuff(var1Keyword) == true) selectedBuff = bum._buffDetail.FindActivatedBuff(var1Keyword, true);
+            if (bum._buffDetail.HasBuff(var1Keyword) == true) selectedBuff = bum._buffDetail.FindActivatedBuff(var1Keyword, false);
         }
         if (selectedBuff == null) selectedBuff = modular.modsa_buffModel;
 
