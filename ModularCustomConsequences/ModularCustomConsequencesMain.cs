@@ -43,7 +43,7 @@ public class Main : BasePlugin
 {
     // Edit the below to your own plugin name, version, etc.
     public const string NAME = "MTCustomScripts";
-    public const string VERSION = "21.94.4";
+    public const string VERSION = "22.94.4";
     public const string AUTHOR = "MT";
     public const string GUID = $"{AUTHOR}.{NAME}";
 
@@ -460,6 +460,8 @@ public class Main : BasePlugin
         MainClass.timingDict.Add("SortAction", 7332);
         MainClass.timingDict.Add("Parrying", 7333);
         MainClass.timingDict.Add("BeforeRoundStart", 7334);
+        MainClass.timingDict.Add("WaitCommand", 7335);
+
         try
         {
             harmony.PatchAll(typeof(Patch_DefenseChange));
@@ -472,6 +474,7 @@ public class Main : BasePlugin
             harmony.PatchAll(typeof(PassiveDetail_Patches));
             harmony.PatchAll(typeof(BuffModel_Patches));
             harmony.PatchAll(typeof(StageModel_Patch));
+
             // harmony.PatchAll(typeof(CoinSlotUI_UpdateCoinColor));
             // harmony.PatchAll(typeof(StyxPatch));
             // harmony.PatchAll(typeof(SystemAbilityDetail_Patch));
