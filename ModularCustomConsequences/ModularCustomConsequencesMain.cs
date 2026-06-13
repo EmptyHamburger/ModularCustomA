@@ -547,6 +547,7 @@ public class Main : BasePlugin
             MainClass.acquirerDict["isunitpartofreson"] = new MTCustomScripts.Acquirers.AcquirerIsUnitPartOfReson();
             MainClass.acquirerDict["isreusedskill"] = new MTCustomScripts.Acquirers.AcquirerIsReusedSkill();
             MainClass.acquirerDict["getspeedadder"] = new MTCustomScripts.Acquirers.AcquirerGetSpeedAdder();
+            MainClass.acquirerDict["gettimingid"] = new MTCustomScripts.Acquirers.AcquirerGetTimingID();
         }
         catch (System.Exception ex) { Main.Logger.LogError("Error when loading Acquirers: " + ex); }
 
@@ -604,6 +605,7 @@ public class Main : BasePlugin
             MainClass.consequenceDict["setactionindex"] = new MTCustomScripts.Consequences.ConsequenceSetActionIndex();
             MainClass.consequenceDict["forceendduel"] = new MTCustomScripts.Consequences.ConsequenceForceEndDuel();
             MainClass.consequenceDict["betterskillsend"] = new MTCustomScripts.Consequences.ConsequenceBetterSkillSend();
+            MainClass.consequenceDict["setskill"] = new MTCustomScripts.Consequences.ConsequenceSetSkill();
 
             MainClass.consequenceDict["dlactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleActivatePath();
             MainClass.consequenceDict["dldeactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleDeactivatePath();

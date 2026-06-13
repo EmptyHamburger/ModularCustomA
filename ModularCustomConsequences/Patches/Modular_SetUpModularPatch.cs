@@ -5,7 +5,7 @@ using ModularSkillScripts;
 namespace MTCustomScripts.Patches;
 
 internal class Modular_SetupModular
-{   
+{
     [HarmonyPatch(typeof(ModularSA), nameof(ModularSA.SetupModular))]
 	[HarmonyPrefix]
 	private static void Prefix_ModularSA_SetupModular(string instructions, ModularSA __instance)
@@ -17,13 +17,13 @@ internal class Modular_SetupModular
 
         for (int i = 0; i < batches.Length; i++) {
             string batch = batches[i];
-            if (MainClass.logEnabled) MainClass.Logg.LogInfo("MT's PATCH: batch " + i.ToString() + ": " + batch);
+            // if (MainClass.logEnabled) MainClass.Logg.LogInfo("MT's PATCH: batch " + i.ToString() + ": " + batch);
             if (batch.StartsWith("TIMING:")) {
                 string timingArg = batch.Remove(0, 7);
                 string[] circles = timingArg.Split(__instance.parenthesisSeparator);
                 string circle_0 = circles[0];
                 if (MainClass.timingDict.ContainsKey(circle_0)) __instance.activationTiming = MainClass.timingDict[circle_0];
-                    
+
                 if (circles.Length > 1)
                 {
                     string hitArgs = circles[1];
