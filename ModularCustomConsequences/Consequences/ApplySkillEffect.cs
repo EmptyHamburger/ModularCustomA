@@ -39,20 +39,20 @@ public class ConsequenceApplySkillEffect : IModularConsequence
             case "Top":
                 nosas._secondSinSlot._effectManager.SetActiveEffect_OneType(effectType, isActive, null);
                 nosas._secondSinSlot._effectManager.SetEffectAlpha(effectType, alphaValue / 100f);
-                nosas._secondSinSlot._effectManager.SetEffectScale(effectType, new Vector3(x, y, z));
+                nosas._secondSinSlot._effectManager.SetEffectScale(effectType, new Vector3(x/100f, y/100f, z/100f));
                 break;
             case "Bottom":
                 nosas._firstSinSlot._effectManager.SetActiveEffect_OneType(effectType, isActive, null);
                 nosas._firstSinSlot._effectManager.SetEffectAlpha(effectType, alphaValue / 100f);
-                nosas._firstSinSlot._effectManager.SetEffectScale(effectType, new Vector3(x, y, z));
+                nosas._firstSinSlot._effectManager.SetEffectScale(effectType, new Vector3(x/100f, y/100f, z/100f));
                 break;
             default:
                 nosas._firstSinSlot._effectManager.SetActiveEffect_OneType(effectType, isActive, null);
                 nosas._secondSinSlot._effectManager.SetActiveEffect_OneType(effectType, isActive, null);
                 nosas._firstSinSlot._effectManager.SetEffectAlpha(effectType, alphaValue / 100f);
                 nosas._secondSinSlot._effectManager.SetEffectAlpha(effectType, alphaValue / 100f);
-                nosas._firstSinSlot._effectManager.SetEffectScale(effectType, new Vector3(x, y, z));
-                nosas._secondSinSlot._effectManager.SetEffectScale(effectType, new Vector3(x, y, z));
+                nosas._firstSinSlot._effectManager.SetEffectScale(effectType, new Vector3(x/100f, y/100f, z/100f));
+                nosas._secondSinSlot._effectManager.SetEffectScale(effectType, new Vector3(x/100f, y/100f, z/100f));
                 break;
             }
         }
