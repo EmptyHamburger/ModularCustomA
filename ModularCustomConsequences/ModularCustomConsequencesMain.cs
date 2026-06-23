@@ -43,7 +43,7 @@ public class Main : BasePlugin
 {
     // Edit the below to your own plugin name, version, etc.
     public const string NAME = "MTCustomScripts";
-    public const string VERSION = "22.96.4";
+    public const string VERSION = "22.97.4";
     public const string AUTHOR = "MT";
     public const string GUID = $"{AUTHOR}.{NAME}";
 
@@ -548,6 +548,7 @@ public class Main : BasePlugin
             MainClass.acquirerDict["isreusedskill"] = new MTCustomScripts.Acquirers.AcquirerIsReusedSkill();
             MainClass.acquirerDict["getspeedadder"] = new MTCustomScripts.Acquirers.AcquirerGetSpeedAdder();
             MainClass.acquirerDict["gettimingid"] = new MTCustomScripts.Acquirers.AcquirerGetTimingID();
+            MainClass.acquirerDict["hasskilleffect"] = new MTCustomScripts.Acquirers.AcquirerHasSkillEffect();
         }
         catch (System.Exception ex) { Main.Logger.LogError("Error when loading Acquirers: " + ex); }
 
