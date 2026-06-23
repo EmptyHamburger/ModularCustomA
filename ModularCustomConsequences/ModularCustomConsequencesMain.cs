@@ -43,7 +43,7 @@ public class Main : BasePlugin
 {
     // Edit the below to your own plugin name, version, etc.
     public const string NAME = "MTCustomScripts";
-    public const string VERSION = "22.95.4";
+    public const string VERSION = "22.96.4";
     public const string AUTHOR = "MT";
     public const string GUID = $"{AUTHOR}.{NAME}";
 
@@ -606,6 +606,9 @@ public class Main : BasePlugin
             MainClass.consequenceDict["forceendduel"] = new MTCustomScripts.Consequences.ConsequenceForceEndDuel();
             MainClass.consequenceDict["betterskillsend"] = new MTCustomScripts.Consequences.ConsequenceBetterSkillSend();
             MainClass.consequenceDict["setskill"] = new MTCustomScripts.Consequences.ConsequenceSetSkill();
+            MainClass.consequenceDict["hideskill"] = new MTCustomScripts.Consequences.ConsequenceHideSkill();
+            MainClass.consequenceDict["setparryingclosetype"] = new MTCustomScripts.Consequences.ConsequenceSetParryingCloseType();
+            MainClass.consequenceDict["applyskilleffect"] = new MTCustomScripts.Consequences.ConsequenceApplySkillEffect();
 
             MainClass.consequenceDict["dlactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleActivatePath();
             MainClass.consequenceDict["dldeactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleDeactivatePath();
