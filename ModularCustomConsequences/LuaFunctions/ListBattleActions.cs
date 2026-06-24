@@ -13,20 +13,20 @@ public class LuaFunctionListBattleActions : IModularLuaFunction
 {
     public ValueTask<int> ExecuteLuaFunction(ModularSA modular, LuaFunctionExecutionContext context, System.Span<LuaValue> buffer, CancellationToken ct)
     {
-        // LuaTable table2 = new LuaTable();
-        // int index = 1;
-        // foreach(BattleActionModel battleActionModel in Singleton<BattleActionModelManager>.Instance._actionList)
-        // {
-        //     LuaTable newDict = new LuaTable();
+        LuaTable table = new LuaTable();
+        int index = 1;
+        foreach(BattleActionModel battleActionModel in Singleton<BattleActionModelManager>.Instance._actionList)
+        {
+            LuaTable newDict = new LuaTable();
 
-        //     newDict["SkillID"] = battleActionModel.GetSkillID();
-        //     newDict["InstID"] = battleActionModel.Model.InstanceID;
-        //     newDict["SkillType"] = battleActionModel.Skill.skillData.
+            newDict["SkillID"] = battleActionModel.GetSkillID();
+            newDict["InstID"] = battleActionModel.Model.InstanceID;
+            // newDict["SkillType"] = battleActionModel.Skill.skillData._skillEgoType;
 
-        //     // table2[index] = newDict;
-        //     // index++;
-        // }
-        // buffer[0] = table2;
+            table[index] = newDict;
+            index++;
+        }
+        buffer[0] = table;
         return ValueTask.FromResult(1);
     }
 }
