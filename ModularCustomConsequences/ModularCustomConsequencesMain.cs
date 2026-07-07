@@ -43,7 +43,7 @@ public class Main : BasePlugin
 {
     // Edit the below to your own plugin name, version, etc.
     public const string NAME = "MTCustomScripts";
-    public const string VERSION = "22.97.4";
+    public const string VERSION = "22.98.4";
     public const string AUTHOR = "MT";
     public const string GUID = $"{AUTHOR}.{NAME}";
 
@@ -64,6 +64,7 @@ public class Main : BasePlugin
     public bool forceEndDuel = false;
     public BattleLog_Parrying currentBattleLog_Parrying;
     public static System.Collections.Generic.Dictionary<BuffModel, System.Collections.Generic.HashSet<string>> dl_activePathsDict = new();
+    public static System.Collections.Generic.Dictionary<BuffModel, System.Collections.Generic.Dictionary<string, string>> dl_overwritePathValue = new();
 
     public class GlobalLuaValues
     {
@@ -164,6 +165,20 @@ public class Main : BasePlugin
         }
     }
 
+    public static void DynamicLocale_SetTextBlockValue(BuffModel buffModel, string val, params string[] path)
+    {
+        if (path == null || path.Length == 0) return;
+
+        if (!dl_overwritePathValue.ContainsKey(buffModel))
+        dl_overwritePathValue[buffModel] = new System.Collections.Generic.Dictionary<string, string>();
+
+        string targetPath = "";
+        for (int i = 0; i < path.Length; i++)
+            targetPath += (i == 0 ? "" : "-") + path[i];
+
+        dl_overwritePathValue[buffModel][targetPath] = val;
+    }
+
     public static void DynamicLocale_DeactivtePath(BuffModel buffModel, params string[] path)
     {
         if (path == null || path.Length == 0) return;
@@ -183,10 +198,13 @@ public class Main : BasePlugin
     public static void DynamicLocale_ClearOneActivePaths(BuffModel buffModel)
     {
         if (dl_activePathsDict.ContainsKey(buffModel))
-            dl_activePathsDict[buffModel].Clear();
+        dl_activePathsDict[buffModel].Clear();
+
+        if (dl_overwritePathValue.ContainsKey(buffModel))
+        dl_overwritePathValue[buffModel].Clear();
     }
 
-    public static string DynamicLocale_ParseActivePaths(string origin, ref int stringIndex, string parentPath, System.Collections.Generic.HashSet<string> activePaths)
+    public static string DynamicLocale_ParseActivePaths(string origin, ref int stringIndex, string parentPath, System.Collections.Generic.HashSet<string> activePaths, System.Collections.Generic.Dictionary<string, string> overwriteBlocks = null)
     {
         StringBuilder parsedStr_Builder = new StringBuilder();
 
@@ -205,15 +223,25 @@ public class Main : BasePlugin
                         string currentPath = string.IsNullOrEmpty(parentPath) ? nextPathIndex.ToString() : $"{parentPath}-{nextPathIndex}";
                         bool isActive = activePaths.Contains(currentPath);
 
+                        string overwriteText = "";
+                        bool hasOverwrite = overwriteBlocks != null && overwriteBlocks.TryGetValue(currentPath, out overwriteText);
+
                         stringIndex = closeBlockIndex + 2;
 
-                        if (isActive)
+                        if (isActive && !hasOverwrite)
                         {
                             string subPathContent = DynamicLocale_ParseActivePaths(origin, ref stringIndex, currentPath, activePaths);
                             parsedStr_Builder.Append(subPathContent);
                         }
                         else
                         {
+                            if (isActive && hasOverwrite)
+                            {
+                                int overwriteTextIdx = 0;
+                                string parsedOverwriteText = DynamicLocale_ParseActivePaths(overwriteText, ref overwriteTextIdx, currentPath, activePaths, overwriteBlocks);
+                                parsedStr_Builder.Append(parsedOverwriteText);
+                            }
+                            
                             int nestedContentCount = 1;
                             while (stringIndex < origin.Length && nestedContentCount > 0)
                             {
@@ -301,9 +329,10 @@ public class Main : BasePlugin
         if (string.IsNullOrEmpty(vanillaLocale)) return vanillaLocale;
 
         System.Collections.Generic.HashSet<string> activePaths = dl_activePathsDict.ContainsKey(buffModel) ? dl_activePathsDict[buffModel] : new System.Collections.Generic.HashSet<string>();
+        System.Collections.Generic.Dictionary<string, string> overwriteBlocks = dl_overwritePathValue.ContainsKey(buffModel) ? dl_overwritePathValue[buffModel] : null;
 
         int stringIndex = 0;
-        string finalResult = DynamicLocale_ParseActivePaths(vanillaLocale, ref stringIndex, "", activePaths);
+        string finalResult = DynamicLocale_ParseActivePaths(vanillaLocale, ref stringIndex, "", activePaths, overwriteBlocks);
         finalResult = DynamicLocale_ParseCustomProperties(buffModel, finalResult);
 
         return finalResult;
@@ -614,6 +643,7 @@ public class Main : BasePlugin
             MainClass.consequenceDict["dlactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleActivatePath();
             MainClass.consequenceDict["dldeactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleDeactivatePath();
             MainClass.consequenceDict["dlclearallactivepaths"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleClearOneActivePaths();
+            MainClass.consequenceDict["dlsetonepathvalue"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleSetOnePathValue();
         }
         catch (System.Exception ex) { Main.Logger.LogError("Error when loading Consequences: " + ex); }
 

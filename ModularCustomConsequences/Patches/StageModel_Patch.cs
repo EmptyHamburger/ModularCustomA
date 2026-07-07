@@ -13,6 +13,7 @@ public class StageModel_Patch
     public static void Prefix_StageModel_Init(StageModel __instance)
     {
         MTCustomScripts.Main.dl_activePathsDict.Clear();
+        MTCustomScripts.Main.dl_overwritePathValue.Clear();
     }
 
     [HarmonyPatch(typeof(StageModel), nameof(StageModel.OnStageEnd))]
@@ -20,6 +21,7 @@ public class StageModel_Patch
     public static void Prefix_StageModel_OnStageEnd(StageModel __instance)
     {
         MTCustomScripts.Main.dl_activePathsDict.Clear();
+        MTCustomScripts.Main.dl_overwritePathValue.Clear();
     }
 
     [HarmonyPatch(typeof(Data), nameof(Data.LoadCustomLocale), new[] { typeof(LOCALIZE_LANGUAGE) })]
@@ -27,6 +29,7 @@ public class StageModel_Patch
     public static void Postfix_Data_LoadCustomLocale(Data __instance)
     {
         MTCustomScripts.Main.dl_activePathsDict.Clear();
+        MTCustomScripts.Main.dl_overwritePathValue.Clear();
     }
 
     [HarmonyPatch(typeof(StageController), nameof(StageController.FixedUpdate))]
