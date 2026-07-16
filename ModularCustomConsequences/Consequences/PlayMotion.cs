@@ -11,7 +11,19 @@ public class ConsequencePlayMotion : IModularConsequence
         BattleUnitModel fromUnit = modular.GetTargetModel(circles[0]);
         if (fromUnit == null || fromUnit.IsDead()) return;
         string motion_detail = circles[1];
+        string has_zoom = circles[3];
+
         var appearance = SingletonBehavior<BattleObjectManager>.Instance.GetViewByUnitID(fromUnit._originID).Appearance;
+        
+        if (!string.IsNullOrEmpty(has_zoom))
+            {
+                var view = SingletonBehavior<BattleObjectManager>.Instance.GetViewByUnitID(fromUnit._originID).Appearance.GetView();
+                List<BattleUnitView> ViewUnits = new List<BattleUnitView>();
+                ViewUnits.Add(view);
+                ViewFocusInfo viewInfo = new ViewFocusInfo(view, ViewUnits);
+                SingletonBehavior<BattleCamManager>.Instance.AddFocusingTarget(viewInfo);
+            }
+
         MOTION_DETAIL motion = (MOTION_DETAIL)Enum.Parse(typeof(MOTION_DETAIL), motion_detail);
         int index = -1;
         if (circles.Length > 2 && !string.IsNullOrEmpty(circles[2]))
