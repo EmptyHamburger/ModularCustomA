@@ -12,11 +12,6 @@ public class ConsequencePlayMotion : IModularConsequence
         if (fromUnit == null || fromUnit.IsDead()) return;
         string motion_detail = circles[1];
         var appearance = SingletonBehavior<BattleObjectManager>.Instance.GetViewByUnitID(fromUnit._originID).Appearance;
-        var view = SingletonBehavior<BattleObjectManager>.Instance.GetViewByUnitID(fromUnit._originID).Appearance.GetView();
-        List<BattleUnitView> ViewUnits = new List<BattleUnitView>();
-        ViewUnits.Add(view);
-        ViewFocusInfo viewInfo = new ViewFocusInfo(view, ViewUnits);
-        SingletonBehavior<BattleCamManager>.Instance.AddFocusingTarget(viewInfo);
         MOTION_DETAIL motion = (MOTION_DETAIL)Enum.Parse(typeof(MOTION_DETAIL), motion_detail);
         int index = -1;
         if (circles.Length > 2 && !string.IsNullOrEmpty(circles[2]))
