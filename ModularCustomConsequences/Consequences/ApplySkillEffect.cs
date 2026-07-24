@@ -4,6 +4,8 @@ using System;
 using BattleUI;
 using BattleUI.Operation;
 using UnityEngine;
+using MTCustomScripts;
+
 namespace MTCustomScripts.Consequences;
 
 public class ConsequenceApplySkillEffect : IModularConsequence
@@ -32,7 +34,7 @@ public class ConsequenceApplySkillEffect : IModularConsequence
 
         foreach(BattleUnitModel unit in targetList)
         {
-            NewOperationSinActionSlot nosas = SingletonBehavior<BattleUIRoot>.Instance.NewOperationController.GetSinActionSlot(unit.GetSinActionList()[slotIdx]);
+            NewOperationSinActionSlot nosas = (slotIdx == -1) ? SingletonBehavior<BattleUIRoot>.Instance.NewOperationController.GetSinActionSlot(unit.GetSinActionList()[MTCustomScripts.Main.lastSinSlotIndex]) : SingletonBehavior<BattleUIRoot>.Instance.NewOperationController.GetSinActionSlot(unit.GetSinActionList()[slotIdx]);
 
             switch (topOrBottom)
             {

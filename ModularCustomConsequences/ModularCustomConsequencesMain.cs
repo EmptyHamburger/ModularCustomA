@@ -43,7 +43,7 @@ public class Main : BasePlugin
 {
     // Edit the below to your own plugin name, version, etc.
     public const string NAME = "MTCustomScripts";
-    public const string VERSION = "22.99.4";
+    public const string VERSION = "22.100.4";
     public const string AUTHOR = "MT";
     public const string GUID = $"{AUTHOR}.{NAME}";
 
@@ -65,6 +65,7 @@ public class Main : BasePlugin
     public BattleLog_Parrying currentBattleLog_Parrying;
     public static System.Collections.Generic.Dictionary<BuffModel, System.Collections.Generic.HashSet<string>> dl_activePathsDict = new();
     public static System.Collections.Generic.Dictionary<BuffModel, System.Collections.Generic.Dictionary<string, string>> dl_overwritePathValue = new();
+    public static int lastSinSlotIndex = 0;
 
     public class GlobalLuaValues
     {
@@ -490,6 +491,7 @@ public class Main : BasePlugin
         MainClass.timingDict.Add("Parrying", 7333);
         MainClass.timingDict.Add("BeforeRoundStart", 7334);
         MainClass.timingDict.Add("WaitCommand", 7335);
+        MainClass.timingDict.Add("OnDeSelectSin", 7336);
 
         try
         {
@@ -503,6 +505,7 @@ public class Main : BasePlugin
             harmony.PatchAll(typeof(PassiveDetail_Patches));
             harmony.PatchAll(typeof(BuffModel_Patches));
             harmony.PatchAll(typeof(StageModel_Patch));
+            harmony.PatchAll(typeof(SinActionModelPatches));
 
             // harmony.PatchAll(typeof(CoinSlotUI_UpdateCoinColor));
             // harmony.PatchAll(typeof(StyxPatch));
@@ -641,6 +644,7 @@ public class Main : BasePlugin
             MainClass.consequenceDict["applyskilleffect"] = new MTCustomScripts.Consequences.ConsequenceApplySkillEffect();
             MainClass.consequenceDict["swapdeploymentorder"] = new MTCustomScripts.Consequences.ConsequenceSwapDeploymentOrder();
             MainClass.consequenceDict["playmotion"] = new MTCustomScripts.Consequences.ConsequencePlayMotion();
+            MainClass.consequenceDict["changeanimspeed"] = new MTCustomScripts.Consequences.ConsequenceChangeAnimSpeed();
 
             MainClass.consequenceDict["dlactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleActivatePath();
             MainClass.consequenceDict["dldeactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleDeactivatePath();
