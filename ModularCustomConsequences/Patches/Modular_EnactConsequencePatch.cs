@@ -7,7 +7,6 @@ using MTCustomScripts;
 
 internal class Modular_EnactConsequence
 {
-
     private static readonly Regex matchReg = Main.Instance.replaceStringRegex;
 
 

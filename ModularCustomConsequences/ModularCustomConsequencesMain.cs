@@ -32,6 +32,8 @@ using View;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
+using System.Collections;
+using Il2CppInterop.Runtime.Injection;
 
 namespace MTCustomScripts;
 
@@ -434,7 +436,7 @@ public class Main : BasePlugin
         }
     }
 
-    public void AddTiming(Harmony harmony, Type patch, string[] timingList, int[] actEvents)
+    public static void AddTiming(Harmony harmony, Type patch, string[] timingList, int[] actEvents)
     {
         try
         {
@@ -450,8 +452,6 @@ public class Main : BasePlugin
         }
         catch (System.Exception ex) { Main.Logger.LogError($"Error on timing with names = {string.Join('/', timingList)}\n{ex}"); }
     }
-
-
 
     public static Main Instance;
 

@@ -1,7 +1,7 @@
 ---@meta
 
 --[[
-    MTCustomScripts Version: v22.95.4
+    MTCustomScripts Version: v22.100.4
 ]]
 
 --#region Aliases
@@ -155,7 +155,211 @@
 --- | 1 if the unit is staggered (Stagger)
 --- | 2 if the unit is staggered+ (Stagger+)
 --- | 3 if the unit is staggered++ (Stagger++)
---#endregion
+
+--- @alias DataType
+--- | "Scale" returns the coin power
+--- | "ScaleAdder" returns the additional coin power (returns -1 if the the skill is not used this Turn) 
+--- | "Final" returns the Final Power (returns -1 if the skill does not target a skill)
+--- | "Clash" returns the Clash Power (returns -1 if the skill does not target a skill)
+--- | "Weight" return the Attack Weight (returns -1 if the skill does not target a skill) 
+--- | "ogWeight" returns the original Attack Weight
+--- | "Evade" returns the additional Evade Power (returns -1 if the skill is not used this Turn, or does not target a skill)
+--- | "Default" returns the skill Base Power 
+--- | "Motion" returns the skill Motion (refer to the enum, will be added later) 
+--- | "Level" returns the skill Level 
+--- | "SkillAtkLevel" returns the skill Offense Level 
+--- | "DefType" same as `getskilldeftype()`
+--- | "AtkType" same as `getskillatk()`
+--- | "Rank" same as `getskillrank()`
+--- | "Fixed" same as `getskillfixedtarget()`
+--- | "Attribute" same as `getskillattribute()`
+--- | "EgoType" same as `getskillegotype()`
+--- | "IsAction" returns 1 if the skill is being used this Turn 
+--- | "UseCount" returns the amount of time the skill is being used this Turn 
+--- | "TargetClash" returns the Clash Power of the skill this is clashing with (returns -1 if the skill is not used this Turn, or does not target a skill)
+--- | "TargetType" returns the type of the skill target (refer to the enum, will be added later) (returns -1 if the the skill is not used this Turn) 
+--- | "TargetCount" returns the amount of Targets (returns -1 if the the skill is not used this Turn)
+--- | "RealTargetCount" returns the amount of Targets (Was added in case TargetCount bugs) (returns -1 if the the skill is not used this Turn) 
+--- | "IsTargettingName" returns if the skill is targetting a unit with a specific name (returns -1 if the the skill is not used this Turn)
+--- | "IsTargettingUniqueName" returns if the skill is targetting a unit with a specific unique name (returns -1 if the the skill is not used this Turn)
+--- | "IsTargettingID" returns if the skill is targetting a unit with a specific ID (returns -1 if the the skill is not used this Turn)
+--- | "IsTargettingMainName" returns if the skill main target has a specific name (returns -1 if the the skill is not used this Turn)
+--- | "IsTargettingMainUniqueName" returns if the skill main target has a specific unqiue name (returns -1 if the the skill is not used this Turn)
+--- | "IsTargettingMainID" returns if the skill main target has a specific ID (returns -1 if the the skill is not used this Turn)
+--- | "ID" returns the skill ID
+
+--- @alias VarSkillData
+--- | "MTCustomScripts's Target-Coin"
+--- | "MTCustomScripts's Single-Coin" used for `ScaleAdder` and `Clash`
+--- | "MTCustomScripts's Multi-Coin" used for `Final`
+--- | "Name" used for `IsTargettingName and `IsTargettingMainName`
+--- | "UniqueName" used for `IsTargettingUniqueName` and `IsTargettingMainUniqueName`
+--- | "ID" used for `IsTargettingID`and `IsTargettingMainID`
+
+--- @alias LoopType
+--- | "Restart" When a loop ends it will restart from the beginning (Default)
+--- | "Yoyo" When a loop ends it will play backwards until it completes another loop, then forward again, then backwards again, and so on and on and on
+--- | "Incremental" Each time a loop ends the difference between its endValue and its startValue will be added to the endValue, thus creating tweens that increase their values with each loop cycle
+
+--- @alias ResonReturnType
+--- | 1 when the selected unit is part of the sinType resonance. If sinType is not valid, it will instead try to check if the selected unit is a part of the highest resonance instead
+--- | -1 when the selected unit can't be found
+
+--- @alias SkillSendOption
+--- | integer Any skill ID
+--- | "S#" # being the skill tier
+--- | "D#" # being the defense skill index
+
+--- @alias TimingID
+--- | 0 StartBattle
+--- | 1 WhenUse
+--- | 2 BeforeAttack
+--- | 3 StartDuel
+--- | 4 WinDuel
+--- | 5 DefeatDuel
+--- | 6 EndBattle
+--- | 7 OnSucceedAttack
+--- | 8 WhenHit
+--- | 9 EndSkill
+--- | 10 FakePower
+--- | 11 BeforeDefense
+--- | 12 OnDie
+--- | 13 OnOtherDie
+--- | 14 DuelClash
+--- | 15 DuelClashAfter
+--- | 16 OnSucceedEvade
+--- | 17 OnDefeatEvade
+--- | 18 OnStartBehaviour
+--- | 19 BeforeBehaviour
+--- | 20 OnEndBehaviour
+--- | 21 EnemyKill
+--- | 22 OnBreak
+--- | 23 OnOtherBreak
+--- | 24 OnDiscard
+--- | 25 OnZeroHP
+--- | 26 EnemyEndSkill
+--- | 27 OnOtherBurst
+--- | 28 BeforeSA
+--- | 29 BeforeWhenHit
+--- | 30 BeforeUse
+--- | 31 Immortal
+--- | 32 ImmortalOther
+--- | 33 SpecialAction
+--- | 34 AfterSlots
+--- | 35 OnCoinToss
+--- | 36 StartBattleSkill
+--- | 37 OnBurst
+--- | 38 StartVisualCoinToss
+--- | 39 StartVisualSkillUse
+--- | 40 WhenGained
+--- | 41 ChangeMotion
+--- | 42 IgnorePanic
+--- | 43 IgnoreBreak
+--- | 44 OnRetreat
+--- | 45 OnGainBuff
+--- | 46 OnUseBuff
+--- | 47 EncounterStart
+--- | 48 WinParrying
+--- | 49 DefeatParrying
+--- | 50 ChangeTakeDamage
+--- | 51 OnCoinAfterAttack
+--- | 52 EnemyBeforeAttack
+--- | 53 AfterChangeShield
+--- | 54 AfterChangeHP
+--- | 55 CanDealTarget
+--- | 56 DelayedStart
+--- | 57 StartVisualDuelEnd
+--- | 58 StartVisualGiveDamage
+--- | 59 StartVisualDuel
+--- | 60 StartVisualDie
+--- | 61 StartVisualPartDestroy
+--- | 62 StartVisualChaseTarget
+--- | 63 BufMaxStackAdder
+--- | 64 BufMaxTurnAdder
+--- | 65 ChangeAttackDamage
+--- | 7332 SortAction
+--- | 7333 Parrying
+--- | 7334 BeforeRoundStart
+--- | 7335 WaitCommand
+--- | 90901 OnPanic
+--- | 90902 OnOtherPanic
+--- | 90903 OnLowMorale
+--- | 90904 OnOtherLowMorale
+--- | 90905 OnRecoverBreak
+--- | 90906 OnOtherRecoverBreak
+--- | 90907 OnTakePiledVibration
+--- | 90908 OnOtherTakePiledVibration
+--- | 90909 OnTakeSwitchingVibration
+--- | 90910 OnOtherTakeSwitchingVibration
+--- | 90911 OnLoseBuff
+--- | 90912 OnBeforeLoseBuff
+--- | 90913 OnChangeSP
+--- | 90914 OnOtherChangeSP
+--- | 90915 OnTakeSPDamage
+--- | 90916 OnOtherTakeSPDamage
+--- | 90917 OnUnOpposed
+--- | 90918 OnEquipDefense
+
+--- @alias EffectType
+--- | "OVERCLOCK_STABLE" Corrosion stable effect (CAN'T BE APPLIED TO TOP SLOT)
+--- | "OVERCLOCK_UNSTABLE" Corrosion unstable effect (CAN'T BE APPLIED TO TOP SLOT)
+--- | "BINAH_EGO" Superbia EGO effect (CAN'T BE APPLIED TO TOP SLOT)
+--- | "INDEX_FINGER" Mark of the Prescript effect
+--- | "RING_FAVUISM_TEST" Ring fauvist effect (ring rodya critique shiny effect thing)
+
+--- @alias MotionID
+--- | "Default" 
+--- | "Dead" 
+--- | "Evade" 
+--- | "Guard" 
+--- | "Damaged" 
+--- | "Move" 
+--- | "Attack" 
+--- | "S1" 
+--- | "S2" 
+--- | "S3" 
+--- | "S4" 
+--- | "S5" 
+--- | "S6" 
+--- | "S7" 
+--- | "S8" 
+--- | "S9" 
+--- | "S10" 
+--- | "Parrying" 
+--- | "Idle" 
+--- | "Parrying_Range" 
+--- | "Special1" 
+--- | "Special2" 
+--- | "Special3" 
+--- | "Parrying_Lose" 
+--- | "S11" 
+--- | "S12" 
+--- | "S13" 
+--- | "S14" 
+--- | "S15" 
+--- | "S16" 
+--- | "S17" 
+--- | "S18" 
+--- | "S19" 
+--- | "S20" 
+--- | "S21" 
+--- | "Empty" 
+--- | "Duel_Ready" 
+--- | "Duel_Win" 
+--- | "Duel_Lose" 
+--- | "Damaged_2" 
+--- | "Damaged_3" 
+--- | "Duel_Ready_Actor" 
+--- | "Duel_Ready_Target" 
+--- | "Duel_Compation" 
+--- | "Retire" 
+--- | "Retreat" 
+--- | "UnRetreat"
+
+--- @alias ListRelatedKeywordsMode
+--- | "sub" sub keywords
+--- | "category" category keywords
+--- --#endregion
 
 --#region Acquisitions and Consequences
 
@@ -420,114 +624,357 @@ function removecoin(Single_Target, ...) return end
 ---@param Amount integer --the Amount of the Skill in the pool
 function addskill(Multi_Target, SkillID, Level, Uptie, Amount) return end
 
+---Remove a skill permanently. Does not remove base skill in the UI for the "Summary" tab
+---@param Multi_Target string --Modular's Multi-Target
+---@param Multi_Skill string --MTCustomScripts's Multi-Skill
 function removeskill(Multi_Target, Multi_Skill) return end
 
+---@param Single_Target string --Modular's Single-Target
+---@param SkillID integer --The Skill ID
+---@return integer --If the target has the skill then returns 1, else returns 0
+---@nodiscard
 function hasskill(Single_Target, SkillID) return 0 end
 
+---@param Single_Target string --Modular's Single-Target
+---@param Single_Skill string --MTCustomScripts's Single-Skill
+---@param DataType DataType --The type of data to return
+---@param Var VarSkillData --a variable might needed for a Data-Type
+---@return integer
+---@nodiscard
 function getskilldata(Single_Target, Single_Skill, DataType, Var) return 0 end
 
+---this consequence has two modes, you can either create a coin based on another coin (Single-Unit to Single-Coin); or make a coin based on specific settings (Power to Color)
+---@param Multi_Target string --Modular's Multi-Target
+---@param Multi_Skill string --MTCustomScripts's Multi-Skill
+---@param CoinIndex integer --Set the coin current index (Origin Index is set as last, Real index is set as this number)
+---@param VAR_4 string | "Power" --Modular's Single-Target or the Coin Power of the target
+---@param VAR_5 string | "Operator" --MTCustomScripts's Multi-Skill or The coin operator to set
+---@param VAR_6 string | "Color" --MTCustomScripts's Single-Coin or Set the color of the coin
+---@param CopyStaticData any --Add this argument if you only want to copy the static data of the targetted coin
 function addcoin(Multi_Target, Multi_Skill, CoinIndex, VAR_4, VAR_5, VAR_6, CopyStaticData) return end
 
+---Get the current skill's power
+---@param Target "Self" | "MainTarget"
+---@return integer
+---@nodiscard
 function getcurrentpower(Target) return 0 end
 
+---Clear/Remove all abilities of the skill
+---@param Target "Self" | "MainTarget"
 function clearskillabilities(Target) return end
 
+---Clear/Remove all abilities of coin(s). If there are no coinIndex, clear all coins' abilities
+---@param Target "Self" | "MainTarget"
+---@param ...? integer --coinIndex (optional): The coin's index, input -1 for coin scripts to target themselves (coin index starts at 0) (You can input as many indexes as you need)
 function clearcoinabilities(Target, ...) return end
 
+---Add a skill script to the skill
+---@param Multi_Target string --MTCustomScripts's Multi-Target
+---@param Multi_Skill string --MTCustomScripts's Multi-Skill
+---@param skillAbilityName string --A vanilla SkillAbility class name / If you want to put modular scripts, put "modReplace"
+---@param skillScriptName string --The script name of the "skillAbilityName" / When putting modular lines, you have to start with the timing, and replace some characters. `:` with `;` | `/` with `\` | `(` with `<<` | `)` with `>>`
+---@param turnLimit? integer --The amount of the ability will trigger in a turn (not needed at all for modular lines, or some abilities)
 function addskillability(Multi_Target, Multi_Skill, skillAbilityName, skillScriptName, turnLimit) return end
 
+---Add a coin script to specific coins. If there are no coinIndex, add the coin script to every coin
+---@param Target "Self" | "MainTarget"
+---@param coinScriptName string --A vanilla coin script name
+---@param ...? integer --coinIndex (optional): The coin's index, input -1 for coin scripts to target themselves (coin index starts at 0) (You can input as many indexes as you need)
 function addcoinability(Target, coinScriptName, ...) return end
 
+---Remove all sub-targets from the skill, only let the skill attack the main target
 function removealltargetexceptmaintarget() return end
 
+---Mid-combat phase mode. Set the main target of the skill to Single-Target
+---@param Mid "Mid" --Fixed
+---@param Single_Target string --Modular's Single-Target
 function setmaintarget(Mid, Single_Target) return end
 
+---Pre-combat phase mode (only works with timings: SpecialAction and WaitCommand). Set the main target of Count skill(s) with skilll id = SkillID of every Attackers to Target
+---@param Pre "Pre" --Fixed
+---@param Attackers string --Modular's Multi-Target
+---@param Target string --Modular's Single-Target
+---@param SkillID integer --A Skill ID
+---@param Count? integer --Any integer >= 1 (Default = 99)
 function setmaintarget(Pre, Attackers, Target, SkillID, Count) return end
 
-function modifysubtarget(Mode, includeTargets, excludeTargets) return end
+---Add/Remove specific sub-targets from the skill
+---@param Mode "Add" | "Remove"
+---@param exceptTargetedUnits boolean --If true, automatically filters out any units that are already the main target or already present in the sub-target list of the skill
+---@param includeTargets string --Modular's Multi-Target
+---@param excludeTargets? string --Modular's Multi-Target (Highest priority, runs after everything)
+function modifysubtarget(Mode, exceptTargetedUnits, includeTargets, excludeTargets) return end
 
+---Set the SP usage of the skill (like how EGO skills consume SP on use)
+---@param newValue integer
+---@param add? any --Add newValue to the skill's SP usage instead
 function setspusage(newValue, add) return end
 
+---Set level, yes
+---@param Multi_Target string --Modular's Multi-Target
+---@param newLevel integer --Any integer >= 1 (idk bro, if you input negative number the game might break)
 function setlevel(Multi_Target, newLevel) return end
 
+---Self-Explaination
+---@param Multi_Target string --Modular's Multi-Target
+---@param newMaxHp integer
 function setmaxhp(Multi_Target, newMaxHp) return end
 
+---Get the default max HP of the unit (Default max HP is the max HP when the unit's level is 0)
+---@param Single_Target string --Modular's Single-Target
+---@return integer
+---@nodiscard
 function getdefaultmaxhp(Single_Target) return 0 end
 
+---Get the HP increment by level of the unit multiplied by 100 and rounded down
+---@param Single_Target string --Modular's Single-Target
+---@return integer
+---@nodiscard
 function gethpincrement(Single_Target) return 0 end
 
+---Get a string value from a specific unit (This method tries to turn the value into a number, if it cannot it will return 0)
+---@param Single_Target string --Modular's Single-Target (If the targetting is invalid, it will return data linked to the encounter)
+---@param DataID string The ID of the Data to search (will return the first Data with ID equal to this)
+---@param DataSource? any --If this valeu is set, will search for a string with the DataID and the DataSource (as a string)
+---@return integer
+---@nodiscard
 function getmtdata(Single_Target, DataID, DataSource) return 0 end
 
+---Set a string value to a specific unit
+---@param Single_Target string --Modular's Single-Target (If the targetting is invalid, the data will become linked to the encounter)
+---@param DataID string --The ID of the Data to search
+---@param DataValue string --The value of the Data
+---@param DataSource? string --The Source of the Data
 function setmtdata(Single_Target, DataID, DataValue, DataSource) return end
 
+---This value will crash your code if there the unit you target did not have any SP changes
+---@param Single_Target string --Modular's Single-Target
+---@param TargetValue "oldsp" | "newsp" --Return the SP before/after the change
+---@return integer
+---@nodiscard
 function getchangespvalue(Single_Target, TargetValue) return 0 end
 
+---Returns the uptie level of the unit
+---@param Single_Target string --Modular's Single-Target
+---@return integer
+---@nodiscard
 function getuptielevel(Single_Target) return 0 end
 
+---Returns the slot index of the skill being used. 0 is the leftmost slot, increased by 1 whenever it shifts to right. Returns -1 if the unit is not using a skill
+---@return integer
+---@nodiscard
 function getskillslotindex() return 0 end
 
+---Returns 1 when the sinner with the specified characterID is fielded. Else, returns 0
+---@param characterID integer --1 = Yi Sang, 2 = Faust, 3 = Don Quixote, 4 = Ryoshu, 5 = Meursault, 6 = Hong Lu, 7 = Heathcliff, 8 = Ishmael, 9 = Rodion, 10 = Sinclair, 11 = Outis, 12 = Gregor
+---@return integer
+---@nodiscard
 function issinnerfielded(characterID) return 0 end
 
+---Adds a keyword to the specified unit in the middle of the encounter
+---@param Multi_Target string --Modular's Multi-Target
+---@param keywordName string --Any string that could be a unitKeyword or association in the json data of a unit
+---@param isAssociation? any --Whether or not the keyword is an association | If this option exists, it tries to add the keyword as an association ID instead
 function addkeyword(Multi_Target, keywordName, isAssociation) return end
 
+---Clears all temporary skill abilities (like changed sin affinities, scripts given via giveskillscript, etc.) from all of your skills in the dashboard
+---@param Multi_Target string --Modular's Multi-Target
 function clearalltempskillabilities(Multi_Target) return end
 
+---Replaces all of the skill affinities on your slots with the specified affinity
+---@param Multi_Target string --Modular's Multi-Target
+---@param sinType SinResType
+---@param includeEgo? any --Whether or not to include EGO | If this option exists, it also changes the sin affinities of EGOs. They're normally ignored
 function replaceallaffinity(Multi_Target, sinType, includeEgo) return end
 
+---Replaces a skill on a dashboard with a specified skill at the specified coordinates
+---@param Single_Target string --Modular's Single-Target
+---@param column integer --The Skill Column Index | Which 'column' you want the skill to spawn in. 0 is the leftmost skill 'column', with it shifting to right with each increase in number
+---@param topOrBottom 0 | 1 --Top Slot or Bottom Slot | Which slot you want the skill to spawn in. 0 for the Bottom Slot, 1 for the Top Slot 
+---@param skillID integer --ID of the Skill you want to spawn in
 function replaceskillondashboard(Single_Target, column, topOrBottom, skillID) return end
 
+---Converts the leftmost-bottom instance of a Skill into another Skill
+---@param Single_Target string --Modular's Single-Target
+---@param searchID integer --The ID of the skill you want to convert
+---@param replaceID integer --The ID of the replacement skill
 function upgradeskillondashboard(Single_Target, searchID, replaceID) return end
 
+---Add a clash between 2 units instantly with determined skills
+---@param unit_1 string --Modular's Single-Target
+---@param unit_2 string --Modular's Single-Target
+---@param skillIDforUnit_1 integer --the skill id for unit 1 to use (self-explanation) (the skill must be CLASHABLE)
+---@param skillIDforUnit_2 integer --the skill id for unit 2 to use (self-explanation) (the skill must be CLASHABLE)
 function addduel(unit_1, unit_2, skillIDforUnit_1, skillIDforUnit_2) return end
 
+---Returns the world position cordType value of the unit multiplied by 100
+---@param Single_Target string --Modular's Single-Target
+---@param cordType "x" | "y" | "z"
+---@return integer
+---@nodiscard
 function getworldpos(Single_Target, cordType) return 0 end
 
+---Set world position
+---@param Multi_Target string --Modular's Multi-Target
+---@param x integer --the x coordinate values (this value will be divided by 100)
+---@param y integer --the y coordinate values (this value will be divided by 100)
+---@param z integer --the z coordinate values (this value will be divided by 100)
 function setworldpos(Multi_Target, x, y, z) return end
 
+---Move the target to the destinated world cords with determined time and easing style
+---@param Multi_Target string --Modular's Multi-Target
+---@param Sequences string --one or multiple sequences; A sequence must follow the format: "{x; y; z; duration; easingStyle}"
+---@param loopCount? 1 | integer | -1 --If you dont want loop, dont ever input this. 1 = No loop (Default), Any positive integer, -1 = Inf loop
+---@param loopType? LoopType
 function setworldpos(Multi_Target, Sequences, loopCount, loopType) return end
 
+---Checks to see if the skill being used is actually reused. Only accepts timings that use a skill
+---@param Target "Self" | "MainTarget"
+---@return integer
+---@nodiscard
 function isreusedskill(Target) return 0 end
 
-function isunitpartofreson(Single_Target, sinType) return 0 end
+---@param Single_Target string --Modular's Single-Target
+---@param sinType SinResType
+---@return ResonReturnType
+---@nodiscard
+function isunitpartofreson(Single_Target, sinType) return 1 end
 
+---Scans the entire dashboard to search for the skill with the desired skillID. Returns 1 if found. Returns -1 when the selected unit can't be found
+---@param Single_Target string --Modular's Single-Target
+---@param skillID integer --A skill ID
+---@return integer
+---@nodiscard
 function hasskillondashboard(Single_Target, skillID) return 0 end
 
+---Activates the E.G.O passive on a unit. Only works on equipped E.G.Os
+---@param Multi_Target string --Modular's Multi-Target
+---@param egoID integer --An EGO ID
 function activateegopassive(Multi_Target, egoID) return end
 
+---This should works with others timing beside SortAction. Set the index of current battle action (or called 'current skill') to newIndex
+---@param newIndex integer --Any integer >= 0. If the value is higher than the last battle action index in current battle, set to the last index instead
 function setactionindex(newIndex) return end
 
-function betterskillsend(Single_Target, Multi_Target, skillOption, actionIndex) return end
+---skillsend but if it has more supports. Sends an attack from a unit to another
+---@param Attacker string --Modular's Single-Target
+---@param Targets string --Modular's Multi-Target
+---@param skillOption SkillSendOption
+---@param actionIndex? integer --Any integer >= 0 (Default = 0). The delay (measured in total skill uses by any unit) before this skill get sent / The skill order, 0 means this skill will be sent immediately or 99 means this skill will be the last skill in that turn regardless of the unit's speed
+function betterskillsend(Attacker, Targets, skillOption, actionIndex) return end
 
+---Return the Modular's script timing ID (an integer)
+---@return TimingID
+---@nodiscard
 function gettimingid() return 0 end
+
+---Apply an effect for skill slots. You can stack multiple effects on a slot, those effects will disappear when you swap over to defense skills, after using the skill and after turn end
+---@param Multi_Target string --Modular's Multi-Target
+---@param slotIndex integer --the skill slot index. Index starts at 0
+---@param topOrBottom "Top" | "Bottom" --Default: Both top and bottom slot
+---@param effectType EffectType
+---@param isActive boolean --To set the effect is active or not
+---@param alphaValue? integer --Any integer in range of 0 to 100. This value will be divided by 100
+function applyskilleffect(Multi_Target, slotIndex, topOrBottom, effectType, isActive, alphaValue) return end
+
+---Check if the slot has a skill effect. Returns 1 if true, 0 if false and -1 if something went wrong
+---@param Single_Target string --Modular's Single-Target
+---@param slotIndex integer --the skill slot index. Index starts at 0
+---@param topOrBottom "Top" | "Bottom"
+---@param effectType EffectType
+---@return integer
+---@nodiscard
+function hasskilleffect(Single_Target, slotIndex, topOrBottom, effectType) return 0 end
+
+---plays a specific motion (like leiheng reload on turn end)
+---@param Single_Target string --Modular's Single-Target (Unit to play the motion)
+---@param Motion MotionID
+---@param MotionIndex? integer --the index of the skill motion to be played (Any integer >= 0 (Default = -1))
+---@param HasZoom? string --any string (If this variable is added, adds a zoom to the unit)
+function playmotion(Single_Target, Motion, MotionIndex, HasZoom) return end
+
+---Increase the skill animation speed like how facade does. Only useable on visual timings like ChangeMotion or OnVisualUse else the effect will be applied on Combat Start. The Speed does not reset to 100 (default) after the affect is applied so others skills will keep the speed increase
+---@param Single_Target string --Modular's Single-Target
+---@param Speed integer --This value will be divided by 100
+function changeanimspeed(Single_Target, Speed) return end
 --#endregion
 
 --#region Exclusive .lua functions
-function jsontolua(string) return "" end
 
+---Turn a string represent JSON into a .lua table
+---@param string string
+---@return table
+---@nodiscard
+function jsontolua(string) return {} end
+
+---Lists the folders of a given directory. This function does not list files. This function is restricted to the Plugins folder and any sub-folders. This function returns a .lua table (array-like)
+---@param path string --Path of the directory
+---@return table
 function listdirectories(path) return {} end
 
+---Returns a .lua table (array-like) contain all the buffs' keyword the unit has
+---@param Single_Target string --Modular's Single-Target
+---@return table
 function listbuffs(Single_Target) return {} end
 
+---Set a global .lua value
+---@param key string --The data ID
+---@param luaValue any
 function setgdata(key, luaValue) return end
 
+---Returns a global .lua value
+---@param key string --The data ID
 ---@return any
+---@nodiscard
 function getgdata(key) return end
 
+---Clear all global datas
 function clearallgdata() return end
 
+---Uses with 'OnGainBuff' timing. Returns a .lua string representing the gained buff's keyword
+---@return string
+---@nodiscard
 function gbkeyword() return "" end
 
+---Returns a .lua string representing the current map's ID (the map which the game is using)
+---@return string
+---@nodiscard
 function getcurrentmapid() return "" end
 
+---Returns a .lua table (array-like) contains all the buffKeyword's mode
+---@param buffKeyword string --any buff keyword
+---@param mode ListRelatedKeywordsMode
+---@return table
+---@nodiscard
 function listrelatedkeywords(buffKeyword, mode) return {} end
 
+---Returns a .lua string representing the unit's appearance ID 
+---@param Single_Target string --Modular's Single-Target
+---@return string
+---@nodiscard
 function getappearanceid(Single_Target) return "" end
 
+---Returns a .lua table (array-like) contains all stagger threshold values filtered by isActiveOnly
+---@param Single_Target string --Modular's Single-Target
+---@param isActiveOnly boolean --If true, only return values of active stagger thresholds
+---@return table
+---@nodiscard
 function listbreakvalues(Single_Target, isActiveOnly) return {} end
 
+---Returns a .lua dictionary with all egos data the unit has
+---@param Single_Target string --Modular's Single-Target
+---@return table
+---@nodiscard
 function listegoskillids(Single_Target) return {} end
 
+---Only works on Identities. Returns a .lua table (array-like) contains all 'skillKeywordList' the Identity has
+---@param Single_Target string --Modular's Single-Target
+---@return table
+---@nodiscard
 function listskillkeywords(Single_Target) return {} end
 
+---Returns a .lua table (array-like) represent the skill order in that turn based on the timing this function get called
+---@return table
+---@nodiscard
 function listbattleactions() return {} end
 --#endregion
