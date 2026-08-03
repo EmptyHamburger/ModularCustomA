@@ -22,7 +22,7 @@ public class PassiveDetail_Patches
 			foreach (ModularSA modular in value) modular.ResetAdders();
 		}
 
-		SkillScriptInitPatch.copypastesolution(__instance._owner, null, null, null, "BeforeRoundStart", BATTLE_EVENT_TIMING.NONE, __instance);
+		SkillScriptInitPatch.SimpleEnactPassive(__instance._owner, null, null, null, "BeforeRoundStart", BATTLE_EVENT_TIMING.NONE, __instance);
 		foreach (SinActionModel sinAction in __instance._owner.GetSinActionList())
 		{
 			foreach (UnitSinModel sinModel in sinAction.currentSinList)

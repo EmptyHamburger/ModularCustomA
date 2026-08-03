@@ -7,17 +7,19 @@ using BepInEx.Unity.IL2CPP.UnityEngine;
 internal class EquipDefenseOperation
 {
     [HarmonyPatch(typeof(NewOperationController), nameof(NewOperationController.EquipDefense))]
-    [HarmonyPrefix]
-    [HarmonyBefore("ModularSkillScripts")]
-    private static bool Prefix_NewOperationController_EquipDefense(bool equiped, SinActionModel sinAction)
+	[HarmonyPrefix]
+	public static void Prefix_NewOperationController_EquipDefense(SinActionModel sinAction)
+    {
+        LuaUnitDataKey.LuaUnitValues[new LuaUnitDataKey{unitPtr_intlong = sinAction.actionSlot.Owner.Pointer.ToInt64(), dataID = "AbsoluteMTCustomDefenseChangerDebounceCheck"}] = false;
+    }
+
+    [HarmonyPatch(typeof(UniquePatches), nameof(UniquePatches.RunSpecialAction))]
+    [HarmonyPostfix]
+    public static void Postfix_UniquePatches_RunSpecialAction(SinActionModel sinAction, ref bool __result)
     {
         BattleUnitModel unit = sinAction.actionSlot.Owner;
-
-        LuaUnitDataKey.LuaUnitValues[new LuaUnitDataKey{unitPtr_intlong = unit.Pointer.ToInt64(), dataID = "AbsoluteMTCustomDefenseChangerDebounceCheck"}] = false;
-
-        if (!unit.IsActionable()) return true;
-        int actevent = MainClass.timingDict["SpecialAction"];
-        bool returnval = true;
+        if (!unit.IsActionable()) __result = true;
+        // bool returnval = true;
         foreach (PassiveModel passiveModel in unit._passiveDetail.PassiveList) {
             if (!passiveModel.CheckActiveCondition()) continue;
             long passiveModel_intlong = passiveModel.Pointer.ToInt64();
@@ -28,7 +30,7 @@ internal class EquipDefenseOperation
                 MTCustomScripts.Main.Instance.special_slotindex = sinAction.GetSlotIndex();
                 // MainClass.Logg.LogInfo("FoundS modpassive - SPECIAL: " + modpa.passiveID);
                 // MainClass.Logg.LogInfo("Triggered Key: " + modpa.SpecialKey.ToString());
-                returnval = false;
+                __result = false;
                 // modpa.modsa_passiveModel = passiveModel;
                 // modpa.Enact(passiveModel.Owner, null, null, null, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
             }
@@ -43,14 +45,14 @@ internal class EquipDefenseOperation
             {
                 if (!Input.GetKeyInt(modpa.SpecialKey)) continue;
                 MTCustomScripts.Main.Instance.special_slotindex = sinAction.GetSlotIndex();
-                returnval = false;
+                __result = false;
                 // MainClass.Logg.LogInfo("FoundS modpassive - SPECIAL: " + modpa.passiveID);
                 // MainClass.Logg.LogInfo("Triggered Key: " + modpa.SpecialKey.ToString());
                 // modpa.modsa_passiveModel = passiveModel;
                 // modpa.Enact(passiveModel.Owner, null, null, null, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
             }
         }
-        if (returnval) return true;
-        return false;
+        // if (returnval) __result = true;
+        // __result = false;
     }
 }
