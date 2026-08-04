@@ -45,7 +45,7 @@ public class Main : BasePlugin
 {
     // Edit the below to your own plugin name, version, etc.
     public const string NAME = "MTCustomScripts";
-    public const string VERSION = "22.100.4";
+    public const string VERSION = "22.101.4";
     public const string AUTHOR = "MT";
     public const string GUID = $"{AUTHOR}.{NAME}";
 
@@ -68,6 +68,7 @@ public class Main : BasePlugin
     public static System.Collections.Generic.Dictionary<BuffModel, System.Collections.Generic.HashSet<string>> dl_activePathsDict = new();
     public static System.Collections.Generic.Dictionary<BuffModel, System.Collections.Generic.Dictionary<string, string>> dl_overwritePathValue = new();
     public static int lastSinSlotIndex = 0;
+    public static System.Collections.Generic.Dictionary<IntPtr, (int Min, int Max)> gateSPDict = new();
 
     public class GlobalLuaValues
     {
@@ -506,6 +507,7 @@ public class Main : BasePlugin
             harmony.PatchAll(typeof(BuffModel_Patches));
             harmony.PatchAll(typeof(StageModel_Patch));
             harmony.PatchAll(typeof(SinActionModelPatches));
+            harmony.PatchAll(typeof(GateSP));
 
             // harmony.PatchAll(typeof(CoinSlotUI_UpdateCoinColor));
             // harmony.PatchAll(typeof(StyxPatch));
@@ -645,6 +647,7 @@ public class Main : BasePlugin
             MainClass.consequenceDict["swapdeploymentorder"] = new MTCustomScripts.Consequences.ConsequenceSwapDeploymentOrder();
             MainClass.consequenceDict["playmotion"] = new MTCustomScripts.Consequences.ConsequencePlayMotion();
             MainClass.consequenceDict["changeanimspeed"] = new MTCustomScripts.Consequences.ConsequenceChangeAnimSpeed();
+            MainClass.consequenceDict["gatesp"] = new MTCustomScripts.Consequences.ConsequenceGateSP();
 
             MainClass.consequenceDict["dlactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleActivatePath();
             MainClass.consequenceDict["dldeactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleDeactivatePath();
