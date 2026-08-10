@@ -6,14 +6,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModularCustomConsequences",
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
+		BIE|x64 = BIE|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CBBA892C-D37D-205E-F37C-5F698586E83B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CBBA892C-D37D-205E-F37C-5F698586E83B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CBBA892C-D37D-205E-F37C-5F698586E83B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CBBA892C-D37D-205E-F37C-5F698586E83B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBBA892C-D37D-205E-F37C-5F698586E83B}.BIE|x64.ActiveCfg = BIE|x64
+		{CBBA892C-D37D-205E-F37C-5F698586E83B}.BIE|x64.Build.0 = BIE|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
