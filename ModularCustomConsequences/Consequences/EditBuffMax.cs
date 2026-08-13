@@ -18,98 +18,36 @@ public class ConsequenceEditBuffMax : IModularConsequence
         * 
         */
 
-        var targetModelList = modular.GetTargetModelList(circles[0]);
-        bool hasTarget = (targetModelList.Count > 0) ? true : false;
+        Il2CppSystem.Collections.Generic.List<BattleUnitModel> targetModelList = modular.GetTargetModelList(circles[0]);
+        if (targetModelList.Count <= 0) return;
 
-        int modifyIntValue = 0;
-        if (!int.TryParse(circles[5], out modifyIntValue)) return;
+        int modifyIntValue = modular.GetNumFromParamString(circles[5]);
+        BUFF_UNIQUE_KEYWORD buffKeyword = CustomBuffs.ParseBuffUniqueKeyword(circles[1]);
 
-        BUFF_UNIQUE_KEYWORD var1Keyword = CustomBuffs.ParseBuffUniqueKeyword(circles[1]);
+        BattleObjectManager instance = SingletonBehavior<BattleObjectManager>.Instance;
+        BattleUnitModel modularBuffUnit = instance.GetModel(modular.modsa_buffModel.GetOwnerInstanceID());
 
-        for (int index = 0; index < (hasTarget ? targetModelList.Count : 1); index++)
+        for (int i = 0; i < targetModelList.Count; i++)
         {
-            BattleUnitModel targetModel = hasTarget ? targetModelList[index] : null;
-            BuffModel selectedBuff = null;
+            BattleUnitModel targetModel = targetModelList[i];
+            BuffModel selectedBuff = (circles[1] == "current") ? modular.modsa_buffModel : targetModel._buffDetail.FindActivatedBuff(buffKeyword, true);
+            if (selectedBuff == modular.modsa_buffModel) targetModel = modularBuffUnit;
 
-            if (circles[1] != "current" && targetModel != null)
-            {
-                if (targetModel._buffDetail.HasBuff(var1Keyword) == true) selectedBuff = targetModel._buffDetail.FindActivatedBuff(var1Keyword, true);
-            }
+            if (selectedBuff == null) continue;
 
-            if (selectedBuff == null) selectedBuff = modular.modsa_buffModel;
-            
-            bool hasInfo = circles.Length > 4 && circles[6] != null && (circles[6] == "info" || circles[6] == "both");
-            bool hasMaxLower = circles.Length > 4 && circles[6] != null && (circles[6] == "lowmax" || circles[6] == "both");
+            int optionalValue = 0;
+            if (circles[6] == "info" || circles[6] == "both") optionalValue += 1;
+            if (circles[6] == "lowmax" || circles[6] == "both") optionalValue += 2;
 
+            int addType = 0;
+            if (circles[3] == "adder" || circles[3] == "both") addType += 1;
+            if (circles[3] == "vanilla" || circles[3] == "both") addType += 2;
 
-            if (circles[2] == "stack" || circles[2] == "both")
-            {
-                if (circles[3] == "adder" || circles[3] == "both")
-                {
-                    if (circles[4] == "add") selectedBuff._maxStackAdder += modifyIntValue;
-                    if (circles[4] == "add" && hasInfo) selectedBuff._buffInfo._maxStack += modifyIntValue;
+            string valueToEdit = circles[2];
+            bool setterTypeIsAdd = circles[4] == "add";
 
-                    if (circles[4] == "set") selectedBuff._maxStackAdder = modifyIntValue;
-                    if (circles[4] == "set" && hasInfo) selectedBuff._buffInfo._maxStack = modifyIntValue;
-                }
-
-                if (circles[3] == "vanilla" || circles[3] == "both")
-                {
-                    if (circles[4] == "add") selectedBuff._vanilaMaxStack += modifyIntValue;
-                    if (circles[4] == "add" && hasInfo) selectedBuff._buffInfo._vanilaMaxStack += modifyIntValue;
-
-                    if (circles[4] == "set") selectedBuff._vanilaMaxStack = modifyIntValue;
-                    if (circles[4] == "set" && hasInfo) selectedBuff._buffInfo._vanilaMaxStack = modifyIntValue;
-                }
-            }
-
-            ///----------------------------------------------------------------------------///
-            ///----------------------------------------------------------------------------///
-            ///----------------------------------------------------------------------------///
-
-            if (circles[2] == "count" || circles[2] == "both")
-            {
-                if (circles[3] == "adder" || circles[3] == "both")
-                {
-                    if (circles[4] == "add") selectedBuff._maxTurnAdder += modifyIntValue;
-                    if (circles[4] == "add" && hasInfo) selectedBuff._buffInfo._maxTurn += modifyIntValue;
-
-                    if (circles[4] == "set") selectedBuff._maxTurnAdder = modifyIntValue;
-                    if (circles[4] == "set" && hasInfo) selectedBuff._buffInfo._maxTurn = modifyIntValue;
-                }
-
-                if (circles[3] == "vanilla" || circles[3] == "both")
-                {
-                    if (circles[4] == "add") selectedBuff._vanilaMaxTurn += modifyIntValue;
-                    if (circles[4] == "add" && hasInfo) selectedBuff._buffInfo._vanilaMaxTurn += modifyIntValue;
-
-                    if (circles[4] == "set") selectedBuff._vanilaMaxTurn = modifyIntValue;
-                    if (circles[4] == "set" && hasInfo) selectedBuff._buffInfo._vanilaMaxTurn = modifyIntValue;
-                }
-            }
-
-            ///----------------------------------------------------------------------------///
-            ///----------------------------------------------------------------------------///
-            ///----------------------------------------------------------------------------///
-            
-            if (hasMaxLower)
-            {
-                BattleObjectManager instance = SingletonBehavior<BattleObjectManager>.Instance;
-                BattleUnitModel model = instance.GetModel(selectedBuff.GetOwnerInstanceID());
-                int loseValue = 0;
-
-                if (selectedBuff.GetCurrentStack() > selectedBuff.GetMaxStack())
-                {
-                    loseValue = selectedBuff.GetMaxStack() - selectedBuff.GetCurrentStack();
-                    selectedBuff.LoseStack(model, 0, modular.battleTiming, out loseValue);
-                }
-
-                if (selectedBuff.GetCurrentTurn() > selectedBuff.GetMaxTurn())
-                {
-                    loseValue = selectedBuff.GetMaxTurn() - selectedBuff.GetCurrentTurn();
-                    selectedBuff.LoseTurn(model, modular.battleTiming, out loseValue);
-                }
-            }
+            if (valueToEdit == "stack" || valueToEdit == "both") selectedBuff.UpdateStackValue(addType, modifyIntValue, setterTypeIsAdd, optionalValue, targetModel);
+            if (valueToEdit == "count" || valueToEdit == "both") selectedBuff.UpdateCountValue(addType, modifyIntValue, setterTypeIsAdd, optionalValue, targetModel);
         }
     }
 }
