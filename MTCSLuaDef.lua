@@ -1,7 +1,7 @@
 ---@meta
 
 --[[
-    MTCustomScripts Version: v22.100.4
+    MTCustomScripts Version: v22.101.4
 ]]
 
 --#region Aliases
