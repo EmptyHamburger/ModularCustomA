@@ -9,7 +9,7 @@ public class ConsequenceRemoveCoin : IModularConsequence
 	public void ExecuteConsequence(ModularSA modular, string section, string circledSection, string[] circles)
 	{
 		SkillModel skill = (circles[0] == "Self") ? modular.modsa_skillModel : modular.modsa_oppoAction._skill;
-		foreach (string circle in circles.Skip(1))
+		foreach (string circle in circles.Skip(1).Reverse())
 		{
 			int idx = modular.GetNumFromParamString(circle);
 			if (idx < 0)
