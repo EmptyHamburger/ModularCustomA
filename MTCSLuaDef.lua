@@ -897,6 +897,12 @@ function playmotion(Single_Target, Motion, MotionIndex, HasZoom) return end
 ---@param Single_Target string --Modular's Single-Target
 ---@param Speed integer --This value will be divided by 100
 function changeanimspeed(Single_Target, Speed) return end
+
+---Gate SP
+---@param Multi_Target string --Modular's Multi-Target
+---@param gateType "Min" | "Max"
+---@param gateValue integer
+function gatesp(Multi_Target, gateType, gateValue) return end
 --#endregion
 
 --#region Exclusive .lua functions

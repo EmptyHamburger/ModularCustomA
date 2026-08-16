@@ -398,7 +398,9 @@ public class Main : BasePlugin
     {
         public void ExecuteConsequence(ModularSA modular, string section, string circledSection, string[] circles)
         {
-            Singleton<BattleActionModelManager>.Instance.CanParryingContinue(null, null, new ParryingStatus(), 1);
+            // var battleUIRoot = SingletonBehavior<BattleUIRoot>.Instance;
+            // battleUIRoot._frontUIController._unitInformationController._unitInformationControllerRenewal.
+            // battleUIRoot._battleSkillViewUIController._skillViewUIInfo._coinUI
         }
     }
 
