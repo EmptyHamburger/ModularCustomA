@@ -8,19 +8,19 @@ public class AcquirerGainBuffSource : IModularAcquirer
     {
         if (modular.modsa_passiveModel == null) return -1;
 
-        switch (MTCustomScripts.Main.Instance.gainbuff_source)
+        return MTCustomScripts.Main.Instance.gainbuff_source switch
         {
-            case ABILITY_SOURCE_TYPE.NONE: return 0;
-            case ABILITY_SOURCE_TYPE.SKILL: return 1;
-            case ABILITY_SOURCE_TYPE.EVENT: return 2;
-            case ABILITY_SOURCE_TYPE.BUFF: return 3;
-            case ABILITY_SOURCE_TYPE.PASSIVE: return 4;
-            case ABILITY_SOURCE_TYPE.SYSTEM_ABILITY: return 5;
-            case ABILITY_SOURCE_TYPE.EGO_GIFT: return 6;
-            case ABILITY_SOURCE_TYPE.PATTERN: return 7;
-            case ABILITY_SOURCE_TYPE.STAGE: return 8;
-            case ABILITY_SOURCE_TYPE.UNIT: return 9;
-            default: return -1;
-        }
+            ABILITY_SOURCE_TYPE.NONE => 0,
+            ABILITY_SOURCE_TYPE.SKILL => 1,
+            ABILITY_SOURCE_TYPE.EVENT => 2,
+            ABILITY_SOURCE_TYPE.BUFF => 3,
+            ABILITY_SOURCE_TYPE.PASSIVE => 4,
+            ABILITY_SOURCE_TYPE.SYSTEM_ABILITY => 5,
+            ABILITY_SOURCE_TYPE.EGO_GIFT => 6,
+            ABILITY_SOURCE_TYPE.PATTERN => 7,
+            ABILITY_SOURCE_TYPE.STAGE => 8,
+            ABILITY_SOURCE_TYPE.UNIT => 9,
+            _ => -1,
+        };
     }
 }

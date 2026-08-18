@@ -45,7 +45,7 @@ public class Main : BasePlugin
 {
     // Edit the below to your own plugin name, version, etc.
     public const string NAME = "MTCustomScripts";
-    public const string VERSION = "22.101.4";
+    public const string VERSION = "22.103.4";
     public const string AUTHOR = "MT";
     public const string GUID = $"{AUTHOR}.{NAME}";
 
@@ -538,6 +538,7 @@ public class Main : BasePlugin
             MainClass.luaFunctionDict["listegoskillids"] = new MTCustomScripts.LuaFunctions.LuaFunctionListEgoSkillIDs();
             MainClass.luaFunctionDict["listskillkeywords"] = new MTCustomScripts.LuaFunctions.LuaFunctionListSkillKeywordList();
             MainClass.luaFunctionDict["listbattleactions"] = new MTCustomScripts.LuaFunctions.LuaFunctionListBattleActions();
+            MainClass.luaFunctionDict["getbufflocaledata"] = new MTCustomScripts.LuaFunctions.LuaFunctionGetBuffLocaleData();
             // MainClass.luaFunctionDict["getrandombuff"] = new LuaFunctionGetRandomBuff(); //Object reference not set to an instance of an object
             // MainClass.luaFunctionDict["listskilltargets"] = new MTCustomScripts.LuaFunctions.LuaFunctionListSkillTargets();
         }
@@ -585,6 +586,10 @@ public class Main : BasePlugin
             MainClass.acquirerDict["getspeedadder"] = new MTCustomScripts.Acquirers.AcquirerGetSpeedAdder();
             MainClass.acquirerDict["gettimingid"] = new MTCustomScripts.Acquirers.AcquirerGetTimingID();
             MainClass.acquirerDict["hasskilleffect"] = new MTCustomScripts.Acquirers.AcquirerHasSkillEffect();
+            MainClass.acquirerDict["hasmang"] = new MTCustomScripts.Acquirers.AcquirerHasMang();
+
+            //Override
+            MainClass.acquirerDict["getcoinscale"] = new MTCustomScripts.Acquirers.AcquirerOneScale();
         }
         catch (System.Exception ex) { Main.Logger.LogError("Error when loading Acquirers: " + ex); }
 
