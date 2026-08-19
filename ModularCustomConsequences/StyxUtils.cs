@@ -17,6 +17,71 @@ namespace MTCustomScripts
             return Math.Max(Math.Min(max, original), min);
         }
 
+        public static void UpdateStackValue(this BuffModel selectedBuff, int vanillaValue, int modifyValue, bool isAdd, int optionalNum, BattleUnitModel buffOwner = null)
+        {
+            if (isAdd)
+            {
+                if (vanillaValue != 1)
+                {
+                    selectedBuff._vanilaMaxStack += modifyValue;
+                    if (optionalNum != 2) selectedBuff._buffInfo._vanilaMaxStack += modifyValue;
+                }
+                if (vanillaValue != 2)
+                {
+                    selectedBuff._maxStackAdder += modifyValue;
+                    if (optionalNum != 2) selectedBuff._buffInfo._maxStack += modifyValue;
+                }
+            }
+            else
+            {
+                if (vanillaValue != 1)
+                {
+                    selectedBuff._vanilaMaxStack = modifyValue;
+                    if (optionalNum != 2) selectedBuff._buffInfo._vanilaMaxStack = modifyValue;
+                }
+                if (vanillaValue != 2)
+                {
+                    selectedBuff._maxStackAdder = modifyValue;
+                    if (optionalNum != 2) selectedBuff._buffInfo._maxStack = modifyValue;
+                }
+            }
+
+            if (optionalNum != 1) selectedBuff.SetMaxStackAndTurn(buffOwner);
+        }
+
+        public static void UpdateCountValue(this BuffModel selectedBuff, int vanillaValue, int modifyValue, bool isAdd, int optionalNum, BattleUnitModel buffOwner = null)
+        {
+            if (isAdd)
+            {
+                if (vanillaValue != 1)
+                {
+                    selectedBuff._vanilaMaxTurn += modifyValue;
+                    if (optionalNum != 2) selectedBuff._buffInfo._vanilaMaxTurn += modifyValue;
+                }
+                if (vanillaValue != 2)
+                {
+                    selectedBuff._maxTurnAdder += modifyValue;
+                    if (optionalNum != 2) selectedBuff._buffInfo._maxTurn += modifyValue;
+                }
+            }
+            else
+            {
+                if (vanillaValue != 1)
+                {
+                    selectedBuff._vanilaMaxTurn = modifyValue;
+                    if (optionalNum != 2) selectedBuff._buffInfo._vanilaMaxTurn = modifyValue;
+                }
+                if (vanillaValue != 2)
+                {
+                    selectedBuff._maxTurnAdder = modifyValue;
+                    if (optionalNum != 2) selectedBuff._buffInfo._maxTurn = modifyValue;
+                }
+            }
+
+            if (optionalNum != 1) selectedBuff.SetMaxStackAndTurn(buffOwner);
+        }
+
+
         public static System.Collections.Generic.List<T> ToSystem<T>(this Il2CppSystem.Collections.Generic.List<T> il2cppList)
         {
             var count = il2cppList.Count;

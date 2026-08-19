@@ -28,10 +28,9 @@ public class ConsequencePlayMotion : IModularConsequence
         MOTION_DETAIL motion = (MOTION_DETAIL)Enum.Parse(typeof(MOTION_DETAIL), motion_detail);
 
         int index = -1;
+        
         if (circles.Length > 2 && !string.IsNullOrEmpty(circles[2]))
-        {
-            int.TryParse(circles[2], out index);
-        }
+        index = modular.GetNumFromParamString(circles[2]);
 
         appearance.ChangeMotion(motion, true, index, false, null, false);
     }

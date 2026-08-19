@@ -14,6 +14,7 @@ public class StageModel_Patch
     {
         MTCustomScripts.Main.dl_activePathsDict.Clear();
         MTCustomScripts.Main.dl_overwritePathValue.Clear();
+        MTCustomScripts.Main.gateSPDict.Clear();
     }
 
     [HarmonyPatch(typeof(StageModel), nameof(StageModel.OnStageEnd))]
@@ -22,6 +23,7 @@ public class StageModel_Patch
     {
         MTCustomScripts.Main.dl_activePathsDict.Clear();
         MTCustomScripts.Main.dl_overwritePathValue.Clear();
+        MTCustomScripts.Main.gateSPDict.Clear();
     }
 
     [HarmonyPatch(typeof(Data), nameof(Data.LoadCustomLocale), new[] { typeof(LOCALIZE_LANGUAGE) })]
@@ -34,7 +36,7 @@ public class StageModel_Patch
 
     [HarmonyPatch(typeof(StageController), nameof(StageController.FixedUpdate))]
     [HarmonyPrefix]
-    private static void Prefix_StageController_FixedUpdate(StageController __instance)
+    public static void Prefix_StageController_FixedUpdate(StageController __instance)
     {
         if (__instance._phase == STAGE_PHASE.WAIT_COMMAND_BEFORE)
         {
