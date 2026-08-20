@@ -45,7 +45,7 @@ public class Main : BasePlugin
 {
     // Edit the below to your own plugin name, version, etc.
     public const string NAME = "MTCustomScripts";
-    public const string VERSION = "22.103.4";
+    public const string VERSION = "24.102.4";
     public const string AUTHOR = "MT";
     public const string GUID = $"{AUTHOR}.{NAME}";
 
@@ -495,6 +495,8 @@ public class Main : BasePlugin
         MainClass.timingDict.Add("BeforeRoundStart", 7334);
         MainClass.timingDict.Add("WaitCommand", 7335);
         MainClass.timingDict.Add("OnDeSelectSin", 7336);
+        MainClass.timingDict.Add("OnSlotSelectsTarget", 7337);
+        MainClass.timingDict.Add("OnSlotSelectedAsTarget", 7338);
 
         try
         {
@@ -587,6 +589,7 @@ public class Main : BasePlugin
             MainClass.acquirerDict["gettimingid"] = new MTCustomScripts.Acquirers.AcquirerGetTimingID();
             MainClass.acquirerDict["hasskilleffect"] = new MTCustomScripts.Acquirers.AcquirerHasSkillEffect();
             MainClass.acquirerDict["hasmang"] = new MTCustomScripts.Acquirers.AcquirerHasMang();
+            MainClass.acquirerDict["getexpectedskillpower"] = new MTCustomScripts.Acquirers.AcquirerGetExpectedSkillPower();
 
             //Override
             MainClass.acquirerDict["getcoinscale"] = new MTCustomScripts.Acquirers.AcquirerOneScale();

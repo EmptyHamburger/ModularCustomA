@@ -20,19 +20,26 @@ public class ConsequenceSetMainTarget : IModularConsequence
 
             if (target.GetSinActionList().Count < 1) return;
 
-            foreach(BattleUnitModel unit in attackers)
+            if (SkillID == -1)
             {
-                foreach(SinActionModel sam in unit.GetSinActionList())
+                modular.modsa_selfAction.ChangeMainTargetSinAction(target.GetSinActionList()[0], target.GetSinActionList()[0]._currentBattleAction, true);
+            }
+            else
+            {
+                foreach(BattleUnitModel unit in attackers)
                 {
-                    if (sam.CurrentBattleAction.Skill.GetID() == SkillID && Count > 0)
+                    foreach(SinActionModel sam in unit.GetSinActionList())
                     {
-                        SinActionModel targetSam = target.GetSinActionList()[0];
-                        BattleActionModel attackerAction = sam.CurrentBattleAction;                
-                        BattleActionModel targetAction = targetSam.CurrentBattleAction;
-                        
-                        attackerAction.ChangeMainTargetSinAction(targetSam, targetAction, true);
+                        if (sam.CurrentBattleAction.Skill.GetID() == SkillID && Count > 0)
+                        {
+                            SinActionModel targetSam = target.GetSinActionList()[0];
+                            BattleActionModel attackerAction = sam.CurrentBattleAction;                
+                            BattleActionModel targetAction = targetSam.CurrentBattleAction;
+                            
+                            attackerAction.ChangeMainTargetSinAction(targetSam, targetAction, true);
 
-                        Count-=1;
+                            Count-=1;
+                        }
                     }
                 }
             }
