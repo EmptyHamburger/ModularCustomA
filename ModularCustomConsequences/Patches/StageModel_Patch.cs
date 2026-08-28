@@ -42,7 +42,7 @@ public class StageModel_Patch
         {
             List<BattleUnitModel> unitList = SingletonBehavior<BattleObjectManager>.Instance.GetModelList();
             int actevent = MainClass.timingDict["WaitCommand"];
-
+            List<BattleActionModel> bamList = Singleton<BattleActionModelManager>.Instance.GetActionList();
             foreach (BattleUnitModel unit in unitList)
             {
                 foreach (PassiveModel passiveModel in unit._passiveDetail.PassiveList)
@@ -80,6 +80,20 @@ public class StageModel_Patch
                     {
                         modba.modsa_buffModel = buffModel;
                         modba.Enact(unit, null, null, null, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
+                    }
+                }
+            }
+            
+            foreach(BattleActionModel bam in bamList)
+            {
+                SkillModel skill = bam.Skill;
+                if (skill == null) continue;
+                long intLong = skill.Pointer.ToInt64();
+                if (SkillScriptInitPatch.modsaDict.ContainsKey(intLong))
+                {
+                    foreach(ModularSA modsa in SkillScriptInitPatch.modsaDict[intLong])
+                    {
+                        modsa.Enact(bam._model, skill, bam, null, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
                     }
                 }
             }
