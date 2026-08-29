@@ -22,7 +22,9 @@ public class ConsequenceSetMainTarget : IModularConsequence
 
             if (SkillID == -1)
             {
-                modular.modsa_selfAction.ChangeMainTargetSinAction(target.GetSinActionList()[0], target.GetSinActionList()[0]._currentBattleAction, true);
+                if (modular.modsa_oppoAction != null)
+                modular.modsa_selfAction.ChangeMainTargetSinAction(modular.modsa_oppoAction._sinAction, modular.modsa_oppoAction, true);
+                else modular.modsa_selfAction.ChangeMainTargetSinAction(target.GetSinActionList()[0], target.GetSinActionList()[0]._currentBattleAction, true);
             }
             else
             {
