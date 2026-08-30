@@ -47,11 +47,11 @@ internal class Modular_SetupModular
                     {
                         parsedKeyword = BUFF_UNIQUE_KEYWORD.None;
                     }
-                    Main.Instance.keywordTriggerDict[__instance.Pointer.ToInt64()] = parsedKeyword;
+                    MTCustomScripts.Main.Instance.keywordTriggerDict[__instance.Pointer.ToInt64()] = parsedKeyword;
                     MainClass.Logg.LogInfo("Parsed keyword trigger for OnGainBuff: " + parsedKeyword.ToString());
 
 					if (!bool.TryParse(hitArgs, out bool result)) result = false;
-					Main.Instance.equipdefense_refreshslotview = result;
+					MTCustomScripts.Main.Instance.equipdefense_refreshslotview = result;
 					// }
 					// if (circle_0 == "SpecialAction")
 					// {
@@ -60,7 +60,7 @@ internal class Modular_SetupModular
 
                 else if (circle_0 == "OnGainBuff")
                 {
-                    Main.Instance.keywordTriggerDict[__instance.Pointer.ToInt64()] = BUFF_UNIQUE_KEYWORD.None;
+                    MTCustomScripts.Main.Instance.keywordTriggerDict[__instance.Pointer.ToInt64()] = BUFF_UNIQUE_KEYWORD.None;
                 }
             }
             // else if (batch.StartsWith("LUA:", StringComparison.OrdinalIgnoreCase))

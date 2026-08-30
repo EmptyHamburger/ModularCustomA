@@ -78,6 +78,10 @@ internal class RightAfterGetAnyBuff
 
             foreach (ModularSA modba in SkillScriptInitPatch.modbaDict[buffmodel_intlong])
             {
+                if (!MTCustomScripts.Main.Instance.keywordTriggerDict.ContainsKey(modba.Pointer.ToInt64())) continue;
+                BUFF_UNIQUE_KEYWORD trigger = MTCustomScripts.Main.Instance.keywordTriggerDict[modba.Pointer.ToInt64()];
+                if ((trigger != BUFF_UNIQUE_KEYWORD.None) && (trigger != keyword)) continue;
+
                 modba.modsa_buffModel = buffModel;
                 modba.Enact(__instance, null, null, actionOrNull, actevent, timing);
             }
