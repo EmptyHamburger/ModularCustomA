@@ -6,7 +6,7 @@ public class AcquirerGainBuffSource : IModularAcquirer
 {
     public int ExecuteAcquirer(ModularSA modular, string section, string circledSection, string[] circles)
     {
-        if (modular.modsa_passiveModel == null) return -1;
+        if (modular.modsa_passiveModel == null && modular.modsa_buffModel == null) return -1;
 
         return MTCustomScripts.Main.Instance.gainbuff_source switch
         {
