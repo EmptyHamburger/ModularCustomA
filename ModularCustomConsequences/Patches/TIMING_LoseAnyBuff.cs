@@ -36,6 +36,7 @@ internal class LoseAnyBuff
             foreach (ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong])
             {
                 if (!MTCustomScripts.Main.Instance.keywordTriggerDict.ContainsKey(modpa.Pointer.ToInt64())) continue;
+                if (modpa.activationTiming != actevent) continue;
                 BUFF_UNIQUE_KEYWORD trigger = MTCustomScripts.Main.Instance.keywordTriggerDict[modpa.Pointer.ToInt64()];
                 if ((trigger != BUFF_UNIQUE_KEYWORD.None) && (trigger != loseBuffInfo.GetKeyword())) continue;
 
@@ -55,6 +56,7 @@ internal class LoseAnyBuff
             foreach (ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong])
             {
                 if (!MTCustomScripts.Main.Instance.keywordTriggerDict.ContainsKey(modpa.Pointer.ToInt64())) continue;
+                if (modpa.activationTiming != actevent) continue;
                 BUFF_UNIQUE_KEYWORD trigger = MTCustomScripts.Main.Instance.keywordTriggerDict[modpa.Pointer.ToInt64()];
                 if ((trigger != BUFF_UNIQUE_KEYWORD.None) && (trigger != loseBuffInfo.GetKeyword())) continue;
 
@@ -72,6 +74,11 @@ internal class LoseAnyBuff
 
             foreach (ModularSA modba in SkillScriptInitPatch.modbaDict[buffmodel_intlong])
             {
+                if (!MTCustomScripts.Main.Instance.keywordTriggerDict.ContainsKey(modba.Pointer.ToInt64())) continue;
+                if (modba.activationTiming != actevent) continue;
+                BUFF_UNIQUE_KEYWORD trigger = MTCustomScripts.Main.Instance.keywordTriggerDict[modba.Pointer.ToInt64()];
+                if ((trigger != BUFF_UNIQUE_KEYWORD.None) && (trigger != loseBuffInfo.GetKeyword())) continue;
+
                 modba.modsa_buffModel = buffModel;
                 MainClass.Logg.LogInfo("Founds buffAbility - LoseBuff timing: " + modba.modsa_buffModel.localizeID);
 
@@ -109,6 +116,7 @@ internal class LoseAnyBuff
             foreach (ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong])
             {
                 if (!MTCustomScripts.Main.Instance.keywordTriggerDict.ContainsKey(modpa.Pointer.ToInt64())) continue;
+                if (modpa.activationTiming != actevent) continue;
                 BUFF_UNIQUE_KEYWORD trigger = MTCustomScripts.Main.Instance.keywordTriggerDict[modpa.Pointer.ToInt64()];
                 if ((trigger != BUFF_UNIQUE_KEYWORD.None) && (trigger != keyword)) continue;
 
@@ -128,6 +136,7 @@ internal class LoseAnyBuff
             foreach (ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong])
             {
                 if (!MTCustomScripts.Main.Instance.keywordTriggerDict.ContainsKey(modpa.Pointer.ToInt64())) continue;
+                if (modpa.activationTiming != actevent) continue;
                 BUFF_UNIQUE_KEYWORD trigger = MTCustomScripts.Main.Instance.keywordTriggerDict[modpa.Pointer.ToInt64()];
                 if ((trigger != BUFF_UNIQUE_KEYWORD.None) && (trigger != keyword)) continue;
 
@@ -146,6 +155,11 @@ internal class LoseAnyBuff
 
             foreach (ModularSA modba in SkillScriptInitPatch.modbaDict[buffmodel_intlong])
             {
+                if (!MTCustomScripts.Main.Instance.keywordTriggerDict.ContainsKey(modba.Pointer.ToInt64())) continue;
+                if (modba.activationTiming != actevent) continue;
+                BUFF_UNIQUE_KEYWORD trigger = MTCustomScripts.Main.Instance.keywordTriggerDict[modba.Pointer.ToInt64()];
+                if ((trigger != BUFF_UNIQUE_KEYWORD.None) && (trigger != keyword)) continue;
+
                 modba.modsa_buffModel = buffModel;
                 MainClass.Logg.LogInfo("Founds buffAbility - BeforeLoseBuff timing: " + modba.modsa_buffModel.localizeID);
 
