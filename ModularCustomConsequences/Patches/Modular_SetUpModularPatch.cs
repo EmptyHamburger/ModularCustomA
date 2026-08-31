@@ -29,13 +29,12 @@ internal class Modular_SetupModular
                 {
                     string hitArgs = circles[1];
                     // if (hitArgs.Contains("Head")) _onlyHeads = true;
-					// else if (hitArgs.Contains("Tail")) _onlyTails = true;
+                    // else if (hitArgs.Contains("Tail")) _onlyTails = true;
 
-					// if (hitArgs.Contains("NoCrit")) _onlyNonCrit = true;
-					// else if (hitArgs.Contains("Crit")) _onlyCrit = true;
-                    BUFF_UNIQUE_KEYWORD parsedKeyword = CustomBuffs.ParseBuffUniqueKeyword(hitArgs);
-                    MainClass.Logg.LogInfo($"Input keyword: {hitArgs}; Parsed keyword: {parsedKeyword}");
-					// if (parsedKeyword.ToString() != hitArgs) parsedKeyword = BUFF_UNIQUE_KEYWORD.None;
+                    // if (hitArgs.Contains("NoCrit")) _onlyNonCrit = true;
+                    // else if (hitArgs.Contains("Crit")) _onlyCrit = true;
+                    // BUFF_UNIQUE_KEYWORD parsedKeyword = CustomBuffs.ParseBuffUniqueKeyword(hitArgs);
+                    if (!Il2CppSystem.Enum.TryParse(hitArgs, out BUFF_UNIQUE_KEYWORD parsedKeyword)) parsedKeyword = BUFF_UNIQUE_KEYWORD.None;
                     __instance.keywordTrigger = parsedKeyword;
                     MTCustomScripts.Main.Instance.keywordTriggerDict[__instance.Pointer.ToInt64()] = parsedKeyword;
                     MainClass.Logg.LogInfo($"Parsed keyword trigger for OnGainBuff: {parsedKeyword.ToString()}; Input: {hitArgs}");
@@ -50,6 +49,7 @@ internal class Modular_SetupModular
                 else if (circle_0 == "OnGainBuff")
                 {
                     MainClass.Logg.LogInfo("OnGainBuff with no keyword detected, default to None");
+                    MTCustomScripts.Main.Instance.keywordTriggerDict[__instance.Pointer.ToInt64()] = BUFF_UNIQUE_KEYWORD.None;
                 }
             }
         }
