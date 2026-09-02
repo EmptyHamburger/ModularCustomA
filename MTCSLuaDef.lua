@@ -983,4 +983,17 @@ function listskillkeywords(Single_Target) return {} end
 ---@return table
 ---@nodiscard
 function listbattleactions() return {} end
+
+---Returns a .lua table (array-like) containing all skill IDs of the target.
+---@param Single_Target string --Modular's Single-Target
+---@return table
+---@nodiscard
+function listallskills(Single_Target) return {} end
+
+---Returns a .lua dictionary with all passives the unit has. Ego passives are under the "egopassive" key with their id as the value, regular passives are under the "passive" key with their id as the value.
+---@param Single_Target string --Modular's Single-Target
+---@return table
+---@nodiscard
+function listpassiveids(Single_Target) return {} end
+
 --#endregion

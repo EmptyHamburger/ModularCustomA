@@ -536,8 +536,10 @@ public class Main : BasePlugin
             MainClass.luaFunctionDict["getcurrentmapid"] = new MTCustomScripts.LuaFunctions.GetCurrentMapID();
             MainClass.luaFunctionDict["listrelatedkeywords"] = new MTCustomScripts.LuaFunctions.LuaFunctionListRelatedKeywords();
             MainClass.luaFunctionDict["getappearanceid"] = new MTCustomScripts.LuaFunctions.LuaFunctionGetAppearanceID();
-            MainClass.luaFunctionDict["listbreakvalues"] = new MTCustomScripts.LuaFunctions.LuaFunctionListBreakSectionValue();
+            MainClass.luaFunctionDict["listallskills"] = new MTCustomScripts.LuaFunctions.LuaFunctionListAllSkills();
+            MainClass.luaFunctionDict["listbreakvalues"] = new MTCustomScripts.LuaFunctions.LuaFunctionListBreakSectionValue(); 
             MainClass.luaFunctionDict["listegoskillids"] = new MTCustomScripts.LuaFunctions.LuaFunctionListEgoSkillIDs();
+            MainClass.luaFunctionDict["listpassiveids"] = new MTCustomScripts.LuaFunctions.LuaFunctionListPassiveIDs();
             MainClass.luaFunctionDict["listskillkeywords"] = new MTCustomScripts.LuaFunctions.LuaFunctionListSkillKeywordList();
             MainClass.luaFunctionDict["listbattleactions"] = new MTCustomScripts.LuaFunctions.LuaFunctionListBattleActions();
             MainClass.luaFunctionDict["getbufflocaledata"] = new MTCustomScripts.LuaFunctions.LuaFunctionGetBuffLocaleData();
