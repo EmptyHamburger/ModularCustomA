@@ -1,6 +1,7 @@
 using HarmonyLib;
 using Lethe.Patches;
 using ModularSkillScripts;
+using Il2CppSystem;
 
 namespace MTCustomScripts.Patches;
 
@@ -41,6 +42,10 @@ internal class Modular_SetupModular
 
 					if (!bool.TryParse(hitArgs, out bool result)) result = false;
 					MTCustomScripts.Main.Instance.equipdefense_refreshslotview = result;
+
+                    if (!Enum.TryParse(hitArgs, out SEPIRA parsedDuranteKeyword)) parsedDuranteKeyword = SEPIRA.NONE;
+                    MTCustomScripts.Main.Instance.duranteTriggerDict[__instance.Pointer.ToInt64()] = parsedDuranteKeyword;
+                    MainClass.Logg.LogInfo($"Parsed Durante keyword trigger for OnActivateDurante: {parsedDuranteKeyword.ToString()}; Input: {hitArgs}");
 					// }
 					// if (circle_0 == "SpecialAction")
 					// {
@@ -50,6 +55,11 @@ internal class Modular_SetupModular
                 {
                     MainClass.Logg.LogInfo("OnGainBuff with no keyword detected, default to None");
                     MTCustomScripts.Main.Instance.keywordTriggerDict[__instance.Pointer.ToInt64()] = BUFF_UNIQUE_KEYWORD.None;
+                }
+                else if (circle_0 == "OnActivateDurante")
+                {
+                    MainClass.Logg.LogInfo("OnActivateDurante with no keyword detected, default to NONE");
+                    MTCustomScripts.Main.Instance.duranteTriggerDict[__instance.Pointer.ToInt64()] = SEPIRA.NONE;
                 }
             }
         }

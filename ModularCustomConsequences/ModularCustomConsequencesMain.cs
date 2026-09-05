@@ -69,6 +69,8 @@ public class Main : BasePlugin
     public static System.Collections.Generic.Dictionary<BuffModel, System.Collections.Generic.Dictionary<string, string>> dl_overwritePathValue = new();
     public static int lastSinSlotIndex = 0;
     public static System.Collections.Generic.Dictionary<IntPtr, (int Min, int Max)> gateSPDict = new();
+    public System.Collections.Generic.Dictionary<long, SEPIRA> duranteTriggerDict = new();
+    public SEPIRA durante_keyword = SEPIRA.NONE;
 
     public class GlobalLuaValues
     {
@@ -497,6 +499,7 @@ public class Main : BasePlugin
         MainClass.timingDict.Add("OnDeSelectSin", 7336);
         MainClass.timingDict.Add("OnSlotSelectsTarget", 7337);
         MainClass.timingDict.Add("OnSlotSelectedAsTarget", 7338);
+        MainClass.timingDict.Add("OnActivateDurante", 7339);
 
         try
         {
@@ -512,6 +515,7 @@ public class Main : BasePlugin
             harmony.PatchAll(typeof(StageModel_Patch));
             harmony.PatchAll(typeof(SinActionModelPatches));
             harmony.PatchAll(typeof(GateSP));
+            harmony.PatchAll(typeof(DuranteManager));
 
             // harmony.PatchAll(typeof(CoinSlotUI_UpdateCoinColor));
             // harmony.PatchAll(typeof(StyxPatch));
@@ -592,9 +596,12 @@ public class Main : BasePlugin
             MainClass.acquirerDict["hasskilleffect"] = new MTCustomScripts.Acquirers.AcquirerHasSkillEffect();
             MainClass.acquirerDict["hasmang"] = new MTCustomScripts.Acquirers.AcquirerHasMang();
             MainClass.acquirerDict["getexpectedskillpower"] = new MTCustomScripts.Acquirers.AcquirerGetExpectedSkillPower();
+            MainClass.acquirerDict["getsepiralevel"] = new MTCustomScripts.Acquirers.AcquirerGetSepiraLevel();
 
             //Override
             MainClass.acquirerDict["getcoinscale"] = new MTCustomScripts.Acquirers.AcquirerOneScale();
+            // MainClass.acquirerDict["getskillattribute"] = new MTCustomScripts.Acquirers.AcquirerSkillAttribute();
+            // MainClass.acquirerDict["getskillatk"] = new MTCustomScripts.Acquirers.AcquirerSkillAtk();
         }
         catch (System.Exception ex) { Main.Logger.LogError("Error when loading Acquirers: " + ex); }
 
