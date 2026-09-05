@@ -1,9 +1,12 @@
 using HarmonyLib;
+using Il2CppSystem.Collections.Generic;
+using Lethe;
 using Lethe.Patches;
 using ModularSkillScripts;
-using System.Text.RegularExpressions;
-using Il2CppSystem.Collections.Generic;
 using MTCustomScripts;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using UnityEngine.Rendering.RadeonRays;
 
 internal class Modular_EnactConsequence
 {
@@ -90,12 +93,12 @@ internal class Modular_EnactConsequence
     }
 
 
-    [HarmonyPatch(typeof(ModularSA), "ProcessBatch")]
+    [HarmonyPatch(typeof(ModularSA), "Consequence")]
     [HarmonyPrefix, HarmonyPriority(Priority.VeryHigh)]
-    public static void Prefix_ModularSA_Consequence(string batch, ModularSA __instance)
+    public static bool Prefix_ModularSA_Consequence(string section, ModularSA __instance)
     {
         Regex waitingReg = Main.Instance.waitingRegex;
-        Match waitingMatch = waitingReg.Match(batch);
+        Match waitingMatch = waitingReg.Match(section);
 
         if (waitingMatch.Success)
         {
@@ -103,8 +106,30 @@ internal class Modular_EnactConsequence
             int finalWait = __instance.GetNumFromParamString(waitingMatchTime);
 
 
-            batch = batch.Replace(waitingMatchTime + ":", "");
-            Il2CppSystem.Threading.Tasks.Task.Delay(finalWait);
+            section = section.Replace(waitingMatchTime + ":", "");
+            DelayConsequence(section, __instance, finalWait);
+            return false;
+        }
+
+        return true;
+    }
+
+    public static async void DelayConsequence(string section, ModularSA modular, int delay)
+    {
+        await System.Threading.Tasks.Task.Delay(delay);
+
+        string[] sectionArgs = section.Split('(', ')');
+        string mEth = sectionArgs[0];
+        string circledSection = "";
+        if (sectionArgs.Length >= 2) circledSection = sectionArgs[1];
+        string[] circles = circledSection.Split(',');
+        if (MainClass.consequenceDict.TryGetValue(mEth, out var consequence))
+        {
+            consequence.ExecuteConsequence(modular, section, circledSection, circles);
+        }
+        else
+        {
+            MainClass.LogModular("Invalid Consequence: " + mEth);
         }
     }
 }

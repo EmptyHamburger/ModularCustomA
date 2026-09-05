@@ -27,7 +27,7 @@
 			https://nuget.bepinex.dev/v3/index.json;
 			https://nuget.samboy.dev/v3/index.json
 		</RestoreAdditionalProjectSources>
-		<!--LimbusCompanyFolder>D:\Zwei</LimbusCompanyFolder-->
+		<LimbusCompanyFolder>D:\Zwei</LimbusCompanyFolder>
 	</PropertyGroup>
 
 	<ItemGroup>
