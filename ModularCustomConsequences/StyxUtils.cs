@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.Playables;
 using Utils;
-using static BattleUI.Abnormality.AbnormalityPartSkills;
 
 namespace MTCustomScripts
 {
@@ -178,10 +177,9 @@ namespace MTCustomScripts
 
 
                     methodSegment = currentSkillTarget + " / " + "Parsing and ID";
+
                     string[] skillSplit = currentSkillTarget.Split('-', StringSplitOptions.RemoveEmptyEntries);
                     bool hasSplit = (skillSplit.Length > 2);
-
-
                     int startData = -1;
                     int firstExtractedInt = -1;
                     List<int> notedSkillId = new();
@@ -235,7 +233,6 @@ namespace MTCustomScripts
                         }
                         notedSkillId.Clear();
                     }
-
                 }
                 catch (System.Exception ex)
                 {
