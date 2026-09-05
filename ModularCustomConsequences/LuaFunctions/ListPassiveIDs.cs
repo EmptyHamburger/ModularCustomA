@@ -22,6 +22,7 @@ public class LuaFunctionListPassiveIDs : IModularLuaFunction
         foreach (EgoPassiveModel egoPassive in target._passiveDetail._egoPassiveList) tempDict["egopassive"].Add(egoPassive.GetID());
         
         foreach (PassiveModel passive in target._passiveDetail._passivelist) tempDict["passive"].Add(passive.GetID());
+        }
 
         LuaTable table = new LuaTable();
 
