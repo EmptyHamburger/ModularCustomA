@@ -26,7 +26,7 @@ public class ConsequenceAddSkillAbility : IModularConsequence
         List<BattleUnitModel> targetList = modular.GetTargetModelList(circles[0]);
         if (targetList == null || targetList.Count <= 0) return;
 
-        List<SkillModel> skillList = modular.GetMultipleSkillModel(targetList, circles[1]);
+        System.Collections.Generic.List<SkillModel> skillList = modular.GetMultipleSkillModel(targetList, circles[1]);
         if (skillList == null || skillList.Count <= 0) return;
 
         string skillScriptName = circles[2];

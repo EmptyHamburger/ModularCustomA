@@ -5,8 +5,10 @@ using ModularSkillScripts;
 using ModularSkillScripts.Patches;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.Playables;
 using Utils;
+using static BattleUI.Abnormality.AbnormalityPartSkills;
 
 namespace MTCustomScripts
 {
@@ -113,237 +115,207 @@ namespace MTCustomScripts
             return result;
         }
 
-        public static SkillModel GetSkill<T>(this Il2CppSystem.Collections.Generic.List<T> il2cppList, int id)
+        public static SkillModel GetSkill(this Il2CppSystem.Collections.Generic.List<BattleActionModel> actionList, int id)
         {
             SkillModel finalSkill = null;
+            for (int i = 0; i < actionList.Count; i++)
+            {
+                finalSkill = actionList[i].Skill;
+                if (finalSkill.GetID() == id) break;
+                else finalSkill = null;
+            }
 
-            if (il2cppList is Il2CppSystem.Collections.Generic.List<BattleActionModel> actionList)
-            {
-                for (int i = 0; i < actionList.Count; i++)
-                {
-                    finalSkill = actionList[i].Skill;
-                    if (finalSkill.GetID() == id) break;
-                    else finalSkill = null;
-                }
-            }
-            else if (il2cppList is Il2CppSystem.Collections.Generic.List<SkillModel> skillList)
-            {
-                for (int i = 0; i < skillList.Count; i++)
-                {
-                    finalSkill = skillList[i];
-                    if (finalSkill.GetID() == id) break;
-                    else finalSkill = null;
-                }
-            }
 
             return finalSkill;
         }
 
-        public static Il2CppSystem.Collections.Generic.List<SkillModel> GetSkillList<T>(this Il2CppSystem.Collections.Generic.List<T> il2cppList, int id, int max = 999)
+
+        public static System.Collections.Generic.List<SkillModel> GetSkillList(this Il2CppSystem.Collections.Generic.List<BattleActionModel> actionList, int id, int max = 999)
         {
-            Il2CppSystem.Collections.Generic.List<SkillModel> finalSkillList = new(max);
-
-            if (il2cppList is Il2CppSystem.Collections.Generic.List<BattleActionModel> actionList)
+            System.Collections.Generic.List<SkillModel> finalSkillList = new(max);
+            for (int i = 0; i < actionList.Count; i++)
             {
-                for (int i = 0; i < actionList.Count; i++)
-                {
-                    SkillModel skill = actionList[i].Skill;
-                    if (skill.GetID() == id) finalSkillList.Add(skill);
+                SkillModel skill = actionList[i].Skill;
+                if (skill.GetID() == id) finalSkillList.Add(skill);
 
-                    if (finalSkillList.Count >= max) break;
-                }
+                if (finalSkillList.Count >= max) break;
             }
-            else if (il2cppList is Il2CppSystem.Collections.Generic.List<SkillModel> skillList)
-            {
-                for (int i = 0; i < skillList.Count; i++)
-                {
-                    if (skillList[i].GetID() == id) finalSkillList.Add(skillList[i]);
-
-                    if (finalSkillList.Count >= max) break;
-                }
-            }
+            
 
             return finalSkillList;
         }
 
-        public static Il2CppSystem.Collections.Generic.List<SkillModel> GetMultipleSkillModel(this ModularSA modular, Il2CppSystem.Collections.Generic.List<BattleUnitModel> selectedUnitList, string skillTarget)
+        public static System.Collections.Generic.List<SkillModel> GetMultipleSkillModel(this ModularSA modular, Il2CppSystem.Collections.Generic.List<BattleUnitModel> selectedUnitList, string skillTarget)
         {
-            Il2CppSystem.Collections.Generic.List<SkillModel> selectedSkillList = new();
-            System.Collections.Generic.List<BattleActionModel> selectedActionList = [];
-
-            skillTarget = skillTarget.ToLower();
-            string[] splitSkillTarget = (skillTarget.Contains('|')) ? skillTarget.Split('|', System.StringSplitOptions.RemoveEmptyEntries) : new string[] { skillTarget };
+            List<SkillModel> selectedSkillList = new();
+            skillTarget = skillTarget.ToLowerInvariant();
+            string[] splitSkillTarget = skillTarget.Split('|', StringSplitOptions.RemoveEmptyEntries);
+            string methodSegment = "NotBeganEvenSection";
 
             for (int i = 0; i < splitSkillTarget.Length; i++)
             {
-                int preModularCount = selectedSkillList.Count;
                 try
                 {
-                    if (splitSkillTarget[i] == "modularskill") selectedSkillList.Add(modular?.modsa_skillModel);
-                    if (splitSkillTarget[i] == "modularselfaction") selectedSkillList.Add(modular?.modsa_selfAction?.Skill);
-                    if (splitSkillTarget[i] == "modularoppoaction") selectedSkillList.Add(modular?.modsa_oppoAction?.Skill);
+                    methodSegment = "Modular";
+
+                    string currentSkillTarget = splitSkillTarget[i];
+
+                    if (currentSkillTarget == "modularskill")
+                    {
+                        selectedSkillList.Add(modular?.modsa_skillModel);
+                        continue;
+                    }
+                    else if (currentSkillTarget == "modularselfaction")
+                    {
+                        selectedSkillList.Add(modular?.modsa_selfAction?.Skill);
+                        continue;
+                    }
+                    else if (currentSkillTarget == "modularoppoaction")
+                    {
+                        selectedSkillList.Add(modular?.modsa_oppoAction?.Skill);
+                        continue;
+                    }
+
+
+                    methodSegment = currentSkillTarget + " / " + "Parsing and ID";
+                    string[] skillSplit = currentSkillTarget.Split('-', StringSplitOptions.RemoveEmptyEntries);
+                    bool hasSplit = (skillSplit.Length > 2);
+
+
+                    int startData = -1;
+                    int firstExtractedInt = -1;
+                    List<int> notedSkillId = new();
+
+                    foreach (BattleUnitModel unit in selectedUnitList)
+                    {
+                        methodSegment = currentSkillTarget + " / " + skillSplit[0];
+                        if (!hasSplit) selectedSkillList.Add(unit.UnitDataModel.GetSkillModel(modular.GetNumFromParamString(currentSkillTarget)));
+                        else if (!currentSkillTarget.Contains("all")) selectedSkillList.Add(modular.GetSingleSkillModel(unit, currentSkillTarget));
+                        else
+                        {
+                            if (startData == -1) startData = (skillSplit[0] == "activeaction" && skillSplit.Length >= 3) ? 1 : 0;
+                            if (firstExtractedInt == -1) firstExtractedInt = modular.GetNumFromParamString(skillSplit[startData + 1]);
+
+                            switch (skillSplit[startData])
+                            {
+                                case "idall":
+                                    notedSkillId.Add(firstExtractedInt);
+                                    break;
+
+
+                                case "dall":
+                                    notedSkillId.Add(unit.GetDefenseSkillIDList()[firstExtractedInt]);
+                                    break;
+
+                                case "sall":
+                                    if (skillSplit.Length > startData + 2) notedSkillId.Add(unit.GetSkillIdByTier(firstExtractedInt)[modular.GetNumFromParamString(skillSplit[startData + 2])]);
+                                    else notedSkillId.Add(unit.GetSkillIdByTier(firstExtractedInt)[0]);
+                                    break;
+
+                                case "atkall":
+                                    foreach (SkillModel skill in unit.GetSkillList()) if (skill.IsAttack()) notedSkillId.Add(skill.GetID());
+                                    break;
+
+                                case "defall":
+                                    notedSkillId.AddRange((IEnumerable<int>)unit.GetDefenseSkillIDList());
+                                    break;
+
+                                case "all":
+                                    foreach (SkillModel skill in unit.GetSkillList()) notedSkillId.Add(skill.GetID());
+                                    break;
+                            }
+                        }
+
+                        if (notedSkillId.Count <= 0) continue;
+
+                        foreach (int skillId in notedSkillId.Distinct())
+                        {
+                            if (startData > 0) selectedSkillList.AddRange(unit._sortedActionList.GetSkillList(skillId));
+                            else selectedSkillList.Add(unit.UnitDataModel.GetSkillModel(skillId));
+                        }
+                        notedSkillId.Clear();
+                    }
+
                 }
                 catch (System.Exception ex)
                 {
-                    MainClass.Logg.LogError($"GetMultipleSkillModel error for Part-1: {ex}");
+                    MainClass.Logg.LogError($"GetSingleSkillModel error for {methodSegment} Targetting: {ex}");
                 }
 
-                if (preModularCount < selectedSkillList.Count) continue;
-
-                foreach (BattleUnitModel selectedUnit in selectedUnitList)
-                {
-                    int skillId = 0;
-                    string[] skillIdSplit = new string[5];
-
-                    try
-                    {
-
-                        skillId = 0;
-                        skillIdSplit = (splitSkillTarget[i].Contains('-')) ? splitSkillTarget[i].Split("-") : null;
-                        if (skillIdSplit == null || skillIdSplit.Length < 2) continue;
-
-                        int universalID = (skillIdSplit.Length >= 2) ? modular.GetNumFromParamString(skillIdSplit[1]) : 0;
-                        int finalUniversalID = (skillIdSplit.Length >= 3) ? modular.GetNumFromParamString(skillIdSplit[2]) - 1 : 0;
-
-                        switch (splitSkillTarget[0])
-                        {
-                            case "s":
-                                if (skillIdSplit.Length >= 3) skillId = selectedUnit.GetSkillIdByTier(universalID)[finalUniversalID];
-                                else skillId = selectedUnit.GetSkillIdByTier(universalID)[0];
-                                break;
-
-
-                            case "d":
-                                skillId = selectedUnit.GetDefenseSkillIDList()[universalID];
-                                break;
-
-
-                            case "current":
-                                if (selectedUnit._actionList.Count >= universalID) break;
-                                selectedSkillList.Add(selectedUnit._actionList[MinMax(universalID, selectedUnit._actionList.Count)].Skill);
-                                break;
-
-
-                            case "activeaction":
-                                if (skillIdSplit.Length < 3) break;
-
-                                if (skillIdSplit[1] == "index") selectedSkillList.Add(selectedUnit._actionList[MinMax(universalID, selectedUnit._actionList.Count)].Skill);
-                                else if (skillIdSplit[1] == "id") selectedSkillList.Add(selectedUnit._actionList.GetSkill(finalUniversalID));
-                                else if (skillIdSplit[1] == "d") selectedSkillList.Add(selectedUnit._actionList.GetSkill(selectedUnit.GetDefenseSkillIDList()[finalUniversalID]));
-                                else if (skillIdSplit[1] == "s")
-                                {
-                                    if (skillIdSplit.Length >= 4) selectedSkillList.Add(selectedUnit._actionList.GetSkill(selectedUnit.GetSkillIdByTier(finalUniversalID)[modular.GetNumFromParamString(skillIdSplit[3])]));
-                                    else selectedSkillList.Add(selectedUnit._actionList.GetSkill(selectedUnit.GetSkillIdByTier(finalUniversalID)[0]));
-                                }
-                                else if (skillIdSplit[1] == "idall") selectedActionList.AddRange((IEnumerable<BattleActionModel>)selectedUnit._actionList.GetSkillList(finalUniversalID));
-                                else if (skillIdSplit[1] == "dall") selectedActionList.AddRange((IEnumerable<BattleActionModel>)selectedUnit._actionList.GetSkillList(selectedUnit.GetDefenseSkillIDList()[finalUniversalID]));
-                                else if (skillIdSplit[1] == "sall")
-                                {
-                                    if (skillIdSplit.Length >= 4) selectedActionList.AddRange((IEnumerable<BattleActionModel>)selectedUnit._actionList.GetSkillList(selectedUnit.GetSkillIdByTier(finalUniversalID)[modular.GetNumFromParamString(skillIdSplit[3])]));
-                                    else selectedActionList.AddRange((IEnumerable<BattleActionModel>)selectedUnit._actionList.GetSkillList(selectedUnit.GetSkillIdByTier(finalUniversalID)[0]));
-                                }
-                                break;
-
-                            default:
-                                skillId = modular.GetNumFromParamString(splitSkillTarget[i]);
-                                break;
-                        }
-
-                        if (selectedActionList.Count > 0)
-                        {
-                            foreach (BattleActionModel selectedAction in selectedActionList) selectedSkillList.Add(selectedAction.Skill);
-                            selectedActionList.Clear();
-                        }
-
-                        if (skillId > 0) selectedSkillList.Add(selectedUnit.UnitDataModel.GetSkillModel(skillId));
-                    }
-                    catch (System.Exception ex)
-                    {
-                        MainClass.Logg.LogError($"GetSingleSkillModel error for Part-2: {ex}");
-                    }
-                }
             }
 
-            return selectedSkillList.ToDistinctIL2CPP();
+            return selectedSkillList.Distinct().ToList();
         }
 
         public static SkillModel GetSingleSkillModel(this ModularSA modular, BattleUnitModel selectedUnit, string skillTarget)
         {
             SkillModel selectedSkill = null;
-            skillTarget = skillTarget.ToLower();
+            skillTarget = skillTarget.ToLowerInvariant();
+            string methodSegment = "Modular";
 
             try
             {
                 if (skillTarget == "modularskill") selectedSkill = modular?.modsa_skillModel;
-                if (skillTarget == "modularselfaction") selectedSkill = modular?.modsa_selfAction?.Skill;
-                if (skillTarget == "modularoppoaction") selectedSkill = modular?.modsa_oppoAction?.Skill;
-            }
-            catch (System.Exception ex)
-            {
-                MainClass.Logg.LogError($"GetSingleSkillModel error for Part-1: {ex}");
-            }
+                else if (skillTarget == "modularselfaction") selectedSkill = modular?.modsa_selfAction?.Skill;
+                else if (skillTarget == "modularoppoaction") selectedSkill = modular?.modsa_oppoAction?.Skill;
 
-            if (selectedSkill != null) return selectedSkill;
 
-            int skillId = 0;
-            string[] skillIdSplit = new string[5];
+                if (selectedSkill != null || selectedUnit == null) return selectedSkill;
+                methodSegment = "Parsing and ID";
 
-            try
-            {
+                string[] skillSplit = (skillTarget.Contains('-')) ? skillTarget.Split('-', StringSplitOptions.RemoveEmptyEntries) : null;
+                if (skillSplit == null || skillSplit.Length < 2) return selectedUnit.UnitDataModel.GetSkillModel(modular.GetNumFromParamString(skillTarget));
 
-                skillId = 0;
-                skillIdSplit = (skillTarget.Contains('-')) ? skillTarget.Split("-") : null;
-                if (skillIdSplit == null || skillIdSplit.Length < 2) return null;
 
-                int universalID = (skillIdSplit.Length >= 2) ? modular.GetNumFromParamString(skillIdSplit[1]) : 0;
-                int finalUniversalID = (skillIdSplit.Length >= 3) ? modular.GetNumFromParamString(skillIdSplit[2]) - 1 : 0;
+                methodSegment = skillSplit[0];
+                int startData = (methodSegment == "activeaction" && skillSplit.Length >= 3) ? 1 : 0;
+                int skillId = -1;
+                int firstExtractedInt = modular.GetNumFromParamString(skillSplit[startData + 1]);
 
-                switch (skillIdSplit[0])
+                switch (skillSplit[startData])
                 {
                     case "s":
-                        if (skillIdSplit.Length >= 3) skillId = selectedUnit.GetSkillIdByTier(universalID)[finalUniversalID];
-                        else skillId = selectedUnit.GetSkillIdByTier(universalID)[0];
+                        if (skillSplit.Length < startData + 2) skillId = selectedUnit.GetSkillIdByTier(firstExtractedInt)[0];
+                        else skillId = selectedUnit.GetSkillIdByTier(firstExtractedInt)[modular.GetNumFromParamString(skillSplit[startData + 2])];
                         break;
+
 
                     case "d":
-                        skillId = selectedUnit.GetDefenseSkillIDList()[universalID];
+                        skillId = selectedUnit.GetDefenseSkillIDList()[firstExtractedInt];
                         break;
+
 
                     case "current":
-                        if (selectedUnit._actionList == null) break;
-                        selectedSkill = selectedUnit._actionList[MinMax(universalID, selectedUnit._actionList.Count)].Skill;
-                        break;
-
-                    case "activeaction":
-                        if (skillIdSplit.Length < 3) break;
-
-                        if (skillIdSplit[1] == "index") selectedSkill = selectedUnit._actionList[MinMax(universalID, selectedUnit._actionList.Count)].Skill;
-                        else if (skillIdSplit[1] == "id") selectedSkill = selectedUnit._actionList.GetSkill(finalUniversalID);
-                        else if (skillIdSplit[1] == "d") selectedSkill = selectedSkill = selectedUnit._actionList.GetSkill(selectedUnit.GetDefenseSkillIDList()[finalUniversalID]);
-                        else if (skillIdSplit[1] == "s")
+                        foreach (BattleActionModel action in selectedUnit.GetSortedActionList()) if (!action.isDoneWithAction)
                         {
-                            if (skillIdSplit.Length >= 4) selectedSkill = selectedUnit._actionList.GetSkill(selectedUnit.GetSkillIdByTier(finalUniversalID)[modular.GetNumFromParamString(skillIdSplit[3])]);
-                            else selectedSkill = selectedUnit._actionList.GetSkill(selectedUnit.GetSkillIdByTier(finalUniversalID)[0]);
+                            selectedSkill = action.Skill;
+                            break;
                         }
                         break;
 
+
+                    case "id":
+                        skillId = firstExtractedInt;
+                        break;
+
+                    case "index":
+                        selectedSkill = selectedUnit._actionList[MinMax(firstExtractedInt, selectedUnit._actionList.Count)].Skill;
+                        break;
+
                     default:
-                        skillId = modular.GetNumFromParamString(skillTarget);
                         break;
                 }
 
+                if (startData > 0 && skillId >= 0) selectedSkill = selectedUnit._sortedActionList.GetSkill(skillId);
+                else if (selectedSkill == null) selectedSkill = selectedUnit.UnitDataModel.GetSkillModel(skillId);
 
-                if (skillId > 0 && selectedSkill == null) selectedSkill = selectedUnit.UnitDataModel.GetSkillModel(skillId);
-
-                if (selectedSkill == null) Main.Logger.LogWarning("Couldn't get a valid single-skill");
+                if (selectedSkill == null) MainClass.Logg.LogError($"selectedSkill is null || skillId={skillId} || skillTarget={skillTarget} || SkillDataArray={skillSplit == null}");
             }
-
             catch (System.Exception ex)
             {
-                MainClass.Logg.LogError($"GetSingleSkillModel error for Part-2: {ex}");
+                MainClass.Logg.LogError($"GetSingleSkillModel error for {methodSegment} Targetting: {ex}");
             }
 
-            if (selectedSkill == null) MainClass.Logg.LogError($"selectedSkill is null || skillId={skillId} || skillTarget={skillTarget} || skillIdSplitIsNull={skillIdSplit == null}");
             return selectedSkill;
         }
 
@@ -584,21 +556,6 @@ namespace MTCustomScripts
 
 
             return finalCoin;
-        }
-
-        public static void ProcessEnumOperation<T>(string value, System.Collections.Generic.List<T> list) where T : struct, Enum
-        {
-            if (string.IsNullOrEmpty(value) || value.Length < 2) return;
-
-            char operation = char.ToLowerInvariant(value[0]);
-            if (operation != 'a' && operation != 'r') return;
-
-            string enumValue = value.Substring(1);
-            if (Il2CppSystem.Enum.TryParse<T>(enumValue, true, out T enumResult))
-            {
-                if (operation == 'r') list.Remove(enumResult);
-                else list.Add(enumResult);
-            }
         }
 
         public static void GenericModularPatches(BattleUnitModel __instance, int actevent, int actevent_other, BATTLE_EVENT_TIMING timing, SkillModel skillModel_inst = null, BattleActionModel selfAction = null, BattleActionModel oppoAction = null, BattleUnitModel killer = null)

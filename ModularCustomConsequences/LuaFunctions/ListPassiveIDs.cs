@@ -19,13 +19,9 @@ public class LuaFunctionListPassiveIDs : IModularLuaFunction
             ["passive"] = new List<int>()
         };
 
-        foreach (EgoPassiveModel egoPassive in target._passiveDetail._egoPassiveList)
-        {
-            tempDict["egopassive"].Add(egoPassive.GetID());
-        }
-        foreach (PassiveModel passive in target._passiveDetail._passivelist)
-        {
-            tempDict["passive"].Add(passive.GetID());
+        foreach (EgoPassiveModel egoPassive in target._passiveDetail._egoPassiveList) tempDict["egopassive"].Add(egoPassive.GetID());
+        
+        foreach (PassiveModel passive in target._passiveDetail._passivelist) tempDict["passive"].Add(passive.GetID());
         }
 
         LuaTable table = new LuaTable();
@@ -34,10 +30,7 @@ public class LuaFunctionListPassiveIDs : IModularLuaFunction
         {
             LuaTable idList = new LuaTable();
 
-            for (int i = 0; i < elem.Value.Count; i++)
-            {
-                idList[i + 1] = elem.Value[i];
-            }
+            for (int i = 0; i < elem.Value.Count; i++) idList[i + 1] = elem.Value[i];
 
             table[elem.Key] = idList;
         }
