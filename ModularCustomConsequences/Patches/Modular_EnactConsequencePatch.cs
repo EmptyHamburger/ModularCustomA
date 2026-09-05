@@ -104,7 +104,7 @@ internal class Modular_EnactConsequence
 
 
             batch = batch.Replace(waitingMatchTime + ":", "");
-            System.Threading.Tasks.Task.Delay(finalWait);
+            Il2CppSystem.Threading.Tasks.Task.Delay(finalWait);
         }
     }
 }

@@ -592,6 +592,7 @@ public class Main : BasePlugin
             MainClass.acquirerDict["hasskilleffect"] = new MTCustomScripts.Acquirers.AcquirerHasSkillEffect();
             MainClass.acquirerDict["hasmang"] = new MTCustomScripts.Acquirers.AcquirerHasMang();
             MainClass.acquirerDict["getexpectedskillpower"] = new MTCustomScripts.Acquirers.AcquirerGetExpectedSkillPower();
+            MainClass.acquirerDict["hasskillkeyword"] = new MTCustomScripts.Acquirers.AcquirerHasSkillKeyword();
 
             //Override
             MainClass.acquirerDict["getcoinscale"] = new MTCustomScripts.Acquirers.AcquirerOneScale();
@@ -660,6 +661,7 @@ public class Main : BasePlugin
             MainClass.consequenceDict["playmotion"] = new MTCustomScripts.Consequences.ConsequencePlayMotion();
             MainClass.consequenceDict["changeanimspeed"] = new MTCustomScripts.Consequences.ConsequenceChangeAnimSpeed();
             MainClass.consequenceDict["gatesp"] = new MTCustomScripts.Consequences.ConsequenceGateSP();
+            MainClass.consequenceDict["addskillkeyword"] = new MTCustomScripts.Consequences.ConsequenceAddSkillKeyword();
 
             MainClass.consequenceDict["dlactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleActivatePath();
             MainClass.consequenceDict["dldeactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleDeactivatePath();

@@ -19,15 +19,10 @@ namespace MTCustomScripts.Consequences
                 if (unitList.Count <= 0) return;
 
                 Main mainClass = Main.Instance;
-                mainClass.Log.LogInfo("Print_1");
 
                 System.Collections.Generic.List<int> skillIdList = new System.Collections.Generic.List<int>();
-
                 foreach (SkillModel currentSkill in modular.GetMultipleSkillModel(unitList, circles[1])) skillIdList.Add(currentSkill.GetID());
-                mainClass.Log.LogInfo("Print_2");
-
                 if (skillIdList.Count <= 0) return;
-                mainClass.Log.LogInfo("Print_3");
 
                 foreach (BattleUnitModel unit in unitList)
                 {
@@ -45,8 +40,6 @@ namespace MTCustomScripts.Consequences
                         if (unitView != null && unitView._battleSkillViewers.ContainsKey(SkillId.ToStringSmallGC())) unitView._battleSkillViewers.Remove(SkillId.ToStringSmallGC());
                     }
                 }
-
-                mainClass.Log.LogInfo("Print_4");
             }
             catch (System.Exception ex) { Main.Logger.LogError("ConsequenceRemoveSkill error: " + ex); }
         }
