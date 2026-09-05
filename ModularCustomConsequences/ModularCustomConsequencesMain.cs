@@ -598,6 +598,7 @@ public class Main : BasePlugin
             MainClass.acquirerDict["getexpectedskillpower"] = new MTCustomScripts.Acquirers.AcquirerGetExpectedSkillPower();
             MainClass.acquirerDict["hasskillkeyword"] = new MTCustomScripts.Acquirers.AcquirerHasSkillKeyword();
             MainClass.acquirerDict["getsepiralevel"] = new MTCustomScripts.Acquirers.AcquirerGetSepiraLevel();
+            MainClass.acquirerDict["getmangcount"] = new MTCustomScripts.Acquirers.AcquirerGetMangCount();
 
             //Override
             MainClass.acquirerDict["getcoinscale"] = new MTCustomScripts.Acquirers.AcquirerOneScale();
