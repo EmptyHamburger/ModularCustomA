@@ -675,6 +675,8 @@ public class Main : BasePlugin
             MainClass.consequenceDict["dldeactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleDeactivatePath();
             MainClass.consequenceDict["dlclearallactivepaths"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleClearOneActivePaths();
             MainClass.consequenceDict["dlsetonepathvalue"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleSetOnePathValue();
+            MainClass.consequenceDict["refreshskillbag"] = new MTCustomScripts.Consequences.ConsequenceRefreshSkillBag();
+            MainClass.consequenceDict["resetskillslots"] = new MTCustomScripts.Consequences.ConsequenceResetSkillSlots();
         }
         catch (System.Exception ex) { Main.Logger.LogError("Error when loading Consequences: " + ex); }
 
