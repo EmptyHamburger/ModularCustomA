@@ -15,7 +15,7 @@ public class ConsequenceAddSkillKeyword : IModularConsequence
 
         if (!Enum.TryParse(circles[1], out SKILL_KEYWORD keyword)) return;
 
-        bool addKeyword = circles.Length > 3 && circles[3] == "add";
+        bool addKeyword = circles.Length > 3 && circles[3] != "add";
 
         foreach (SkillModel skill in skillList)
         {
