@@ -22,10 +22,17 @@ public class ConsequenceSetMainTarget : IModularConsequence
 
             if (SkillID == -1)
             {
+                // SinActionModel selfSAM = modular.modsa_selfAction._sinAction;
+                // SinActionModel targetSAM = target.GetSinActionList()[0];
+                // modular.modsa_selfAction.ChangeMainTargetSinAction(targetSAM, targetSAM._currentBattleAction, true);
+                // // Singleton<SinManager>.Instance._targetManager.Refresh();
+
+                Singleton<BattleActionModelManager>.Instance.RemoveDuel(modular.modsa_selfAction);
                 SinActionModel selfSAM = modular.modsa_selfAction._sinAction;
                 SinActionModel targetSAM = target.GetSinActionList()[0];
                 modular.modsa_selfAction.ChangeMainTargetSinAction(targetSAM, targetSAM._currentBattleAction, true);
-                // Singleton<SinManager>.Instance._targetManager.Refresh();
+                foreach(BattleActionModel bam in selfSAM.GetActionListTargetingThisSlot())
+                selfSAM._actionSlot.SetActionTargetingThisSlot(bam);
             }
             else
             {
@@ -39,8 +46,13 @@ public class ConsequenceSetMainTarget : IModularConsequence
                             BattleActionModel attackerAction = sam.CurrentBattleAction;                
                             BattleActionModel targetAction = targetSam.CurrentBattleAction;
                             
+                            Singleton<BattleActionModelManager>.Instance.RemoveDuel(attackerAction);
+
                             attackerAction.ChangeMainTargetSinAction(targetSam, targetAction, true);
                             // Singleton<SinManager>.Instance._targetManager.Refresh();
+                            
+                            foreach(BattleActionModel bam in sam.GetActionListTargetingThisSlot())
+                            sam._actionSlot.SetActionTargetingThisSlot(bam);
 
                             Count-=1;
                         }
