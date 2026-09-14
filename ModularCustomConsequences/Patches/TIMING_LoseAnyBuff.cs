@@ -1,9 +1,10 @@
 ﻿using HarmonyLib;
 using Il2CppSystem.Collections.Generic;
 using ModularSkillScripts;
+using ModularSkillScripts.Patches;
 using MTCustomScripts;
 
-namespace ModularSkillScripts.Patches;
+namespace MTCustomScripts.Patches;
 
 internal class LoseAnyBuff
 {

@@ -1,6 +1,8 @@
 ﻿using HarmonyLib;
 using MTCustomScripts;
 
+namespace MTCustomScripts.Patches;
+
 internal class BuffModel_OverwritePanic
 {
     [HarmonyPatch(typeof(BuffModel), nameof(BuffModel.GetOverwritePanicType))]

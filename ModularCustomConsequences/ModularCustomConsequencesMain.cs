@@ -71,6 +71,7 @@ public class Main : BasePlugin
     public static System.Collections.Generic.Dictionary<IntPtr, (int Min, int Max)> gateSPDict = new();
     public System.Collections.Generic.Dictionary<long, SEPIRA> duranteTriggerDict = new();
     public SEPIRA durante_keyword = SEPIRA.NONE;
+    public static System.Collections.Generic.Dictionary<IntPtr, BattleUnitModel> intPtrCharacterState_BattleUnitModel_Dict = new();
 
     public class GlobalLuaValues
     {
@@ -515,7 +516,8 @@ public class Main : BasePlugin
             harmony.PatchAll(typeof(StageModel_Patch));
             harmony.PatchAll(typeof(SinActionModelPatches));
             harmony.PatchAll(typeof(GateSP));
-            harmony.PatchAll(typeof(DuranteManager));
+            // harmony.PatchAll(typeof(DuranteManager));
+            harmony.PatchAll(typeof(CharacterState_Patches));
 
             // harmony.PatchAll(typeof(CoinSlotUI_UpdateCoinColor));
             // harmony.PatchAll(typeof(StyxPatch));
@@ -602,6 +604,9 @@ public class Main : BasePlugin
 
             //Override
             MainClass.acquirerDict["getcoinscale"] = new MTCustomScripts.Acquirers.AcquirerOneScale();
+            MainClass.acquirerDict["getshield"] = new MTCustomScripts.Acquirers.AcquirerGetShield();
+            MainClass.acquirerDict["getdmgtaken"] = new MTCustomScripts.Acquirers.AcquirerGetDmgTaken();
+
             // MainClass.acquirerDict["getskillattribute"] = new MTCustomScripts.Acquirers.AcquirerSkillAttribute();
             // MainClass.acquirerDict["getskillatk"] = new MTCustomScripts.Acquirers.AcquirerSkillAtk();
         }

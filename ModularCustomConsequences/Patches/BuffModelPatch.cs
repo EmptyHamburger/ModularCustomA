@@ -6,6 +6,9 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
+
+namespace MTCustomScripts.Patches;
+
 internal class BuffModel_Patches
 {
     [HarmonyPatch(typeof(BuffModel), nameof(BuffModel.GetDesc))]

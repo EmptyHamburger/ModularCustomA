@@ -4,6 +4,8 @@ using ModularSkillScripts.Patches;
 using BattleUI.Operation;
 using BepInEx.Unity.IL2CPP.UnityEngine;
 
+namespace MTCustomScripts.Patches;
+
 internal class EquipDefenseOperation
 {
     [HarmonyPatch(typeof(NewOperationController), nameof(NewOperationController.EquipDefense))]

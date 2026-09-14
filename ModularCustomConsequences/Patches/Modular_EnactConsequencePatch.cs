@@ -8,6 +8,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UnityEngine.Rendering.RadeonRays;
 
+namespace MTCustomScripts.Patches;
+
 internal class Modular_EnactConsequence
 {
     private static readonly Regex matchReg = Main.Instance.replaceStringRegex;

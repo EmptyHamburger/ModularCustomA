@@ -5,6 +5,8 @@ using ModularSkillScripts.Patches;
 using BattleUI.Operation;
 using BepInEx.Unity.IL2CPP.UnityEngine;
 
+namespace MTCustomScripts.Patches;
+
 internal class Patch_DefenseChange
 {
     [HarmonyPatch(typeof(UnitScript_10913), nameof(UnitScript_10913.GetOverwriteDefenseSkillID))]
