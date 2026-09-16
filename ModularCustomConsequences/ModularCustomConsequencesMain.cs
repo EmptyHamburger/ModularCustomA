@@ -45,7 +45,7 @@ public class Main : BasePlugin
 {
     // Edit the below to your own plugin name, version, etc.
     public const string NAME = "MTCustomScripts";
-    public const string VERSION = "24.108.4";
+    public const string VERSION = "24.109.4";
     public const string AUTHOR = "MT";
     public const string GUID = $"{AUTHOR}.{NAME}";
 
@@ -72,6 +72,7 @@ public class Main : BasePlugin
     public System.Collections.Generic.Dictionary<long, SEPIRA> duranteTriggerDict = new();
     public SEPIRA durante_keyword = SEPIRA.NONE;
     public static System.Collections.Generic.Dictionary<IntPtr, BattleUnitModel> intPtrCharacterState_BattleUnitModel_Dict = new();
+    public static System.Collections.Generic.Dictionary<IntPtr, int> intPtrMangAddOn_ActiveMangCountOnSkillStart = new();
 
     public class GlobalLuaValues
     {
@@ -517,7 +518,8 @@ public class Main : BasePlugin
             harmony.PatchAll(typeof(SinActionModelPatches));
             harmony.PatchAll(typeof(GateSP));
             // harmony.PatchAll(typeof(DuranteManager));
-            harmony.PatchAll(typeof(CharacterState_Patches));
+            // harmony.PatchAll(typeof(CharacterState_Patches));
+            // harmony.PatchAll(typeof(SkillAbilityMang_Patch));
 
             // harmony.PatchAll(typeof(CoinSlotUI_UpdateCoinColor));
             // harmony.PatchAll(typeof(StyxPatch));
@@ -596,12 +598,10 @@ public class Main : BasePlugin
             MainClass.acquirerDict["getspeedadder"] = new MTCustomScripts.Acquirers.AcquirerGetSpeedAdder();
             MainClass.acquirerDict["gettimingid"] = new MTCustomScripts.Acquirers.AcquirerGetTimingID();
             MainClass.acquirerDict["hasskilleffect"] = new MTCustomScripts.Acquirers.AcquirerHasSkillEffect();
-            MainClass.acquirerDict["hasmang"] = new MTCustomScripts.Acquirers.AcquirerHasMang();
+            MainClass.acquirerDict["getmang"] = new MTCustomScripts.Acquirers.AcquirerGetMang();
             MainClass.acquirerDict["getexpectedskillpower"] = new MTCustomScripts.Acquirers.AcquirerGetExpectedSkillPower();
             MainClass.acquirerDict["hasskillkeyword"] = new MTCustomScripts.Acquirers.AcquirerHasSkillKeyword();
             MainClass.acquirerDict["getsepiralevel"] = new MTCustomScripts.Acquirers.AcquirerGetSepiraLevel();
-            MainClass.acquirerDict["getmangcount"] = new MTCustomScripts.Acquirers.AcquirerGetMangCount();
-
             //Override
             MainClass.acquirerDict["getcoinscale"] = new MTCustomScripts.Acquirers.AcquirerOneScale();
             MainClass.acquirerDict["getshield"] = new MTCustomScripts.Acquirers.AcquirerGetShield();
@@ -675,13 +675,15 @@ public class Main : BasePlugin
             MainClass.consequenceDict["changeanimspeed"] = new MTCustomScripts.Consequences.ConsequenceChangeAnimSpeed();
             MainClass.consequenceDict["gatesp"] = new MTCustomScripts.Consequences.ConsequenceGateSP();
             MainClass.consequenceDict["addskillkeyword"] = new MTCustomScripts.Consequences.ConsequenceAddSkillKeyword();
+            MainClass.consequenceDict["refreshskillbag"] = new MTCustomScripts.Consequences.ConsequenceRefreshSkillBag();
+            MainClass.consequenceDict["resetskillslots"] = new MTCustomScripts.Consequences.ConsequenceResetSkillSlots();
+            MainClass.consequenceDict["addmang"] = new MTCustomScripts.Consequences.ConsequenceAddMang();
 
+            // Dynamic Locale
             MainClass.consequenceDict["dlactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleActivatePath();
             MainClass.consequenceDict["dldeactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleDeactivatePath();
             MainClass.consequenceDict["dlclearallactivepaths"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleClearOneActivePaths();
             MainClass.consequenceDict["dlsetonepathvalue"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleSetOnePathValue();
-            MainClass.consequenceDict["refreshskillbag"] = new MTCustomScripts.Consequences.ConsequenceRefreshSkillBag();
-            MainClass.consequenceDict["resetskillslots"] = new MTCustomScripts.Consequences.ConsequenceResetSkillSlots();
         }
         catch (System.Exception ex) { Main.Logger.LogError("Error when loading Consequences: " + ex); }
 
