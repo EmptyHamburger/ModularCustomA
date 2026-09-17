@@ -933,6 +933,13 @@ function addskillkeyword(Multi_Target, Multi_Skill, SkillKeyword, Add) return en
 ---@return integer
 ---@nodiscard
 function getmang(Target) return 0 end
+
+---Returns 1 if the provided buff has count. Returns 0 if it does not. Returns -1 if the unit is null or if the unit does not possess the buff
+---@param Single_Target string --Modular's Single-Target
+---@param buffKeyword string --Any buff keyword
+---@return 1 | 0 | -1
+---@nodiscard
+function getbuffhascount(Single_Target, buffKeyword) return 0 end
 --#endregion
 
 --#region Exclusive .lua functions
@@ -1025,4 +1032,10 @@ function listallskills(Single_Target) return {} end
 ---@return table
 ---@nodiscard
 function listpassiveids(Single_Target) return {} end
+
+---Return the buff's locale data. Returns Nil if buffKeyword or dataType is invalid
+---@param buffKeyword string --Any buff keyword
+---@param dataType "name" | "desc" | "summary"
+---@return string | nil
+function getbufflocaledata(buffKeyword, dataType) return "" end
 --#endregion
