@@ -607,6 +607,9 @@ public class Main : BasePlugin
             MainClass.acquirerDict["getshield"] = new MTCustomScripts.Acquirers.AcquirerGetShield();
             MainClass.acquirerDict["getdmgtaken"] = new MTCustomScripts.Acquirers.AcquirerGetDmgTaken();
 
+            // Froggo was Here
+            MainClass.acquirerDict["getbuffhascount"] = new MTCustomScripts.Acquirers.AcquirerGetBuffHasCount();
+
             // MainClass.acquirerDict["getskillattribute"] = new MTCustomScripts.Acquirers.AcquirerSkillAttribute();
             // MainClass.acquirerDict["getskillatk"] = new MTCustomScripts.Acquirers.AcquirerSkillAtk();
         }
