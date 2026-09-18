@@ -13,7 +13,7 @@ internal class CoinModel_Patches
     [HarmonyPostfix]
     public static void Postfix_CoinModel_OnResult_OnParrying(BattleActionModel action, BattleActionModel oppoAction, BATTLE_EVENT_TIMING timing, CoinModel __instance)
     {
-        MTCustomScripts.Main.Logger.LogFatal("Postfix_CoinModel_OnResult_OnParrying ran");
+        // MTCustomScripts.Main.Logger.LogFatal("Postfix_CoinModel_OnResult_OnParrying ran");
         int actevent = MainClass.timingDict["AfterCoinRollParrying"];
         BattleUnitModel unit = action._model;
 
