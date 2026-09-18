@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Lethe.Patches;
+using Lethe.EnumInjections;
 using ModularSkillScripts;
 
 namespace MTCustomScripts.Acquirers

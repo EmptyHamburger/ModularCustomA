@@ -502,6 +502,7 @@ public class Main : BasePlugin
         MainClass.timingDict.Add("OnSlotSelectsTarget", 7337);
         MainClass.timingDict.Add("OnSlotSelectedAsTarget", 7338);
         MainClass.timingDict.Add("OnActivateDurante", 7339);
+        MainClass.timingDict.Add("AfterCoinRollParrying", 7340);
 
         try
         {
@@ -517,6 +518,7 @@ public class Main : BasePlugin
             harmony.PatchAll(typeof(StageModel_Patch));
             harmony.PatchAll(typeof(SinActionModelPatches));
             harmony.PatchAll(typeof(GateSP));
+            harmony.PatchAll(typeof(CoinModel_Patches));
             // harmony.PatchAll(typeof(DuranteManager));
             // harmony.PatchAll(typeof(CharacterState_Patches));
             // harmony.PatchAll(typeof(SkillAbilityMang_Patch));

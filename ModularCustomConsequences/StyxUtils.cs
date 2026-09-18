@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 using Lethe;
-using Lethe.Patches;
+using Lethe.EnumInjections;
 using ModularSkillScripts;
 using ModularSkillScripts.Patches;
 using System;
