@@ -1,7 +1,7 @@
 ---@meta
 
 --[[
-    MTCustomScripts Version: v24.111.4
+    MTCustomScripts Version: v25.112.4
 ]]
 
 --#region Aliases
@@ -940,6 +940,11 @@ function getmang(Target) return 0 end
 ---@return 1 | 0 | -1
 ---@nodiscard
 function getbuffhascount(Single_Target, buffKeyword) return 0 end
+
+---Get the Coin's index. Returns -1 if the Coin not found
+---@param indexType "Log" | "Real" | "Origin"
+---@return integer
+function getcoinindex(indexType) return -1 end
 --#endregion
 
 --#region Exclusive .lua functions
