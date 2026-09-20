@@ -7,15 +7,26 @@ using ModularSkillScripts.Patches;
 
 namespace MTCustomScripts.Patches;
 
-internal class CoinModel_Patches
+internal class OneCoinLog_Patches
 {
-    [HarmonyPatch(typeof(CoinModel), nameof(CoinModel.OnResult_OnParrying))]
+    [HarmonyPatch(typeof(OneCoinLog), nameof(OneCoinLog.SetAfterLog_Parrying))]
     [HarmonyPostfix]
-    public static void Postfix_CoinModel_OnResult_OnParrying(BattleActionModel action, BattleActionModel oppoAction, BATTLE_EVENT_TIMING timing, CoinModel __instance)
+    public static void Postfix_OneCoinLog_SetAfterLog_Parrying(BattleActionModel actorAction, BattleActionModel opponentAction, ParryingStatus parryingStatus, OneCoinLog __instance)
     {
-        // MTCustomScripts.Main.Logger.LogFatal("Postfix_CoinModel_OnResult_OnParrying ran");
-        int actevent = MainClass.timingDict["AfterCoinRollParrying"];
-        BattleUnitModel unit = action._model;
+        // MTCustomScripts.Main.Logger.LogFatal("Postfix_OneCoinLog_SetAfterLog_Parrying ran");
+        // MTCustomScripts.Main.Logger.LogFatal($"Coin _isHead: {__instance._isHead}");
+        // MTCustomScripts.Main.Logger.LogFatal($"Coin _coinLogIdx: {__instance._coinLogIdx}; _originCoinIdx: {__instance._originCoinIdx}; _realCoinIdx: {__instance._realCoinIdx}");
+        // SkillPowerData skillPowerData = __instance._oneSkillPowerData;
+        // MTCustomScripts.Main.Logger.LogFatal($"SkillPowerData adderResultSkillPower: {skillPowerData.adderResultSkillPower}; finalValue: {skillPowerData.finalValue}; modifiedSkillPower: {skillPowerData.modifiedSkillPower}; resultValue: {skillPowerData.resultValue}; vanillaSkillPower: {skillPowerData.vanillaSkillPower}");
+        // CoinData coinData = skillPowerData.coinData;
+        // MTCustomScripts.Main.Logger.LogFatal($"CoinData battleResult: {coinData.battleResult}");
+        // OneCoinResult selfCoin = coinData.oneCoinResult;
+        // OneCoinResult oppoCoin = coinData.opponentCoinResult;
+        // MTCustomScripts.Main.Logger.LogFatal($"OneCoinResult-SELF accumulatedValue: {selfCoin.accumulatedValue}; addedResultScale: {selfCoin.addedResultScale}; afterDmg: {selfCoin.afterDmg}; beforeDmg: {selfCoin.beforeDmg}; idx: {selfCoin.idx}; operatorType: {selfCoin.operatorType}; prob: {selfCoin.prob}; scale: {selfCoin.scale};");
+        // MTCustomScripts.Main.Logger.LogFatal($"OneCoinResult-OPPO accumulatedValue: {oppoCoin.accumulatedValue}; addedResultScale: {oppoCoin.addedResultScale}; afterDmg: {oppoCoin.afterDmg}; beforeDmg: {oppoCoin.beforeDmg}; idx: {oppoCoin.idx}; operatorType: {oppoCoin.operatorType}; prob: {oppoCoin.prob}; scale: {oppoCoin.scale};");
+
+        int actevent = MainClass.timingDict["AfterCoinParrying"];
+        BattleUnitModel unit = actorAction._model;
 
         if (unit == null) return;
 
@@ -29,8 +40,8 @@ internal class CoinModel_Patches
             {
                 if (modpa.activationTiming != actevent) continue;
                 modpa.modsa_passiveModel = passiveModel;
-                modpa.modsa_coinModel = __instance;
-                modpa.Enact(unit, action._skill, action, oppoAction, actevent, timing);
+                modpa.modsa_coinModel = __instance._coin;
+                modpa.Enact(unit, actorAction._skill, actorAction, opponentAction, actevent, BATTLE_EVENT_TIMING.NONE);
             }
         }
 
@@ -44,8 +55,8 @@ internal class CoinModel_Patches
             {
                 if (modpa.activationTiming != actevent) continue;
                 modpa.modsa_passiveModel = passiveModel;
-                modpa.modsa_coinModel = __instance;
-                modpa.Enact(unit, action._skill, action, oppoAction, actevent, timing);
+                modpa.modsa_coinModel = __instance._coin;
+                modpa.Enact(unit, actorAction._skill, actorAction, opponentAction, actevent, BATTLE_EVENT_TIMING.NONE);
             }
         }
 
@@ -58,8 +69,24 @@ internal class CoinModel_Patches
             {
                 if (modba.activationTiming != actevent) continue;
                 modba.modsa_buffModel = buffModel;
-                modba.modsa_coinModel = __instance;
-                modba.Enact(unit, action._skill, action, oppoAction, actevent, timing);
+                modba.modsa_coinModel = __instance._coin;
+                modba.Enact(unit, actorAction._skill, actorAction, opponentAction, actevent, BATTLE_EVENT_TIMING.NONE);
+            }
+        }
+
+        SkillModel skillModel = actorAction._skill;
+        if (skillModel != null)
+        {
+            long skillmodel_intlong = skillModel.Pointer.ToInt64();
+            if (SkillScriptInitPatch.modsaDict.ContainsKey(skillmodel_intlong))
+            {
+                foreach (ModularSA modsa in SkillScriptInitPatch.modsaDict[skillmodel_intlong].ToArray())
+                {
+                    if (modsa.activationTiming != actevent) continue;
+                    modsa.modsa_coinModel = __instance._coin;
+                    modsa.modsa_skillModel = skillModel;
+                    modsa.Enact(unit, skillModel, actorAction, opponentAction, actevent, BATTLE_EVENT_TIMING.NONE);
+                }
             }
         }
     }
