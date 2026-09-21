@@ -45,7 +45,7 @@ public class Main : BasePlugin
 {
     // Edit the below to your own plugin name, version, etc.
     public const string NAME = "MTCustomScripts";
-    public const string VERSION = "25.112.4";
+    public const string VERSION = "26.113.4";
     public const string AUTHOR = "MT";
     public const string GUID = $"{AUTHOR}.{NAME}";
 
@@ -519,7 +519,7 @@ public class Main : BasePlugin
             harmony.PatchAll(typeof(SinActionModelPatches));
             harmony.PatchAll(typeof(GateSP));
             harmony.PatchAll(typeof(OneCoinLog_Patches));
-            // harmony.PatchAll(typeof(DuranteManager));
+            harmony.PatchAll(typeof(DuranteManager));
             // harmony.PatchAll(typeof(CharacterState_Patches));
             // harmony.PatchAll(typeof(SkillAbilityMang_Patch));
 
