@@ -359,6 +359,19 @@
 --- @alias ListRelatedKeywordsMode
 --- | "sub" sub keywords
 --- | "category" category keywords
+
+--- @alias SepiraReturnValue
+--- | 0 NONE
+--- | 1 HOKMA
+--- | 2 BINAH
+--- | 3 CHESED
+--- | 4 GEBURA
+--- | 5 TIPHERETH
+--- | 6 NETZACH
+--- | 7 HOD
+--- | 8 YESOD
+--- | 9 MALKUTH
+--- | 10 MALKUTH_IMPERFECT
 --- --#endregion
 
 --#region Acquisitions and Consequences
@@ -944,7 +957,13 @@ function getbuffhascount(Single_Target, buffKeyword) return 0 end
 ---Get the Coin's index. Returns -1 if the Coin not found
 ---@param indexType "Log" | "Real" | "Origin"
 ---@return integer
+---@nodiscard
 function getcoinindex(indexType) return -1 end
+
+---Return the Sepira's ID
+---@return SepiraReturnValue
+---@nodiscard
+function getsepiralevel() return 0 end
 --#endregion
 
 --#region Exclusive .lua functions
