@@ -493,7 +493,7 @@ public class Main : BasePlugin
         AddTiming(harmony, typeof(OnUnOpposed), ["OnUnOpposed"], [90917]);
         AddTiming(harmony, typeof(OnEquipDefense), ["OnEquipDefense"], [90918]);
         // AddTiming(harmony, typeof(OnUseBuff), ["OnUseBuff"], [90919]);
-
+        AddTiming(harmony, typeof(CombatEnd), ["CombatEnd"], [90920]);
         MainClass.timingDict.Add("SortAction", 7332);
         MainClass.timingDict.Add("Parrying", 7333);
         MainClass.timingDict.Add("BeforeRoundStart", 7334);
