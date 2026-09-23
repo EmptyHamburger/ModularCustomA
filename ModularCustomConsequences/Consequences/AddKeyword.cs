@@ -12,7 +12,7 @@ public class ConsequenceAddKeyword : IModularConsequence
 
 		if (Enum.TryParse(circles[1], out UNIT_KEYWORD keyword))
 		{
-			foreach(BattleUnitModel unit in targetList)
+			foreach (BattleUnitModel unit in targetList)
 			{
 				if (circles.Length > 2 && !unit.AssociationList.Contains(keyword))
 				{

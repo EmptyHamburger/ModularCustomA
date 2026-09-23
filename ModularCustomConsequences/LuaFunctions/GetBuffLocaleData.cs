@@ -15,7 +15,7 @@ public class LuaFunctionGetBuffLocaleData : IModularLuaFunction
         if (textData == null)
         {
             MainClass.Logg.LogError($"Buff's Text Data does not exist: {buffKeyword}");
-            return ValueTask.FromResult(1);
+            return ValueTask.FromResult(0);
         }
         string opt = context.GetArgument(1).Read<string>().ToLower();
         switch (opt)

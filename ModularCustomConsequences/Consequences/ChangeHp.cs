@@ -13,8 +13,8 @@ public class ConsequenceChangeHp : IModularConsequence
         int newHp = modular.GetNumFromParamString(circles[1]);
         string mode = circles[2];
         Enum.TryParse<DAMAGE_SOURCE_TYPE>(circles[3], true, out DAMAGE_SOURCE_TYPE source);
-        BattleUnitModel attackerOrNull = circles.Length > 5 ? modular.GetTargetModel(circles[6]) : null;
-        BUFF_UNIQUE_KEYWORD keyword = CustomBuffs.ParseBuffUniqueKeyword(circles[4]);
+        BattleUnitModel attackerOrNull = circles.Length > 6 ? modular.GetTargetModel(circles[6]) : null;
+        if (!Il2CppSystem.Enum.TryParse<BUFF_UNIQUE_KEYWORD>(circles[4], out BUFF_UNIQUE_KEYWORD keyword)) keyword = BUFF_UNIQUE_KEYWORD.None;
         if (keyword.ToString() != circles[4]) keyword = BUFF_UNIQUE_KEYWORD.None;
         bool deactivePassedBreakSection = modular.GetBoolFromParamString(circles[5]);
         foreach(BattleUnitModel target in targetList)

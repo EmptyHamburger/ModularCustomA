@@ -4,8 +4,9 @@ using Il2CppSystem.Collections.Generic;
 using BepInEx.Unity.IL2CPP.UnityEngine;
 using ModularSkillScripts;
 using MTCustomScripts;
+using ModularSkillScripts.Patches;
 
-namespace ModularSkillScripts.Patches;
+namespace MTCustomScripts.Patches;
 
 internal class RightAfterGetAnyBuff
 {
@@ -40,6 +41,7 @@ internal class RightAfterGetAnyBuff
             foreach (ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong])
             {
                 if (!MTCustomScripts.Main.Instance.keywordTriggerDict.ContainsKey(modpa.Pointer.ToInt64())) continue;
+                if (modpa.activationTiming != actevent) continue;
                 BUFF_UNIQUE_KEYWORD trigger = MTCustomScripts.Main.Instance.keywordTriggerDict[modpa.Pointer.ToInt64()];
                 if ((trigger != BUFF_UNIQUE_KEYWORD.None) && (trigger != keyword)) continue;
 
@@ -60,6 +62,7 @@ internal class RightAfterGetAnyBuff
             foreach (ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong])
             {
                 if (!MTCustomScripts.Main.Instance.keywordTriggerDict.ContainsKey(modpa.Pointer.ToInt64())) continue;
+                if (modpa.activationTiming != actevent) continue;
                 BUFF_UNIQUE_KEYWORD trigger = MTCustomScripts.Main.Instance.keywordTriggerDict[modpa.Pointer.ToInt64()];
                 if ((trigger != BUFF_UNIQUE_KEYWORD.None) && (trigger != keyword)) continue;
 
@@ -78,6 +81,11 @@ internal class RightAfterGetAnyBuff
 
             foreach (ModularSA modba in SkillScriptInitPatch.modbaDict[buffmodel_intlong])
             {
+                if (!MTCustomScripts.Main.Instance.keywordTriggerDict.ContainsKey(modba.Pointer.ToInt64())) continue;
+                if (modba.activationTiming != actevent) continue;
+                BUFF_UNIQUE_KEYWORD trigger = MTCustomScripts.Main.Instance.keywordTriggerDict[modba.Pointer.ToInt64()];
+                if ((trigger != BUFF_UNIQUE_KEYWORD.None) && (trigger != keyword)) continue;
+
                 modba.modsa_buffModel = buffModel;
                 modba.Enact(__instance, null, null, actionOrNull, actevent, timing);
             }

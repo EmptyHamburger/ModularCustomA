@@ -82,7 +82,7 @@ namespace MTCustomScripts.Acquirers
                     break;
                 case "Fixed":
                     if (selfAction == null) return -1;
-                    result = (skill.CanBeChangedTarget(selfAction)) ? 1 : 0;
+                    result = skill.CanBeChangedTarget(selfAction, oppoAction) ? 1 : 0; //MT - Added oppoAction because CanBeChangedTarget now requires it
                     break;
                 case "Attribute":
                     result = (int)skill.GetAttributeType();

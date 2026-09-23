@@ -20,19 +20,42 @@ public class ConsequenceSetMainTarget : IModularConsequence
 
             if (target.GetSinActionList().Count < 1) return;
 
-            foreach(BattleUnitModel unit in attackers)
+            if (SkillID == -1)
             {
-                foreach(SinActionModel sam in unit.GetSinActionList())
-                {
-                    if (sam.CurrentBattleAction.Skill.GetID() == SkillID && Count > 0)
-                    {
-                        SinActionModel targetSam = target.GetSinActionList()[0];
-                        BattleActionModel attackerAction = sam.CurrentBattleAction;                
-                        BattleActionModel targetAction = targetSam.CurrentBattleAction;
-                        
-                        attackerAction.ChangeMainTargetSinAction(targetSam, targetAction, true);
+                // SinActionModel selfSAM = modular.modsa_selfAction._sinAction;
+                // SinActionModel targetSAM = target.GetSinActionList()[0];
+                // modular.modsa_selfAction.ChangeMainTargetSinAction(targetSAM, targetSAM._currentBattleAction, true);
+                // // Singleton<SinManager>.Instance._targetManager.Refresh();
 
-                        Count-=1;
+                Singleton<BattleActionModelManager>.Instance.RemoveDuel(modular.modsa_selfAction);
+                SinActionModel selfSAM = modular.modsa_selfAction._sinAction;
+                SinActionModel targetSAM = target.GetSinActionList()[0];
+                modular.modsa_selfAction.ChangeMainTargetSinAction(targetSAM, targetSAM._currentBattleAction, true);
+                foreach(BattleActionModel bam in selfSAM.GetActionListTargetingThisSlot())
+                selfSAM._actionSlot.SetActionTargetingThisSlot(bam);
+            }
+            else
+            {
+                foreach(BattleUnitModel unit in attackers)
+                {
+                    foreach(SinActionModel sam in unit.GetSinActionList())
+                    {
+                        if (sam.CurrentBattleAction.Skill.GetID() == SkillID && Count > 0)
+                        {
+                            SinActionModel targetSam = target.GetSinActionList()[0];
+                            BattleActionModel attackerAction = sam.CurrentBattleAction;                
+                            BattleActionModel targetAction = targetSam.CurrentBattleAction;
+                            
+                            Singleton<BattleActionModelManager>.Instance.RemoveDuel(attackerAction);
+
+                            attackerAction.ChangeMainTargetSinAction(targetSam, targetAction, true);
+                            // Singleton<SinManager>.Instance._targetManager.Refresh();
+                            
+                            foreach(BattleActionModel bam in sam.GetActionListTargetingThisSlot())
+                            sam._actionSlot.SetActionTargetingThisSlot(bam);
+
+                            Count-=1;
+                        }
                     }
                 }
             }

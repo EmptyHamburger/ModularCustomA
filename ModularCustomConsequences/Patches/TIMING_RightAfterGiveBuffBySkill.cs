@@ -2,8 +2,10 @@ using HarmonyLib;
 using MTCustomScripts;
 using Il2CppSystem.Collections.Generic;
 using Lethe.Patches;
+using ModularSkillScripts.Patches;
+using ModularSkillScripts;
 
-namespace ModularSkillScripts.Patches;
+namespace MTCustomScripts.Patches;
 
 internal class RightAfterGiveBuffBySkill
 {
