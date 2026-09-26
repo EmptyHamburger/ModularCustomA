@@ -12,7 +12,9 @@ public class ConsequenceRemoveCoin : IModularConsequence
 		
 		if (circles[1] == "All")
 		{
-			skill._coinList.Clear();
+			for (int i = skill._coinList.Count - 1; i > -1; i--)
+			skill.RemoveCoinModelFromListByIndex(i);
+			
 			return;
 		}
 
@@ -21,12 +23,12 @@ public class ConsequenceRemoveCoin : IModularConsequence
 			int idx = modular.GetNumFromParamString(circle);
 			if (idx < 0)
 			{
-				skill._coinList.RemoveAt(modular.modsa_coinModel.GetOriginCoinIndex());
+				skill.RemoveCoinModelFromListByIndex(modular.modsa_coinModel.GetRealCoinIndex());
 				continue;
 			}
 
 			idx = Math.Min(idx, skill.CoinList.Count - 1);
-			skill._coinList.RemoveAt(idx);
+			skill.RemoveCoinModelFromListByIndex(idx);
 		}
 	}
 }
