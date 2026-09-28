@@ -40,42 +40,59 @@ public class PassiveDetail_Patches
 		}
 	}
 
-	// [HarmonyPatch(typeof(PassiveDetail), nameof(PassiveDetail.OnKillTarget))]
-	// [HarmonyPostfix]
-	// public static void Postfix_PassiveDetail_OnKillTarget(BattleActionModel actionOrNull, BattleUnitModel target, DAMAGE_SOURCE_TYPE dmgSrcType, BATTLE_EVENT_TIMING timing, PassiveDetail __instance)
-	// {
-	// 	int actevent = MainClass.timingDict["EnemyKill"];
-	// 	// MTCustomScripts.Main.Logger.LogFatal("ENEMY KILL PATCH RAN");
-	// 	foreach (PassiveModel passiveModel in __instance.PassiveList)
-	// 	{
-	// 		if (!passiveModel.CheckActiveCondition()) continue;
-	// 		long passiveModel_intlong = passiveModel.Pointer.ToInt64();
-	// 		if (!SkillScriptInitPatch.modpaDict.ContainsKey(passiveModel_intlong)) continue;
+	[HarmonyPatch(typeof(PassiveDetail), nameof(PassiveDetail.OnKillTarget))]
+	[HarmonyPostfix]
+	public static void Postfix_PassiveDetail_OnKillTarget(BattleActionModel actionOrNull, BattleUnitModel target, DAMAGE_SOURCE_TYPE dmgSrcType, BATTLE_EVENT_TIMING timing, PassiveDetail __instance)
+	{
+		int actevent = MainClass.timingDict["EnemyKillAbnor"];
+		// MTCustomScripts.Main.Logger.LogFatal("ENEMY KILL PATCH RAN");
+		SkillModel skill = actionOrNull?._skill;
 
-	// 		foreach (ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong])
-	// 		{
-	// 			if (modpa.activationTiming != actevent) continue;
-	// 			modpa.modsa_passiveModel = passiveModel;
-	// 			modpa.modsa_victimModel = target;
-	// 			modpa.modsa_killerModel = actionOrNull?._model;
-	// 			modpa.Enact(actionOrNull?._model, actionOrNull?._skill, actionOrNull, null, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
-	// 		}
-	// 	}
+		foreach (PassiveModel passiveModel in __instance.PassiveList)
+		{
+			if (!passiveModel.CheckActiveCondition()) continue;
+			long passiveModel_intlong = passiveModel.Pointer.ToInt64();
+			if (!SkillScriptInitPatch.modpaDict.ContainsKey(passiveModel_intlong)) continue;
 
-	// 	foreach (PassiveModel passiveModel in __instance.EgoPassiveList)
-	// 	{
-	// 		if (!passiveModel.CheckActiveCondition()) continue;
-	// 		long passiveModel_intlong = passiveModel.Pointer.ToInt64();
-	// 		if (!SkillScriptInitPatch.modpaDict.ContainsKey(passiveModel_intlong)) continue;
+			foreach (ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong])
+			{
+				if (modpa.activationTiming != actevent) continue;
+				modpa.modsa_passiveModel = passiveModel;
+				modpa.modsa_victimModel = target;
+				modpa.modsa_killerModel = actionOrNull?._model;
+				modpa.Enact(__instance._owner, skill, actionOrNull, null, actevent, timing);
+			}
+		}
 
-	// 		foreach (ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong])
-	// 		{
-	// 			if (modpa.activationTiming != actevent) continue;
-	// 			modpa.modsa_passiveModel = passiveModel;
-	// 			modpa.modsa_victimModel = target;
-	// 			modpa.modsa_killerModel = actionOrNull?._model;
-	// 			modpa.Enact(actionOrNull?._model, actionOrNull?._skill, actionOrNull, null, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
-	// 		}
-	// 	}
-	// }
+		foreach (PassiveModel passiveModel in __instance.EgoPassiveList)
+		{
+			if (!passiveModel.CheckActiveCondition()) continue;
+			long passiveModel_intlong = passiveModel.Pointer.ToInt64();
+			if (!SkillScriptInitPatch.modpaDict.ContainsKey(passiveModel_intlong)) continue;
+
+			foreach (ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong])
+			{
+				if (modpa.activationTiming != actevent) continue;
+				modpa.modsa_passiveModel = passiveModel;
+				modpa.modsa_victimModel = target;
+				modpa.modsa_killerModel = actionOrNull?._model;
+				modpa.Enact(__instance._owner, skill, actionOrNull, null, actevent, timing);
+			}
+		}
+
+		foreach (BuffModel buffModel in __instance._owner._buffDetail.GetActivatedBuffModelAll())
+		{
+			long buffmodel_intlong = buffModel.Pointer.ToInt64();
+			if (!SkillScriptInitPatch.modbaDict.ContainsKey(buffmodel_intlong)) continue;
+
+			foreach (ModularSA modba in SkillScriptInitPatch.modbaDict[buffmodel_intlong])
+			{
+				if (modba.activationTiming != actevent) continue;
+				modba.modsa_buffModel = buffModel;
+				modba.modsa_victimModel = target;
+				modba.modsa_killerModel = actionOrNull?._model;
+				modba.Enact(__instance._owner, skill, actionOrNull, null, actevent, timing);
+			}
+		}
+	}
 }

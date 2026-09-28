@@ -503,6 +503,7 @@ public class Main : BasePlugin
         MainClass.timingDict.Add("OnSlotSelectedAsTarget", 7338);
         MainClass.timingDict.Add("OnActivateDurante", 7339);
         MainClass.timingDict.Add("AfterCoinParrying", 7340);
+        MainClass.timingDict.Add("EnemyKillAbnor", 7341);
 
         try
         {
