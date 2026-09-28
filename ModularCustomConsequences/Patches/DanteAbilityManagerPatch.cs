@@ -106,5 +106,15 @@ internal static class DuranteManager
                 }
             }
         }
+
+        BattleObjectManager objManager = SingletonBehavior<BattleObjectManager>.Instance;
+		objManager.UpdatePassiveState();
+		objManager.OnRoundStart_View_AfterChoice();
+		objManager.UpdateViewState(false, false);
+
+		foreach (BattleUnitView unitView in objManager.GetAliveViewList())
+		{
+			unitView.RefreshAppearanceRenderer(true);
+		}
     }
 }
