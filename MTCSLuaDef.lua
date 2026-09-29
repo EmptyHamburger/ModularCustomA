@@ -1,7 +1,7 @@
 ---@meta
 
 --[[
-    MTCustomScripts Version: v26.113.4
+    MTCustomScripts Version: v27.115.4
 ]]
 
 --#region Aliases
@@ -964,6 +964,18 @@ function getcoinindex(indexType) return -1 end
 ---@return SepiraReturnValue
 ---@nodiscard
 function getsepiralevel() return 0 end
+
+---Set speed (Cannot set speed to a lower value of the unit's min speed or higher value of the unit's max speed. checkMinMax should bypass this but it never work)
+---@param Multi_Target string --Modular's Multi-Target
+---@param newSpeed integer
+---@param checkMinMax? boolean --Dont really know if this actually do anything
+function setspeed(Multi_Target, newSpeed, checkMinMax) return end
+
+---Set Min/Max speed
+---@param Multi_Target string --Modular's Multi-Target
+---@param limitType "Min" | "Max"
+---@param newLimitValue integer
+function setspeedlimit(Multi_Target, limitType, newLimitValue) return end
 --#endregion
 
 --#region Exclusive .lua functions
