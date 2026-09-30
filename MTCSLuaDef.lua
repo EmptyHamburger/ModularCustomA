@@ -968,7 +968,7 @@ function getsepiralevel() return 0 end
 ---Set speed
 ---@param Multi_Target string --Modular's Multi-Target
 ---@param newSpeed integer
----@param priority integer --Any integer >= 0 or <= 999. Decide action order of units with the same speed (the higher, your skill goes first among those)
+---@param priority integer --Any integer >= 0 or <= 999. Decide action order for units with the same speed (the higher, your skill goes first among those)
 ---@param checkMinMax? boolean --Default: `false`. If `true`, clamps `newSpeed` to the unit's min and max speed limits
 function setspeed(Multi_Target, newSpeed, priority, checkMinMax) return end
 

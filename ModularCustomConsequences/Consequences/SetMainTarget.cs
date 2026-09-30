@@ -1,5 +1,7 @@
 using ModularSkillScripts;
 using BattleUI;
+using System;
+
 namespace MTCustomScripts.Consequences;
 
 public class ConsequenceSetMainTarget : IModularConsequence
@@ -22,17 +24,11 @@ public class ConsequenceSetMainTarget : IModularConsequence
 
             if (SkillID == -1)
             {
-                // SinActionModel selfSAM = modular.modsa_selfAction._sinAction;
-                // SinActionModel targetSAM = target.GetSinActionList()[0];
-                // modular.modsa_selfAction.ChangeMainTargetSinAction(targetSAM, targetSAM._currentBattleAction, true);
-                // // Singleton<SinManager>.Instance._targetManager.Refresh();
-
-                SinActionModel selfSAM = modular.modsa_selfAction._sinAction;
+                SinActionModel selfSAM = modular.modsa_selfAction?._sinAction;
                 SinActionModel targetSAM = target.GetSinActionList()[0];
-                modular.modsa_selfAction.ChangeMainTargetSinAction(targetSAM, targetSAM._currentBattleAction, true);
-                Singleton<BattleActionModelManager>.Instance.RemoveDuel(modular.modsa_selfAction);
-                foreach(BattleActionModel bam in selfSAM.GetActionListTargetingThisSlot())
-                selfSAM._actionSlot.SetActionTargetingThisSlot(bam);
+
+                if (selfSAM != null && targetSAM != null)
+                TryApplyDuelClash(selfSAM, targetSAM);
             }
             else
             {
@@ -43,19 +39,11 @@ public class ConsequenceSetMainTarget : IModularConsequence
                         if (sam.CurrentBattleAction.Skill.GetID() == SkillID && Count > 0)
                         {
                             SinActionModel targetSam = target.GetSinActionList()[0];
-                            BattleActionModel attackerAction = sam.CurrentBattleAction;                
-                            BattleActionModel targetAction = targetSam.CurrentBattleAction;
-                            
-                            // Singleton<BattleActionModelManager>.Instance.RemoveDuel(attackerAction);
-
-                            attackerAction.ChangeMainTargetSinAction(targetSam, targetAction, true);
-                            Singleton<BattleActionModelManager>.Instance.RemoveDuel(modular.modsa_selfAction);
-                            // Singleton<SinManager>.Instance._targetManager.Refresh();
-                            
-                            foreach(BattleActionModel bam in sam.GetActionListTargetingThisSlot())
-                            sam._actionSlot.SetActionTargetingThisSlot(bam);
-
-                            Count-=1;
+                            if (targetSam != null)
+                            {
+                                TryApplyDuelClash(sam, targetSam);
+                                Count -= 1;
+                            }
                         }
                     }
                 }
@@ -72,6 +60,69 @@ public class ConsequenceSetMainTarget : IModularConsequence
             Il2CppSystem.Collections.Generic.List<SinActionModel> actionList = Singleton<SinManager>.Instance.GetActionListByUnit(target);
             if (actionList.Count < 1) return;
             modular.modsa_selfAction._targetDataDetail.GetCurrentTargetSet()._mainTarget = new TargetSinActionData(actionList[0]);
+        }
+    }
+
+    public static void TryApplyDuelClash(SinActionModel attackerSAM, SinActionModel targetSAM)
+    {
+        if (attackerSAM == null || targetSAM == null) return;
+
+        BattleActionModel attackerAction = attackerSAM.CurrentBattleAction;
+        BattleActionModel targetAction = targetSAM.CurrentBattleAction;
+
+        if (attackerAction == null) return;
+
+        SinActionModel oldTargetSAM = attackerAction.GetMainTargetSinAction();
+        BattleActionModel oldTargetAction = oldTargetSAM.CurrentBattleAction;
+
+
+        BattleActionModelManager battleActionManager = Singleton<BattleActionModelManager>.Instance;
+
+        if (battleActionManager != null)
+        {
+            battleActionManager.RemoveDuel(attackerAction);
+            if (oldTargetAction != null) battleActionManager.RemoveDuel(oldTargetAction);
+            if (targetAction != null) battleActionManager.RemoveDuel(targetAction);
+        }
+
+
+
+        attackerAction.ChangeMainTargetSinAction(targetSAM, targetAction, false);
+        if (attackerAction.GetAttackWeight() > 1)
+        try {attackerAction.ChangeAllSubTarget();} catch (Exception ex) {MTCustomScripts.Main.Logger.LogError($"Cannot refresh sub-targets for Attacker's action: {ex}");}
+
+        if (targetAction != null)
+        {
+            targetAction.ChangeMainTargetSinAction(attackerSAM, attackerAction, false);
+            if (targetAction.GetAttackWeight() > 1)
+            try {targetAction.ChangeAllSubTarget();} catch (Exception ex) {MTCustomScripts.Main.Logger.LogError($"Cannot refresh sub-targets for Target's action: {ex}");}
+
+            if (BattleActionModel.CanDuelBoth(attackerAction, targetAction))
+            {
+                if (attackerAction._model._faction == UNIT_FACTION.PLAYER)
+                battleActionManager.AddDuel(attackerAction, targetAction);
+                else battleActionManager.AddDuel(targetAction, attackerAction);
+            }
+        }
+
+        
+
+        if (oldTargetSAM?._actionSlot != null)
+        {
+            foreach (BattleActionModel bam in oldTargetSAM.GetActionListTargetingThisSlot())
+            oldTargetSAM._actionSlot.SetActionTargetingThisSlot(bam);
+        }
+
+        if (targetSAM?._actionSlot != null)
+        {
+            foreach (BattleActionModel bam in targetSAM.GetActionListTargetingThisSlot())
+            targetSAM._actionSlot.SetActionTargetingThisSlot(bam);
+        }
+
+        if (attackerSAM?._actionSlot != null)
+        {
+            foreach (BattleActionModel bam in attackerSAM.GetActionListTargetingThisSlot())
+            attackerSAM._actionSlot.SetActionTargetingThisSlot(bam);
         }
     }
 }
