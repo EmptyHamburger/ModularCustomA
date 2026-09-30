@@ -10,10 +10,11 @@ public class ConsequenceSetSpeed : IModularConsequence
         if (units.Count < 1) return;
 
         int newSpeedVal = modular.GetNumFromParamString(circles[1]);
+        int priority = modular.GetNumFromParamString(circles[2]);
         bool checkMinMax = false;
-        if (circles.Length > 2) checkMinMax = modular.GetBoolFromParamString(circles[2]);
+        if (circles.Length > 3) checkMinMax = modular.GetBoolFromParamString(circles[3]);
 
         foreach(BattleUnitModel unit in units)
-        unit.SetSpeed(newSpeedVal, checkMinMax);
+        unit.SetSpeed(newSpeedVal * 1000 + priority, checkMinMax);
 	}
 }
