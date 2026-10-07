@@ -45,7 +45,7 @@ internal class Modular_SetupModular
 
                     if (!Enum.TryParse(hitArgs, out SEPIRA parsedDuranteKeyword)) parsedDuranteKeyword = SEPIRA.NONE;
                     MTCustomScripts.Main.Instance.duranteTriggerDict[__instance.Pointer.ToInt64()] = parsedDuranteKeyword;
-                    MainClass.Logg.LogInfo($"Parsed Durante keyword trigger for OnActivateDurante: {parsedDuranteKeyword.ToString()}; Input: {hitArgs}");
+                    MainClass.Logg.LogInfo($"Parsed Durante keyword trigger for OnActivateDurante/AfterDuranteAnim: {parsedDuranteKeyword.ToString()}; Input: {hitArgs}");
 					// }
 					// if (circle_0 == "SpecialAction")
 					// {
@@ -56,9 +56,9 @@ internal class Modular_SetupModular
                     MainClass.Logg.LogInfo("OnGainBuff with no keyword detected, default to None");
                     MTCustomScripts.Main.Instance.keywordTriggerDict[__instance.Pointer.ToInt64()] = BUFF_UNIQUE_KEYWORD.None;
                 }
-                else if (circle_0 == "OnActivateDurante")
+                else if (circle_0 == "OnActivateDurante" || circle_0 == "AfterDuranteAnim")
                 {
-                    MainClass.Logg.LogInfo("OnActivateDurante with no keyword detected, default to NONE");
+                    MainClass.Logg.LogInfo("OnActivateDurante/AfterDuranteAnim with no keyword detected, default to NONE");
                     MTCustomScripts.Main.Instance.duranteTriggerDict[__instance.Pointer.ToInt64()] = SEPIRA.NONE;
                 }
             }

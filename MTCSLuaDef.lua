@@ -709,7 +709,8 @@ function setmaintarget(Mid, Single_Target) return end
 ---@param Target string --Modular's Single-Target
 ---@param SkillID integer --A Skill ID
 ---@param Count? integer --Any integer >= 1 (Default = 99)
-function setmaintarget(Pre, Attackers, Target, SkillID, Count) return end
+---@param forceDuel? true | false --Default: `false`. Only input this if this is between 2 skills, try to force a Clash for the 2 skills
+function setmaintarget(Pre, Attackers, Target, SkillID, Count, forceDuel) return end
 
 ---Add/Remove specific sub-targets from the skill
 ---@param Mode "Add" | "Remove"

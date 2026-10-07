@@ -45,7 +45,7 @@ public class Main : BasePlugin
 {
     // Edit the below to your own plugin name, version, etc.
     public const string NAME = "MTCustomScripts";
-    public const string VERSION = "27.115.4";
+    public const string VERSION = "31.115.4";
     public const string AUTHOR = "MT";
     public const string GUID = $"{AUTHOR}.{NAME}";
 
@@ -73,6 +73,8 @@ public class Main : BasePlugin
     public SEPIRA durante_keyword = SEPIRA.NONE;
     public static System.Collections.Generic.Dictionary<IntPtr, BattleUnitModel> intPtrCharacterState_BattleUnitModel_Dict = new();
     public static System.Collections.Generic.Dictionary<IntPtr, int> intPtrMangAddOn_ActiveMangCountOnSkillStart = new();
+    public static SinActionModel currentSinActionModelPlayer = null;
+
 
     public class GlobalLuaValues
     {
@@ -504,6 +506,10 @@ public class Main : BasePlugin
         MainClass.timingDict.Add("OnActivateDurante", 7339);
         MainClass.timingDict.Add("AfterCoinParrying", 7340);
         MainClass.timingDict.Add("EnemyKillAbnor", 7341);
+        MainClass.timingDict.Add("AfterDuranteAnim", 7342);
+        MainClass.timingDict.Add("OnDashboardSkillHover", 7343);
+        MainClass.timingDict.Add("OnSlotHoverTarget", 7344);
+        MainClass.timingDict.Add("OnSlotHoveredBy", 7345);
 
         try
         {
@@ -521,6 +527,7 @@ public class Main : BasePlugin
             harmony.PatchAll(typeof(GateSP));
             harmony.PatchAll(typeof(OneCoinLog_Patches));
             harmony.PatchAll(typeof(DuranteManager));
+            harmony.PatchAll(typeof(SlotHoveringPatch));
             // harmony.PatchAll(typeof(CharacterState_Patches));
             // harmony.PatchAll(typeof(SkillAbilityMang_Patch));
 

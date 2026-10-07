@@ -11,6 +11,6 @@ public class ConsequenceHideSkill : IModularConsequence
         BattleUnitModel battleUnitModel = modular.GetTargetModel(circles[0]);
         if (battleUnitModel == null) return;
 
-        SingletonBehavior<BattleObjectManager>.Instance.GetView(battleUnitModel)._battleSkillViewers.Remove(circles[1]);
+        SingletonBehavior<BattleObjectManager>.Instance.GetView(battleUnitModel)?._battleSkillViewers.Remove(circles[1]);
     }
 }
