@@ -1,7 +1,7 @@
 ---@meta
 
 --[[
-    MTCustomScripts Version: v27.115.4
+    MTCustomScripts Version: v31.115.4
 ]]
 
 --#region Aliases
@@ -978,6 +978,11 @@ function setspeed(Multi_Target, newSpeed, priority, checkMinMax) return end
 ---@param limitType "Min" | "Max"
 ---@param newLimitValue integer
 function setspeedlimit(Multi_Target, limitType, newLimitValue) return end
+
+---Allow certain TIMINGs to refresh the units' appearance renderer
+---@param Multi_Target string --Modular's Multi-Target
+---@param allowRefresh true | false
+function allowrefreshrenderer(Multi_Target, allowRefresh) return end
 --#endregion
 
 --#region Exclusive .lua functions

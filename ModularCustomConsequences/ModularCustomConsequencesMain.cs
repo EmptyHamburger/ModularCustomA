@@ -45,7 +45,7 @@ public class Main : BasePlugin
 {
     // Edit the below to your own plugin name, version, etc.
     public const string NAME = "MTCustomScripts";
-    public const string VERSION = "31.115.4";
+    public const string VERSION = "31.116.4";
     public const string AUTHOR = "MT";
     public const string GUID = $"{AUTHOR}.{NAME}";
 
@@ -522,12 +522,14 @@ public class Main : BasePlugin
             harmony.PatchAll(typeof(BattleActionModelManager_Patches));
             harmony.PatchAll(typeof(PassiveDetail_Patches));
             harmony.PatchAll(typeof(BuffModel_Patches));
-            harmony.PatchAll(typeof(StageModel_Patch));
+            harmony.PatchAll(typeof(WaitCommand_Patches));
             harmony.PatchAll(typeof(SinActionModelPatches));
             harmony.PatchAll(typeof(GateSP));
             harmony.PatchAll(typeof(OneCoinLog_Patches));
             harmony.PatchAll(typeof(DuranteManager));
             harmony.PatchAll(typeof(SlotHoveringPatch));
+            harmony.PatchAll(typeof(ResetDatas_Patch));
+            harmony.PatchAll(typeof(Modular_VisualUpdateForSpecialPatch));
             // harmony.PatchAll(typeof(CharacterState_Patches));
             // harmony.PatchAll(typeof(SkillAbilityMang_Patch));
 
@@ -695,6 +697,7 @@ public class Main : BasePlugin
             MainClass.consequenceDict["addmang"] = new MTCustomScripts.Consequences.ConsequenceAddMang();
             MainClass.consequenceDict["setspeed"] = new MTCustomScripts.Consequences.ConsequenceSetSpeed();
             MainClass.consequenceDict["setspeedlimit"] = new MTCustomScripts.Consequences.ConsequenceSetSpeedLimit();
+            MainClass.consequenceDict["allowrefreshrenderer"] = new MTCustomScripts.Consequences.ConsequenceAllowRefreshRenderer();
 
             // Dynamic Locale
             MainClass.consequenceDict["dlactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleActivatePath();

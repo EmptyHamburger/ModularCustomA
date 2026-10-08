@@ -6,6 +6,7 @@ using Il2CppSystem.Collections.Generic;
 using ModularSkillScripts.Patches;
 using MTCustomScripts;
 using System;
+using MTCustomScripts.Utils;
 
 namespace MTCustomScripts.Patches;
 internal class SinActionModelPatches
@@ -63,6 +64,8 @@ internal class SinActionModelPatches
                 }
             }
         }
+
+        MTUtil.UpdateState();
     }
 
     [HarmonyPatch(typeof(SinActionModel), nameof(SinActionModel.SelectSin), new Type[]{typeof(UnitSinModel), typeof(SinActionModel)})]
@@ -179,14 +182,6 @@ internal class SinActionModelPatches
             }
         }
 
-        BattleObjectManager objManager = SingletonBehavior<BattleObjectManager>.Instance;
-		objManager.UpdatePassiveState();
-		objManager.OnRoundStart_View_AfterChoice();
-		objManager.UpdateViewState(false, false);
-
-		foreach (BattleUnitView unitView in objManager.GetAliveViewList())
-		{
-			unitView.RefreshAppearanceRenderer(true);
-		}
+        MTUtil.UpdateState();
     }
 }

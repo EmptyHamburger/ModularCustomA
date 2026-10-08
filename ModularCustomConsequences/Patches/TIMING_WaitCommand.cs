@@ -1,39 +1,14 @@
 using HarmonyLib;
 using Lethe.Patches;
 using Il2CppSystem.Collections.Generic;
-namespace MTCustomScripts.Patches;
-
 using ModularSkillScripts;
 using ModularSkillScripts.Patches;
+using MTCustomScripts.Utils;
 
-public class StageModel_Patch
+namespace MTCustomScripts.Patches;
+
+public class WaitCommand_Patches
 {
-    [HarmonyPatch(typeof(StageModel), nameof(StageModel.Init))]
-    [HarmonyPrefix]
-    public static void Prefix_StageModel_Init(StageModel __instance)
-    {
-        MTCustomScripts.Main.dl_activePathsDict.Clear();
-        MTCustomScripts.Main.dl_overwritePathValue.Clear();
-        MTCustomScripts.Main.gateSPDict.Clear();
-    }
-
-    [HarmonyPatch(typeof(StageModel), nameof(StageModel.OnStageEnd))]
-    [HarmonyPrefix]
-    public static void Prefix_StageModel_OnStageEnd(StageModel __instance)
-    {
-        MTCustomScripts.Main.dl_activePathsDict.Clear();
-        MTCustomScripts.Main.dl_overwritePathValue.Clear();
-        MTCustomScripts.Main.gateSPDict.Clear();
-    }
-
-    [HarmonyPatch(typeof(Data), nameof(Data.LoadCustomLocale), new[] { typeof(LOCALIZE_LANGUAGE) })]
-    [HarmonyPrefix]
-    public static void Postfix_Data_LoadCustomLocale(Data __instance)
-    {
-        MTCustomScripts.Main.dl_activePathsDict.Clear();
-        MTCustomScripts.Main.dl_overwritePathValue.Clear();
-    }
-
     [HarmonyPatch(typeof(StageController), nameof(StageController.FixedUpdate))]
     [HarmonyPrefix]
     public static void Prefix_StageController_FixedUpdate(StageController __instance)
@@ -98,15 +73,7 @@ public class StageModel_Patch
                 }
             }
 
-            BattleObjectManager objManager = SingletonBehavior<BattleObjectManager>.Instance;
-            objManager.UpdatePassiveState();
-            objManager.OnRoundStart_View_AfterChoice();
-            objManager.UpdateViewState(false, false);
-
-            foreach (BattleUnitView unitView in objManager.GetAliveViewList())
-            {
-                unitView.RefreshAppearanceRenderer(true);
-            }
+            MTUtil.UpdateState();
         }
     }
 }

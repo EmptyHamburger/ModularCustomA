@@ -4,6 +4,7 @@ using ModularSkillScripts;
 using ModularSkillScripts.Patches;
 using BattleUI;
 using BattleUI.Operation;
+using MTCustomScripts.Utils;
 
 namespace MTCustomScripts.Patches;
 
@@ -80,15 +81,7 @@ internal static class SlotHoveringPatch
             }
         }
 
-        BattleObjectManager objManager = SingletonBehavior<BattleObjectManager>.Instance;
-        objManager.UpdatePassiveState();
-        objManager.OnRoundStart_View_AfterChoice();
-        objManager.UpdateViewState(false, false);
-
-        foreach (BattleUnitView unitView in objManager.GetAliveViewList())
-        {
-            unitView.RefreshAppearanceRenderer(true);
-        }
+        MTUtil.UpdateState();
     }
     // SingletonBehavior<BattleUIRoot>.Instance.ShowExpectedSkillInfoByOverAction(abActionSlot.currentSelectSin, abActionSlot);
 
@@ -234,14 +227,6 @@ internal static class SlotHoveringPatch
             }
         }
 
-        BattleObjectManager objManager = SingletonBehavior<BattleObjectManager>.Instance;
-        objManager.UpdatePassiveState();
-        objManager.OnRoundStart_View_AfterChoice();
-        objManager.UpdateViewState(false, false);
-
-        foreach (BattleUnitView unitView in objManager.GetAliveViewList())
-        {
-            unitView.RefreshAppearanceRenderer(true);
-        }
+        MTUtil.UpdateState();
     }
 }
