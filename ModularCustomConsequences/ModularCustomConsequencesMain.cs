@@ -45,7 +45,7 @@ public class Main : BasePlugin
 {
     // Edit the below to your own plugin name, version, etc.
     public const string NAME = "MTCustomScripts";
-    public const string VERSION = "31.116.4";
+    public const string VERSION = "31.117.4";
     public const string AUTHOR = "MT";
     public const string GUID = $"{AUTHOR}.{NAME}";
 
@@ -698,6 +698,7 @@ public class Main : BasePlugin
             MainClass.consequenceDict["setspeed"] = new MTCustomScripts.Consequences.ConsequenceSetSpeed();
             MainClass.consequenceDict["setspeedlimit"] = new MTCustomScripts.Consequences.ConsequenceSetSpeedLimit();
             MainClass.consequenceDict["allowrefreshrenderer"] = new MTCustomScripts.Consequences.ConsequenceAllowRefreshRenderer();
+            MainClass.consequenceDict["setmodularvalue"] = new MTCustomScripts.Consequences.ConsequenceSetModularValue();
 
             // Dynamic Locale
             MainClass.consequenceDict["dlactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleActivatePath();

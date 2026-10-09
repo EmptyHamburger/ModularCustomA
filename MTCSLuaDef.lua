@@ -1,7 +1,7 @@
 ---@meta
 
 --[[
-    MTCustomScripts Version: v31.115.4
+    MTCustomScripts Version: v31.117.4
 ]]
 
 --#region Aliases
@@ -983,6 +983,11 @@ function setspeedlimit(Multi_Target, limitType, newLimitValue) return end
 ---@param Multi_Target string --Modular's Multi-Target
 ---@param allowRefresh true | false
 function allowrefreshrenderer(Multi_Target, allowRefresh) return end
+
+---Set the value of a Modular's VALUE_X where X is the value index
+---@param valueIdx 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+---@param newValue integer
+function setmodularvalue(valueIdx, newValue) return end
 --#endregion
 
 --#region Exclusive .lua functions

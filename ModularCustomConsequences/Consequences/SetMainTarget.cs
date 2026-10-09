@@ -89,7 +89,7 @@ public class ConsequenceSetMainTarget : IModularConsequence
         if (!forceDuel || targetAction == null) return;
 
         if (targetAction.IsMultiTarget())
-        targetAction.ChangeMainTargetSinAction(attackerSAM, attackerAction);
+        targetAction.ChangeMainTargetSinAction(attackerSAM, attackerAction, true);
         else
         {
             Singleton<SinManager>.Instance.RemoveBattleAction(targetAction, true);
