@@ -45,7 +45,7 @@ public class Main : BasePlugin
 {
     // Edit the below to your own plugin name, version, etc.
     public const string NAME = "MTCustomScripts";
-    public const string VERSION = "31.117.4";
+    public const string VERSION = "33.118.4";
     public const string AUTHOR = "MT";
     public const string GUID = $"{AUTHOR}.{NAME}";
 
@@ -500,7 +500,7 @@ public class Main : BasePlugin
         MainClass.timingDict.Add("Parrying", 7333);
         MainClass.timingDict.Add("BeforeRoundStart", 7334);
         MainClass.timingDict.Add("WaitCommand", 7335);
-        MainClass.timingDict.Add("OnDeSelectSin", 7336);
+        MainClass.timingDict.Add("OnDeselectSin", 7336);
         MainClass.timingDict.Add("OnSlotSelectsTarget", 7337);
         MainClass.timingDict.Add("OnSlotSelectedAsTarget", 7338);
         MainClass.timingDict.Add("OnActivateDurante", 7339);
@@ -510,6 +510,7 @@ public class Main : BasePlugin
         MainClass.timingDict.Add("OnDashboardSkillHover", 7343);
         MainClass.timingDict.Add("OnSlotHoverTarget", 7344);
         MainClass.timingDict.Add("OnSlotHoveredBy", 7345);
+        MainClass.timingDict.Add("OnDeselectSinGlobal", 7346);
 
         try
         {
@@ -563,6 +564,8 @@ public class Main : BasePlugin
             MainClass.luaFunctionDict["listskillkeywords"] = new MTCustomScripts.LuaFunctions.LuaFunctionListSkillKeywordList();
             MainClass.luaFunctionDict["listbattleactions"] = new MTCustomScripts.LuaFunctions.LuaFunctionListBattleActions();
             MainClass.luaFunctionDict["getbufflocaledata"] = new MTCustomScripts.LuaFunctions.LuaFunctionGetBuffLocaleData();
+            MainClass.luaFunctionDict["listactiontargetingthisslot"] = new MTCustomScripts.LuaFunctions.LuaFunctionListActionTargetingThisSlot();
+            MainClass.luaFunctionDict["listallskillsmt"] = new MTCustomScripts.LuaFunctions.LuaFunctionListAllSkillsMT();
             // MainClass.luaFunctionDict["getrandombuff"] = new LuaFunctionGetRandomBuff(); //Object reference not set to an instance of an object
             // MainClass.luaFunctionDict["listskilltargets"] = new MTCustomScripts.LuaFunctions.LuaFunctionListSkillTargets();
         }

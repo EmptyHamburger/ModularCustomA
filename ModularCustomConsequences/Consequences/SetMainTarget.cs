@@ -82,7 +82,7 @@ public class ConsequenceSetMainTarget : IModularConsequence
         if (oldTargetAction != null && oldTargetAction != attackerAction)
         battleActionManager?.RemoveDuel(oldTargetAction);
 
-        attackerAction.ChangeMainTargetSinAction(targetSAM, targetSAM.CurrentBattleAction, true);
+        attackerAction.ChangeMainTargetSinAction(targetSAM, targetSAM?.CurrentBattleAction, true);
         targetSAM.OnTargetedAsMain(attackerAction);
 
         BattleActionModel targetAction = targetSAM.CurrentBattleAction;

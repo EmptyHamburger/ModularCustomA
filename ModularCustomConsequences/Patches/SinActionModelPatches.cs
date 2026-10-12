@@ -21,9 +21,69 @@ internal class SinActionModelPatches
         //     SingletonBehavior<BattleUIRoot>.Instance?.NewOperationController?.GetSinActionSlot(sam)?._secondSinSlot?._effectManager?._skillEffectList?.Clear();
         // }
         // catch { }
-        List<BattleUnitModel> unitList = SingletonBehavior<BattleObjectManager>.Instance.GetModelList();
-        int actevent = MainClass.timingDict["OnDeSelectSin"];
+        // List<BattleUnitModel> unitList = SingletonBehavior<BattleObjectManager>.Instance.GetModelList();
+        int actevent = MainClass.timingDict["OnDeselectSin"];
         MTCustomScripts.Main.lastSinSlotIndex = __instance.GetSlotIndex();
+        BattleUnitModel sourceUnit = __instance._unitModel;
+
+        SkillModel skillModel = __instance?._currentBattleAction?._skill;
+        if (skillModel != null)
+        {
+            long skillmodel_intlong = skillModel.Pointer.ToInt64();
+            if (SkillScriptInitPatch.modsaDict.ContainsKey(skillmodel_intlong))
+            {
+                foreach (ModularSA modsa in SkillScriptInitPatch.modsaDict[skillmodel_intlong].ToArray())
+                {
+                    modsa.Enact(sourceUnit, skillModel, __instance?._currentBattleAction, null, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
+                }
+            }
+        }
+
+        if (sourceUnit != null)
+        {
+            foreach (PassiveModel passiveModel in sourceUnit._passiveDetail.PassiveList)
+            {
+                if (!passiveModel.CheckActiveCondition()) continue;
+                long passiveModel_intlong = passiveModel.Pointer.ToInt64();
+                if (!SkillScriptInitPatch.modpaDict.ContainsKey(passiveModel_intlong)) continue;
+
+                foreach (ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong])
+                {
+                    modpa.modsa_passiveModel = passiveModel;
+                    modpa.Enact(sourceUnit, __instance?._currentBattleAction?._skill, __instance?._currentBattleAction, null, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
+                }
+            }
+
+            foreach (PassiveModel passiveModel in sourceUnit._passiveDetail.EgoPassiveList)
+            {
+                if (!passiveModel.CheckActiveCondition()) continue;
+                long passiveModel_intlong = passiveModel.Pointer.ToInt64();
+                if (!SkillScriptInitPatch.modpaDict.ContainsKey(passiveModel_intlong)) continue;
+
+                foreach (ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong])
+                {
+                    modpa.modsa_passiveModel = passiveModel;
+                    modpa.Enact(sourceUnit, __instance?._currentBattleAction?._skill, __instance?._currentBattleAction, null, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
+                }
+            }
+
+            foreach (BuffModel buffModel in sourceUnit._buffDetail.GetActivatedBuffModelAll())
+            {
+                long buffmodel_intlong = buffModel.Pointer.ToInt64();
+                if (!SkillScriptInitPatch.modbaDict.ContainsKey(buffmodel_intlong)) continue;
+
+                foreach (ModularSA modba in SkillScriptInitPatch.modbaDict[buffmodel_intlong])
+                {
+                    modba.modsa_buffModel = buffModel;
+                    modba.Enact(sourceUnit, __instance?._currentBattleAction?._skill, __instance?._currentBattleAction, null, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
+                }
+            }
+        }
+
+        actevent = MainClass.timingDict["OnDeselectSinGlobal"];
+
+        List<BattleUnitModel> unitList = SingletonBehavior<BattleObjectManager>.Instance.GetModelList();
+        List<BattleActionModel> bamList = Singleton<BattleActionModelManager>.Instance.GetActionList();
         foreach (BattleUnitModel unit in unitList)
         {
             foreach (PassiveModel passiveModel in unit._passiveDetail.PassiveList)
@@ -34,8 +94,10 @@ internal class SinActionModelPatches
 
                 foreach (ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong])
                 {
+                    if (modpa.activationTiming != actevent) continue;
+                    
                     modpa.modsa_passiveModel = passiveModel;
-                    modpa.Enact(unit, null, null, null, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
+                    modpa.Enact(unit, null, null, __instance?._currentBattleAction, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
                 }
             }
 
@@ -47,8 +109,10 @@ internal class SinActionModelPatches
 
                 foreach (ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong])
                 {
+                    if (modpa.activationTiming != actevent) continue;
+
                     modpa.modsa_passiveModel = passiveModel;
-                    modpa.Enact(unit, null, null, null, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
+                    modpa.Enact(unit, null, null, __instance?._currentBattleAction, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
                 }
             }
 
@@ -59,8 +123,26 @@ internal class SinActionModelPatches
 
                 foreach (ModularSA modba in SkillScriptInitPatch.modbaDict[buffmodel_intlong])
                 {
+                    if (modba.activationTiming != actevent) continue;
+
                     modba.modsa_buffModel = buffModel;
-                    modba.Enact(unit, null, null, null, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
+                    modba.Enact(unit, null, null, __instance?._currentBattleAction, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
+                }
+            }
+        }
+        
+        foreach(BattleActionModel bam in bamList)
+        {
+            SkillModel skill = bam.Skill;
+            if (skill == null) continue;
+            long intLong = skill.Pointer.ToInt64();
+            if (SkillScriptInitPatch.modsaDict.ContainsKey(intLong))
+            {
+                foreach(ModularSA modsa in SkillScriptInitPatch.modsaDict[intLong])
+                {
+                    if (modsa.activationTiming != actevent) continue;
+
+                    modsa.Enact(bam._model, skill, bam, __instance?._currentBattleAction, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
                 }
             }
         }

@@ -1,7 +1,7 @@
 ---@meta
 
 --[[
-    MTCustomScripts Version: v31.117.4
+    MTCustomScripts Version: v33.118.4
 ]]
 
 --#region Aliases
@@ -627,7 +627,7 @@ function getopposkillid() return 0 end
 
 ---Removes any number of coins
 ---@param Single_Target string --Modular's Single-Target
----@param ... integer  --The coin's index, input -1 for coin scripts to target themselves (coin index starts at 0) (You can input as many indexes as you need)
+---@param ... integer | "All"  --The coin's index, input -1 for coin scripts to target themselves (coin index starts at 0) (You can input as many indexes as you need)
 function removecoin(Single_Target, ...) return end
 
 ---@param Multi_Target string --Modular's Multi-Target
@@ -1085,5 +1085,12 @@ function listpassiveids(Single_Target) return {} end
 ---@param buffKeyword string --Any buff keyword
 ---@param dataType "name" | "desc" | "summary"
 ---@return string | nil
+---@@nodiscard
 function getbufflocaledata(buffKeyword, dataType) return "" end
+
+---Returns a lua table (array-like) with a fixed format contains datas of all skills targeting this skill slot (Visit document page for more infos
+---@param Target "Self" | "MainTarget"
+---@return table
+---@@nodiscard
+function listactiontargetingthisslot(Target) return {} end
 --#endregion

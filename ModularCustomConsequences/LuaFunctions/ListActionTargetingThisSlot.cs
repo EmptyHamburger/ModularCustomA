@@ -9,7 +9,7 @@ using Il2CppSystem;
 
 namespace MTCustomScripts.LuaFunctions;
 
-public class LuaFunctionListActionTargetThisSlot : IModularLuaFunction
+public class LuaFunctionListActionTargetingThisSlot : IModularLuaFunction
 {
     public ValueTask<int> ExecuteLuaFunction(ModularSA modular, LuaFunctionExecutionContext context, System.Span<LuaValue> buffer, CancellationToken ct)
     {
@@ -17,9 +17,10 @@ public class LuaFunctionListActionTargetThisSlot : IModularLuaFunction
         if (context.GetArgument(0).Read<string>() != "Self") unitAction = modular.modsa_oppoAction;
         if (unitAction == null)
         {
-            MTCustomScripts.Main.Logger.LogError($"[ListActionTargetThisSlot] {context.GetArgument(0).Read<string>()} action not found!");
+            MTCustomScripts.Main.Logger.LogError($"[ListActionTargetingThisSlot] {context.GetArgument(0).Read<string>()} action not found!");
             return ValueTask.FromResult(0);
         }
+        
         LuaTable table = new LuaTable();
         int index = 1;
         foreach(BattleActionModel battleActionModel in unitAction.SinAction.GetActionListTargetingThisSlot())
