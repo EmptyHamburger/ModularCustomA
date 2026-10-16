@@ -20,8 +20,8 @@ namespace MTCustomScripts.Consequences
             }
             catch (Exception ex)
             {
-                MTCustomScripts.Main.Logger.LogFatal($"Couldn't change Action's index: {ex.Message}");
-                MTCustomScripts.Main.Logger.LogFatal($"STAR TRACE: {ex.StackTrace}");
+                MTCustomScripts.Main.Logger.LogFatalError($"Couldn't change Action's index: {ex.Message}");
+                MTCustomScripts.Main.Logger.LogFatalError($"STAR TRACE: {ex.StackTrace}");
             }
         }
     }

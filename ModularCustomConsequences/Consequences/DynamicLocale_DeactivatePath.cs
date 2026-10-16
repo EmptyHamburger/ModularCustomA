@@ -7,7 +7,7 @@ namespace MTCustomScripts.Consequences
     {
         public void ExecuteConsequence(ModularSA modular, string section, string circledSection, string[] circles)
         {      
-            if (modular.modsa_buffModel == null) MTCustomScripts.Main.Logger.LogFatal("[Dynamic Locale] BuffModel not found! - DeactivatePath");
+            if (modular.modsa_buffModel == null) MTCustomScripts.Main.Logger.LogFatalError("[Dynamic Locale] BuffModel not found! - DeactivatePath");
             MTCustomScripts.Main.DynamicLocale_DeactivtePath(modular.modsa_buffModel, circles);
         }
     }

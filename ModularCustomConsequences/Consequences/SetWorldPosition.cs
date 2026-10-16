@@ -112,7 +112,7 @@ public class ConsequenceSetWorldPosition: IModularConsequence
 
 // foreach(Match match in newTween)
 // {
-//     if (match.Groups[5].Success) MTCustomScripts.Main.Logger.LogFatal(match.Groups[5].Value);
+//     if (match.Groups[5].Success) MTCustomScripts.Main.Logger.LogFatalError(match.Groups[5].Value);
 
 //     float x = modular.GetNumFromParamString(match.Groups[1].Value) / 100f;
 //     float y = modular.GetNumFromParamString(match.Groups[2].Value) / 100f;
