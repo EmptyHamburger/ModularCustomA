@@ -14,14 +14,14 @@ internal static class DuranteManager
     // [HarmonyPostfix]
     // public static void Postfix_OnClickConfirm()
     // {
-    //     MTCustomScripts.Main.Logger.LogFatal("DanteAbilityUIController.OnClickConfirm");
+    //     MTCustomScripts.Main.Logger.LogFatalError("DanteAbilityUIController.OnClickConfirm");
     // }
 
     [HarmonyPatch(typeof(DanteAbilityManager), nameof(DanteAbilityManager.ActivateDanteAbility))]
     [HarmonyPostfix]
     public static void Postfix_DanteAbility_ActivateDanteAbility(SEPIRA level, int id)
     {
-        // MTCustomScripts.Main.Logger.LogFatal("DanteAbilityManager.ActivateDanteAbility");
+        // MTCustomScripts.Main.Logger.LogFatalError("DanteAbilityManager.ActivateDanteAbility");
         // SEPIRA sepira = __instance._classInfo._sepira;
         List<BattleUnitModel> unitList = SingletonBehavior<BattleObjectManager>.Instance.GetModelList();
         int actevent = MainClass.timingDict["OnActivateDurante"];
@@ -110,7 +110,7 @@ internal static class DuranteManager
     [HarmonyPostfix]
     public static void Postfix_DanteAbilityUIController_AddActivatedDanteAbility(int abilityId, int activeTurns)
     {
-        // MTCustomScripts.Main.Logger.LogFatal($"DanteAbilityUIController.AddActivatedDanteAbility abilityId: {abilityId}");
+        // MTCustomScripts.Main.Logger.LogFatalError($"DanteAbilityUIController.AddActivatedDanteAbility abilityId: {abilityId}");
 
         List<BattleUnitModel> unitList = SingletonBehavior<BattleObjectManager>.Instance.GetModelList();
         int actevent = MainClass.timingDict["AfterDuranteAnim"];

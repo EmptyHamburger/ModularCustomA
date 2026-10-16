@@ -14,7 +14,7 @@ internal static class SlotHoveringPatch
     [HarmonyPostfix]
     public static void Postfix_NewOperationController_ShowSkillInfoByOperation(SinActionModel sinAction, UnitSinModel unitsin)
     {
-        // MTCustomScripts.Main.Logger.LogFatal($"Postfix_NewOperationController_ShowSkillInfoByOperation");
+        // MTCustomScripts.Main.Logger.LogFatalError($"Postfix_NewOperationController_ShowSkillInfoByOperation");
         MTCustomScripts.Main.currentSinActionModelPlayer = sinAction;
         BattleUnitModel unit = sinAction._unitModel;
         int actevent = MainClass.timingDict["OnDashboardSkillHover"];
@@ -89,7 +89,7 @@ internal static class SlotHoveringPatch
     [HarmonyPostfix]
     public static void Postfix_BattleUIRoot_ShowExpectedSkillInfoByOverAction(UnitSinModel sin, SinActionModel targetSinAction, BattleUIRoot __instance)
     {
-        // MTCustomScripts.Main.Logger.LogFatal($"Postfix_BattleUIRoot_ShowExpectedSkillInfoByOverAction");
+        // MTCustomScripts.Main.Logger.LogFatalError($"Postfix_BattleUIRoot_ShowExpectedSkillInfoByOverAction");
 
         SinActionModel targeterSAM = MTCustomScripts.Main.currentSinActionModelPlayer;
 

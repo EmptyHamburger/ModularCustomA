@@ -45,7 +45,7 @@ public class PassiveDetail_Patches
 	public static void Postfix_PassiveDetail_OnKillTarget(BattleActionModel actionOrNull, BattleUnitModel target, DAMAGE_SOURCE_TYPE dmgSrcType, BATTLE_EVENT_TIMING timing, PassiveDetail __instance)
 	{
 		int actevent = MainClass.timingDict["EnemyKillAbnor"];
-		// MTCustomScripts.Main.Logger.LogFatal("ENEMY KILL PATCH RAN");
+		// MTCustomScripts.Main.Logger.LogFatalError("ENEMY KILL PATCH RAN");
 		SkillModel skill = actionOrNull?._skill;
 
 		foreach (PassiveModel passiveModel in __instance.PassiveList)
