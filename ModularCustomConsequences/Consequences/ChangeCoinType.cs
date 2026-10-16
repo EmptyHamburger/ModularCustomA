@@ -21,7 +21,7 @@ namespace MTCustomScripts.Consequences
             Il2CppSystem.Collections.Generic.List<BattleUnitModel> unitList = modular.GetTargetModelList(circles[0]);
             if (unitList.Count == 0) return;
 
-            Il2CppSystem.Collections.Generic.List<SkillModel> selectedSkills = modular.GetMultipleSkillModel(unitList, circles[1]);
+            System.Collections.Generic.List<SkillModel> selectedSkills = modular.GetMultipleSkillModel(unitList, circles[1]);
             System.Collections.Generic.List<CoinModel> coinList = [];
 
             foreach (SkillModel skill in selectedSkills)

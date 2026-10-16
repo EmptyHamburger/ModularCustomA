@@ -1,4 +1,5 @@
 ﻿using ModularSkillScripts;
+using Server;
 
 namespace MTCustomScripts.Consequences
 {
@@ -27,14 +28,16 @@ namespace MTCustomScripts.Consequences
                 {
                     for (int i = 0; i < skillIdList.Count; i++)
                     {
-                        if (unit.UnitDataModel.ClassInfo.GetSkillIds().Contains(skillIdList[i])) mainClass.storedRemoveSkillHash.Add(skillIdList[i]);
+                        int SkillId = skillIdList[i];
 
-                        if (unit.UnitDataModel.HasSkill(skillIdList[i])) unit.UnitDataModel._skillList.Remove(unit.UnitDataModel.GetSkillModel(skillIdList[i]));
-                        UnitAttribute skillAttribute = unit.UnitDataModel._unitAttributeList.ToSystem().Find(x => x.SkillId == skillIdList[i]);
+                        if (unit.UnitDataModel.ClassInfo.GetSkillIds().Contains(SkillId)) mainClass.storedRemoveSkillHash.Add(SkillId);
+
+                        if (unit.UnitDataModel.HasSkill(SkillId)) unit.UnitDataModel._skillList.Remove(unit.UnitDataModel.GetSkillModel(SkillId));
+                        UnitAttribute skillAttribute = unit.UnitDataModel._unitAttributeList.ToSystem().Find(x => x.SkillId == SkillId);
                         if (skillAttribute != null) unit.UnitDataModel._unitAttributeList.Remove(skillAttribute);
 
                         BattleUnitView unitView = SingletonBehavior<BattleObjectManager>.Instance.GetView(unit);
-                        if (unitView != null && unitView._battleSkillViewers.ContainsKey(skillIdList[i].ToStringSmallGC())) unitView._battleSkillViewers.Remove(skillIdList[i].ToStringSmallGC());
+                        if (unitView != null && unitView._battleSkillViewers.ContainsKey(SkillId.ToStringSmallGC())) unitView._battleSkillViewers.Remove(SkillId.ToStringSmallGC());
                     }
                 }
             }

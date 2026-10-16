@@ -1,4 +1,4 @@
-using Lethe.Patches;
+using Lethe.EnumInjections;
 using ModularSkillScripts;
 using System;
 using System.Linq;

@@ -6,7 +6,7 @@ public class AcquirerGainBuffActiveRound : IModularAcquirer
 {
     public int ExecuteAcquirer(ModularSA modular, string section, string circledSection, string[] circles)
     {
-        if (modular.modsa_passiveModel != null) return MTCustomScripts.Main.Instance.gainbuff_activeRound;
+        if (modular.modsa_passiveModel != null || modular.modsa_buffModel != null) return MTCustomScripts.Main.Instance.gainbuff_activeRound;
         return -1;
     }
 }

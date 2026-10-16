@@ -45,7 +45,7 @@ public class Main : BasePlugin
 {
     // Edit the below to your own plugin name, version, etc.
     public const string NAME = "MTCustomScripts";
-    public const string VERSION = "22.101.4";
+    public const string VERSION = "34.120.4";
     public const string AUTHOR = "MT";
     public const string GUID = $"{AUTHOR}.{NAME}";
 
@@ -69,6 +69,13 @@ public class Main : BasePlugin
     public static System.Collections.Generic.Dictionary<BuffModel, System.Collections.Generic.Dictionary<string, string>> dl_overwritePathValue = new();
     public static int lastSinSlotIndex = 0;
     public static System.Collections.Generic.Dictionary<IntPtr, (int Min, int Max)> gateSPDict = new();
+    public System.Collections.Generic.Dictionary<long, SEPIRA> duranteTriggerDict = new();
+    public SEPIRA durante_keyword = SEPIRA.NONE;
+    public static System.Collections.Generic.Dictionary<IntPtr, BattleUnitModel> intPtrCharacterState_BattleUnitModel_Dict = new();
+    public static System.Collections.Generic.Dictionary<IntPtr, int> intPtrMangAddOn_ActiveMangCountOnSkillStart = new();
+    public static SinActionModel currentSinActionModelPlayer = null;
+    public static bool _TIMING_OpenInfo_RunOriginMethod = true;
+
 
     public class GlobalLuaValues
     {
@@ -398,7 +405,9 @@ public class Main : BasePlugin
     {
         public void ExecuteConsequence(ModularSA modular, string section, string circledSection, string[] circles)
         {
-            Singleton<BattleActionModelManager>.Instance.CanParryingContinue(null, null, new ParryingStatus(), 1);
+            // var battleUIRoot = SingletonBehavior<BattleUIRoot>.Instance;
+            // battleUIRoot._frontUIController._unitInformationController._unitInformationControllerRenewal.
+            // battleUIRoot._battleSkillViewUIController._skillViewUIInfo._coinUI
         }
     }
 
@@ -481,17 +490,28 @@ public class Main : BasePlugin
         AddTiming(harmony, typeof(RecoverSwitchPanic), ["OnPanic", "OnOtherPanic", "OnLowMorale", "OnOtherLowMorale"], [90901, 90902, 90903, 90904]);
         AddTiming(null, null, ["OnRecoverBreak", "OnOtherRecoverBreak"], [90905, 90906]);
         AddTiming(null, null, ["OnTakePiledVibration", "OnOtherTakePiledVibration", "OnTakeSwitchingVibration", "OnOtherTakeSwitchingVibration"], [90907, 90908, 90909, 90910]);
-        AddTiming(harmony, typeof(LoseAnyBuff), ["OnLoseBuff", "OnBeforeLoseBuff"], [90911, 90912]);
+        // AddTiming(harmony, typeof(LoseAnyBuff), ["OnLoseBuff", "OnBeforeLoseBuff"], [90911, 90912]);
         AddTiming(harmony, typeof(ChangeSP), ["OnChangeSP", "OnOtherChangeSP", "OnTakeSPDamage", "OnOtherTakeSPDamage"], [90913, 90914, 90915, 90916]);
         AddTiming(harmony, typeof(OnUnOpposed), ["OnUnOpposed"], [90917]);
         AddTiming(harmony, typeof(OnEquipDefense), ["OnEquipDefense"], [90918]);
         // AddTiming(harmony, typeof(OnUseBuff), ["OnUseBuff"], [90919]);
-
+        AddTiming(harmony, typeof(CombatEnd), ["CombatEnd"], [90920]);
         MainClass.timingDict.Add("SortAction", 7332);
         MainClass.timingDict.Add("Parrying", 7333);
         MainClass.timingDict.Add("BeforeRoundStart", 7334);
         MainClass.timingDict.Add("WaitCommand", 7335);
-        MainClass.timingDict.Add("OnDeSelectSin", 7336);
+        MainClass.timingDict.Add("OnDeselectSin", 7336);
+        MainClass.timingDict.Add("OnSlotSelectsTarget", 7337);
+        MainClass.timingDict.Add("OnSlotSelectedAsTarget", 7338);
+        MainClass.timingDict.Add("OnActivateDurante", 7339);
+        MainClass.timingDict.Add("AfterCoinParrying", 7340);
+        MainClass.timingDict.Add("EnemyKillAbnor", 7341);
+        MainClass.timingDict.Add("AfterDuranteAnim", 7342);
+        MainClass.timingDict.Add("OnDashboardSkillHover", 7343);
+        MainClass.timingDict.Add("OnSlotHoverTarget", 7344);
+        MainClass.timingDict.Add("OnSlotHoveredBy", 7345);
+        MainClass.timingDict.Add("OnDeselectSinGlobal", 7346);
+        MainClass.timingDict.Add("OpenInfo", 7347);
 
         try
         {
@@ -504,9 +524,17 @@ public class Main : BasePlugin
             harmony.PatchAll(typeof(BattleActionModelManager_Patches));
             harmony.PatchAll(typeof(PassiveDetail_Patches));
             harmony.PatchAll(typeof(BuffModel_Patches));
-            harmony.PatchAll(typeof(StageModel_Patch));
+            harmony.PatchAll(typeof(WaitCommand_Patches));
             harmony.PatchAll(typeof(SinActionModelPatches));
             harmony.PatchAll(typeof(GateSP));
+            harmony.PatchAll(typeof(OneCoinLog_Patches));
+            harmony.PatchAll(typeof(DuranteManager));
+            harmony.PatchAll(typeof(SlotHoveringPatch));
+            harmony.PatchAll(typeof(ResetDatas_Patch));
+            harmony.PatchAll(typeof(Modular_VisualUpdateForSpecialPatch));
+            harmony.PatchAll(typeof(OpenInfo_Patches));
+            // harmony.PatchAll(typeof(CharacterState_Patches));
+            // harmony.PatchAll(typeof(SkillAbilityMang_Patch));
 
             // harmony.PatchAll(typeof(CoinSlotUI_UpdateCoinColor));
             // harmony.PatchAll(typeof(StyxPatch));
@@ -531,10 +559,15 @@ public class Main : BasePlugin
             MainClass.luaFunctionDict["getcurrentmapid"] = new MTCustomScripts.LuaFunctions.GetCurrentMapID();
             MainClass.luaFunctionDict["listrelatedkeywords"] = new MTCustomScripts.LuaFunctions.LuaFunctionListRelatedKeywords();
             MainClass.luaFunctionDict["getappearanceid"] = new MTCustomScripts.LuaFunctions.LuaFunctionGetAppearanceID();
-            MainClass.luaFunctionDict["listbreakvalues"] = new MTCustomScripts.LuaFunctions.LuaFunctionListBreakSectionValue();
+            MainClass.luaFunctionDict["listallskills"] = new MTCustomScripts.LuaFunctions.LuaFunctionListAllSkills();
+            MainClass.luaFunctionDict["listbreakvalues"] = new MTCustomScripts.LuaFunctions.LuaFunctionListBreakSectionValue(); 
             MainClass.luaFunctionDict["listegoskillids"] = new MTCustomScripts.LuaFunctions.LuaFunctionListEgoSkillIDs();
+            MainClass.luaFunctionDict["listpassiveids"] = new MTCustomScripts.LuaFunctions.LuaFunctionListPassiveIDs();
             MainClass.luaFunctionDict["listskillkeywords"] = new MTCustomScripts.LuaFunctions.LuaFunctionListSkillKeywordList();
             MainClass.luaFunctionDict["listbattleactions"] = new MTCustomScripts.LuaFunctions.LuaFunctionListBattleActions();
+            MainClass.luaFunctionDict["getbufflocaledata"] = new MTCustomScripts.LuaFunctions.LuaFunctionGetBuffLocaleData();
+            MainClass.luaFunctionDict["listactiontargetingthisslot"] = new MTCustomScripts.LuaFunctions.LuaFunctionListActionTargetingThisSlot();
+            MainClass.luaFunctionDict["listallskillsmt"] = new MTCustomScripts.LuaFunctions.LuaFunctionListAllSkillsMT();
             // MainClass.luaFunctionDict["getrandombuff"] = new LuaFunctionGetRandomBuff(); //Object reference not set to an instance of an object
             // MainClass.luaFunctionDict["listskilltargets"] = new MTCustomScripts.LuaFunctions.LuaFunctionListSkillTargets();
         }
@@ -582,6 +615,23 @@ public class Main : BasePlugin
             MainClass.acquirerDict["getspeedadder"] = new MTCustomScripts.Acquirers.AcquirerGetSpeedAdder();
             MainClass.acquirerDict["gettimingid"] = new MTCustomScripts.Acquirers.AcquirerGetTimingID();
             MainClass.acquirerDict["hasskilleffect"] = new MTCustomScripts.Acquirers.AcquirerHasSkillEffect();
+            MainClass.acquirerDict["getmang"] = new MTCustomScripts.Acquirers.AcquirerGetMang();
+            MainClass.acquirerDict["getexpectedskillpower"] = new MTCustomScripts.Acquirers.AcquirerGetExpectedSkillPower();
+            MainClass.acquirerDict["hasskillkeyword"] = new MTCustomScripts.Acquirers.AcquirerHasSkillKeyword();
+            MainClass.acquirerDict["getsepiralevel"] = new MTCustomScripts.Acquirers.AcquirerGetSepiraLevel();
+            MainClass.acquirerDict["getcoinindex"] = new MTCustomScripts.Acquirers.AcquirerGetCoinIndex();
+            MainClass.acquirerDict["getmodularvalue"] = new MTCustomScripts.Acquirers.AcquirerGetModularValue();
+
+            //Override
+            MainClass.acquirerDict["getcoinscale"] = new MTCustomScripts.Acquirers.AcquirerOneScale();
+            MainClass.acquirerDict["getshield"] = new MTCustomScripts.Acquirers.AcquirerGetShield();
+            MainClass.acquirerDict["getdmgtaken"] = new MTCustomScripts.Acquirers.AcquirerGetDmgTaken();
+
+            // Froggo was Here
+            MainClass.acquirerDict["getbuffhascount"] = new MTCustomScripts.Acquirers.AcquirerGetBuffHasCount();
+
+            // MainClass.acquirerDict["getskillattribute"] = new MTCustomScripts.Acquirers.AcquirerSkillAttribute();
+            // MainClass.acquirerDict["getskillatk"] = new MTCustomScripts.Acquirers.AcquirerSkillAtk();
         }
         catch (System.Exception ex) { Main.Logger.LogError("Error when loading Acquirers: " + ex); }
 
@@ -647,7 +697,17 @@ public class Main : BasePlugin
             MainClass.consequenceDict["playmotion"] = new MTCustomScripts.Consequences.ConsequencePlayMotion();
             MainClass.consequenceDict["changeanimspeed"] = new MTCustomScripts.Consequences.ConsequenceChangeAnimSpeed();
             MainClass.consequenceDict["gatesp"] = new MTCustomScripts.Consequences.ConsequenceGateSP();
+            MainClass.consequenceDict["addskillkeyword"] = new MTCustomScripts.Consequences.ConsequenceAddSkillKeyword();
+            MainClass.consequenceDict["refreshskillbag"] = new MTCustomScripts.Consequences.ConsequenceRefreshSkillBag();
+            MainClass.consequenceDict["resetskillslots"] = new MTCustomScripts.Consequences.ConsequenceResetSkillSlots();
+            MainClass.consequenceDict["addmang"] = new MTCustomScripts.Consequences.ConsequenceAddMang();
+            MainClass.consequenceDict["setspeed"] = new MTCustomScripts.Consequences.ConsequenceSetSpeed();
+            MainClass.consequenceDict["setspeedlimit"] = new MTCustomScripts.Consequences.ConsequenceSetSpeedLimit();
+            MainClass.consequenceDict["allowrefreshrenderer"] = new MTCustomScripts.Consequences.ConsequenceAllowRefreshRenderer();
+            MainClass.consequenceDict["setmodularvalue"] = new MTCustomScripts.Consequences.ConsequenceSetModularValue();
+            MainClass.consequenceDict["allowopeninfo"] = new MTCustomScripts.Consequences.ConsequenceAllowOpenInfo();
 
+            // Dynamic Locale
             MainClass.consequenceDict["dlactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleActivatePath();
             MainClass.consequenceDict["dldeactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleDeactivatePath();
             MainClass.consequenceDict["dlclearallactivepaths"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleClearOneActivePaths();

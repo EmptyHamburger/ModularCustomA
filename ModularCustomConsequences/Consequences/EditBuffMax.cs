@@ -1,5 +1,5 @@
 using ModularSkillScripts;
-using Lethe.Patches;
+using Lethe.EnumInjections;
 
 namespace MTCustomScripts.Consequences;
 

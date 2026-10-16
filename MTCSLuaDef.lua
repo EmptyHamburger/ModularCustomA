@@ -1,7 +1,7 @@
 ---@meta
 
 --[[
-    MTCustomScripts Version: v22.100.4
+    MTCustomScripts Version: v34.120.4
 ]]
 
 --#region Aliases
@@ -10,7 +10,7 @@
 --- | "Positive"
 --- | "Negative"
 
---- @alias BuffCategory
+--- @alias Buff_Category
 ---| "SIN"
 ---| "RESOURCE"
 ---| "SHIELD_MANAGER"
@@ -359,12 +359,25 @@
 --- @alias ListRelatedKeywordsMode
 --- | "sub" sub keywords
 --- | "category" category keywords
+
+--- @alias SepiraReturnValue
+--- | 0 NONE
+--- | 1 HOKMA
+--- | 2 BINAH
+--- | 3 CHESED
+--- | 4 GEBURA
+--- | 5 TIPHERETH
+--- | 6 NETZACH
+--- | 7 HOD
+--- | 8 YESOD
+--- | 9 MALKUTH
+--- | 10 MALKUTH_IMPERFECT
 --- --#endregion
 
 --#region Acquisitions and Consequences
 
 --- Return an integer representing the coin's operator type
---- @param unit "Self" | "MainTarget"
+--- @param unit "Self" | "MainTarget" | "Target"
 --- @param coin_index integer --The index of the coin, starting at 0. If this is higher than the highest coin index the skill has, it will be set to highest coin index
 --- @return CoinOperatorReturn
 --- @nodiscard
@@ -404,7 +417,7 @@ function destroybuff(Multi_Target, keyword, destroyRound) return end
 
 --- Buff type / buff category based destroy mode. Destroys [amount] of existing buffs chosen randomly, filtered by buff type / buff category
 ---@param Multi_Target string --Modular's Multi-Target
----@param mode BuffType | BuffCategory --filter which buffs to destroy
+---@param mode BuffType | Buff_Category --filter which buffs to destroy
 ---@param destroyRound ActiveRoundInput --the active round of the existing buff
 ---@param amount integer | "All" --number of buffs to destroy (any integer >= 0) or "All" (all buffs filtered by [mode])
 ---@param includeCantBeDespelled? any --Adding this optional argument will include buffs with "canBeDespelled = false"
@@ -439,7 +452,7 @@ function deactivebreak(Multi_Target, breakIndex, sort, reverseIndex) return end
 
 ---Pick [amount] of existing buffs on the target(s) then add/remove potency and count based on the buff category. Accept negative values
 ---@param Multi_Target string --Modular's Multi-Target
----@param buffCategory BuffCategory --affected buff category
+---@param buffCategory Buff_Category --affected buff category
 ---@param stack integer --potency/stack
 ---@param turn integer --count/turn
 ---@param activeRound ActiveRoundInput --the active round of the existing buff
@@ -599,7 +612,7 @@ function isactionable(Single_Target) return 0 end
 ---@param ignoreImmortal boolean --If true, ignore all immortal effect(s) to kill the unit. If false, unit with immortal effect(s) won't be killed
 ---@param dmgSource DamageSource --source of the damage
 ---@param killer? string --Modular's Single-Target. Determine who is the killer
----@param action? "Self" | "MainTarget" --Specifies which action (mostly skill) is credited with the kill and therefore triggers any On Kill effects (Haven't test this one yet)
+---@param action? "Self" | "MainTarget" | "Target" --Specifies which action (mostly skill) is credited with the kill and therefore triggers any On Kill effects (Haven't test this one yet)
 function instantdeath(Multi_Target, ignoreImmortal, dmgSource, killer, action) return end
 
 ---Staggers the target immediately (This consequence exists because break can not be used in lua modular)
@@ -614,7 +627,7 @@ function getopposkillid() return 0 end
 
 ---Removes any number of coins
 ---@param Single_Target string --Modular's Single-Target
----@param ... integer  --The coin's index, input -1 for coin scripts to target themselves (coin index starts at 0) (You can input as many indexes as you need)
+---@param ... integer | "All"  --The coin's index, input -1 for coin scripts to target themselves (coin index starts at 0) (You can input as many indexes as you need)
 function removecoin(Single_Target, ...) return end
 
 ---@param Multi_Target string --Modular's Multi-Target
@@ -654,17 +667,17 @@ function getskilldata(Single_Target, Single_Skill, DataType, Var) return 0 end
 function addcoin(Multi_Target, Multi_Skill, CoinIndex, VAR_4, VAR_5, VAR_6, CopyStaticData) return end
 
 ---Get the current skill's power
----@param Target "Self" | "MainTarget"
+---@param Target "Self" | "MainTarget" | "Target"
 ---@return integer
 ---@nodiscard
 function getcurrentpower(Target) return 0 end
 
 ---Clear/Remove all abilities of the skill
----@param Target "Self" | "MainTarget"
+---@param Target "Self" | "MainTarget" | "Target"
 function clearskillabilities(Target) return end
 
 ---Clear/Remove all abilities of coin(s). If there are no coinIndex, clear all coins' abilities
----@param Target "Self" | "MainTarget"
+---@param Target "Self" | "MainTarget" | "Target"
 ---@param ...? integer --coinIndex (optional): The coin's index, input -1 for coin scripts to target themselves (coin index starts at 0) (You can input as many indexes as you need)
 function clearcoinabilities(Target, ...) return end
 
@@ -677,7 +690,7 @@ function clearcoinabilities(Target, ...) return end
 function addskillability(Multi_Target, Multi_Skill, skillAbilityName, skillScriptName, turnLimit) return end
 
 ---Add a coin script to specific coins. If there are no coinIndex, add the coin script to every coin
----@param Target "Self" | "MainTarget"
+---@param Target "Self" | "MainTarget" | "Target"
 ---@param coinScriptName string --A vanilla coin script name
 ---@param ...? integer --coinIndex (optional): The coin's index, input -1 for coin scripts to target themselves (coin index starts at 0) (You can input as many indexes as you need)
 function addcoinability(Target, coinScriptName, ...) return end
@@ -696,7 +709,8 @@ function setmaintarget(Mid, Single_Target) return end
 ---@param Target string --Modular's Single-Target
 ---@param SkillID integer --A Skill ID
 ---@param Count? integer --Any integer >= 1 (Default = 99)
-function setmaintarget(Pre, Attackers, Target, SkillID, Count) return end
+---@param forceDuel? true | false --Default: `false`. Only input this if this is between 2 skills, try to force a Clash for the 2 skills
+function setmaintarget(Pre, Attackers, Target, SkillID, Count, forceDuel) return end
 
 ---Add/Remove specific sub-targets from the skill
 ---@param Mode "Add" | "Remove"
@@ -829,7 +843,7 @@ function setworldpos(Multi_Target, x, y, z) return end
 function setworldpos(Multi_Target, Sequences, loopCount, loopType) return end
 
 ---Checks to see if the skill being used is actually reused. Only accepts timings that use a skill
----@param Target "Self" | "MainTarget"
+---@param Target "Self" | "MainTarget" | "Target"
 ---@return integer
 ---@nodiscard
 function isreusedskill(Target) return 0 end
@@ -897,6 +911,93 @@ function playmotion(Single_Target, Motion, MotionIndex, HasZoom) return end
 ---@param Single_Target string --Modular's Single-Target
 ---@param Speed integer --This value will be divided by 100
 function changeanimspeed(Single_Target, Speed) return end
+
+---Gate SP
+---@param Multi_Target string --Modular's Multi-Target
+---@param gateType "Min" | "Max"
+---@param gateValue integer
+function gatesp(Multi_Target, gateType, gateValue) return end
+
+---Get the expected final skill power
+---@param Target "Self" | "MainTarget" | "Target"
+---@param valueType "Min" | "Max" --get the maximum or minimum expected final skill power
+---@return integer
+---@nodiscard
+function getexpectedskillpower(Target, valueType) return 0 end
+
+---Return the amount of skills with `SkillKeyword` (return -1 in case the parsing failed)
+---@param Multi_Target string --Modular's Multi-Target
+---@param Multi_Skill string --MTCustomScripts's Multi-Skill
+---@param SkillKeyword string --Basically every vanilla buff-keywords
+---@return integer
+---@nodiscard
+function hasskillkeyword(Multi_Target, Multi_Skill, SkillKeyword) return 0 end
+
+---Add SkillKeyword to every selected Skills
+---@param Multi_Target string --Modular's Multi-Target
+---@param Multi_Skill string --MTCustomScripts's Multi-Skill
+---@param SkillKeyword string --Basically every vanilla buff-keywords
+---@param Add? any --optional, if this value is set to anything but null or add, remove SkillKeyword instead
+function addskillkeyword(Multi_Target, Multi_Skill, SkillKeyword, Add) return end
+
+---Returns the Mang count of the Target provided by Limbus's Mang Controllers.
+---Only works with timings that run after WhenUse and before EndBehaviour (Like BSA and OSA).
+---Returns -1 if Target not found or something went wrong
+---@param Target "Self" | "MainTarget" | "Target"
+---@return integer
+---@nodiscard
+function getmang(Target) return 0 end
+
+---Returns 1 if the provided buff has count. Returns 0 if it does not. Returns -1 if the unit is null or if the unit does not possess the buff
+---@param Single_Target string --Modular's Single-Target
+---@param buffKeyword string --Any buff keyword
+---@return 1 | 0 | -1
+---@nodiscard
+function getbuffhascount(Single_Target, buffKeyword) return 0 end
+
+---Get the Coin's index. Returns -1 if the Coin not found
+---@param indexType "Log" | "Real" | "Origin"
+---@return integer
+---@nodiscard
+function getcoinindex(indexType) return -1 end
+
+---Return the Sepira's ID
+---@return SepiraReturnValue
+---@nodiscard
+function getsepiralevel() return 0 end
+
+---Set speed
+---@param Multi_Target string --Modular's Multi-Target
+---@param newSpeed integer
+---@param priority integer --Any integer >= 0 or <= 999. Decide action order for units with the same speed (the higher, your skill goes first among those)
+---@param checkMinMax? boolean --Default: `false`. If `true`, clamps `newSpeed` to the unit's min and max speed limits
+function setspeed(Multi_Target, newSpeed, priority, checkMinMax) return end
+
+---Set Min/Max speed
+---@param Multi_Target string --Modular's Multi-Target
+---@param limitType "Min" | "Max"
+---@param newLimitValue integer
+function setspeedlimit(Multi_Target, limitType, newLimitValue) return end
+
+---Allow certain TIMINGs to refresh the units' appearance renderer
+---@param Multi_Target string --Modular's Multi-Target
+---@param allowRefresh true | false
+function allowrefreshrenderer(Multi_Target, allowRefresh) return end
+
+---Set the value of a Modular's VALUE_X where X is the value index
+---@param valueIdx 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+---@param newValue integer
+function setmodularvalue(valueIdx, newValue) return end
+
+---Returns the Modular's VALUE_X of the script (where X = `valueIdx`)
+---@param valueIdx 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+---@return integer
+---@nodiscard
+function getmodularvalue(valueIdx) return 0 end
+
+---OpenInfo's exclusive consequence. Allow the player to open the unit's infomation or not when clicked on
+---@param allow true | false
+function allowopeninfo(allow) return end
 --#endregion
 
 --#region Exclusive .lua functions
@@ -977,4 +1078,29 @@ function listskillkeywords(Single_Target) return {} end
 ---@return table
 ---@nodiscard
 function listbattleactions() return {} end
+
+---Returns a .lua table (array-like) containing all skill IDs of the target.
+---@param Single_Target string --Modular's Single-Target
+---@return table
+---@nodiscard
+function listallskills(Single_Target) return {} end
+
+---Returns a .lua dictionary with all passives the unit has. Ego passives are under the "egopassive" key with their id as the value, regular passives are under the "passive" key with their id as the value.
+---@param Single_Target string --Modular's Single-Target
+---@return table
+---@nodiscard
+function listpassiveids(Single_Target) return {} end
+
+---Return the buff's locale data. Returns Nil if buffKeyword or dataType is invalid
+---@param buffKeyword string --Any buff keyword
+---@param dataType "name" | "desc" | "summary"
+---@return string | nil
+---@@nodiscard
+function getbufflocaledata(buffKeyword, dataType) return "" end
+
+---Returns a lua table (array-like) with a fixed format contains datas of all skills targeting this skill slot (Visit document page for more infos
+---@param Target "Self" | "MainTarget"
+---@return table
+---@@nodiscard
+function listactiontargetingthisslot(Target) return {} end
 --#endregion

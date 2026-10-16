@@ -1,6 +1,6 @@
 using ModularSkillScripts;
 using System;
-using Lethe.Patches;
+using Lethe.EnumInjections;
 
 namespace MTCustomScripts.Consequences;
 

@@ -11,7 +11,7 @@ public class ConsequenceChangeSp : IModularConsequence
         int newMp = modular.GetNumFromParamString(circles[1]);
         foreach(BattleUnitModel target in targetList)
         {
-            target.ChangeMp(newMp);
+            target._changeStat.SetMp(newMp, out int _);
         }
     }
 }

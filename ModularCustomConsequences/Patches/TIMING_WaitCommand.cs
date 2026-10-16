@@ -1,48 +1,23 @@
 using HarmonyLib;
 using Lethe.Patches;
 using Il2CppSystem.Collections.Generic;
-namespace MTCustomScripts.Patches;
-
 using ModularSkillScripts;
 using ModularSkillScripts.Patches;
+using MTCustomScripts.Utils;
 
-public class StageModel_Patch
+namespace MTCustomScripts.Patches;
+
+public class WaitCommand_Patches
 {
-    [HarmonyPatch(typeof(StageModel), nameof(StageModel.Init))]
-    [HarmonyPrefix]
-    public static void Prefix_StageModel_Init(StageModel __instance)
-    {
-        MTCustomScripts.Main.dl_activePathsDict.Clear();
-        MTCustomScripts.Main.dl_overwritePathValue.Clear();
-        MTCustomScripts.Main.gateSPDict.Clear();
-    }
-
-    [HarmonyPatch(typeof(StageModel), nameof(StageModel.OnStageEnd))]
-    [HarmonyPrefix]
-    public static void Prefix_StageModel_OnStageEnd(StageModel __instance)
-    {
-        MTCustomScripts.Main.dl_activePathsDict.Clear();
-        MTCustomScripts.Main.dl_overwritePathValue.Clear();
-        MTCustomScripts.Main.gateSPDict.Clear();
-    }
-
-    [HarmonyPatch(typeof(Data), nameof(Data.LoadCustomLocale), new[] { typeof(LOCALIZE_LANGUAGE) })]
-    [HarmonyPrefix]
-    public static void Postfix_Data_LoadCustomLocale(Data __instance)
-    {
-        MTCustomScripts.Main.dl_activePathsDict.Clear();
-        MTCustomScripts.Main.dl_overwritePathValue.Clear();
-    }
-
     [HarmonyPatch(typeof(StageController), nameof(StageController.FixedUpdate))]
     [HarmonyPrefix]
-    private static void Prefix_StageController_FixedUpdate(StageController __instance)
+    public static void Prefix_StageController_FixedUpdate(StageController __instance)
     {
         if (__instance._phase == STAGE_PHASE.WAIT_COMMAND_BEFORE)
         {
             List<BattleUnitModel> unitList = SingletonBehavior<BattleObjectManager>.Instance.GetModelList();
             int actevent = MainClass.timingDict["WaitCommand"];
-
+            List<BattleActionModel> bamList = Singleton<BattleActionModelManager>.Instance.GetActionList();
             foreach (BattleUnitModel unit in unitList)
             {
                 foreach (PassiveModel passiveModel in unit._passiveDetail.PassiveList)
@@ -83,6 +58,22 @@ public class StageModel_Patch
                     }
                 }
             }
+            
+            foreach(BattleActionModel bam in bamList)
+            {
+                SkillModel skill = bam.Skill;
+                if (skill == null) continue;
+                long intLong = skill.Pointer.ToInt64();
+                if (SkillScriptInitPatch.modsaDict.ContainsKey(intLong))
+                {
+                    foreach(ModularSA modsa in SkillScriptInitPatch.modsaDict[intLong])
+                    {
+                        modsa.Enact(bam._model, skill, bam, null, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
+                    }
+                }
+            }
+
+            MTUtil.UpdateState();
         }
     }
 }

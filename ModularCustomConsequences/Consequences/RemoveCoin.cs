@@ -9,12 +9,21 @@ public class ConsequenceRemoveCoin : IModularConsequence
 	public void ExecuteConsequence(ModularSA modular, string section, string circledSection, string[] circles)
 	{
 		SkillModel skill = (circles[0] == "Self") ? modular.modsa_skillModel : modular.modsa_oppoAction._skill;
-		foreach (string circle in circles.Skip(1))
+		
+		if (circles[1] == "All")
+		{
+			for (int i = skill._coinList.Count - 1; i > -1; i--)
+			skill.RemoveCoinModelFromListByIndex(i);
+			
+			return;
+		}
+
+		foreach (string circle in circles.Skip(1).Reverse())
 		{
 			int idx = modular.GetNumFromParamString(circle);
 			if (idx < 0)
 			{
-				skill.RemoveCoinModelFromListByIndex(modular.modsa_coinModel.GetOriginCoinIndex());
+				skill.RemoveCoinModelFromListByIndex(modular.modsa_coinModel.GetRealCoinIndex());
 				continue;
 			}
 
