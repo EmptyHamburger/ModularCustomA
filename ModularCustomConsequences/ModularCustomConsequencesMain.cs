@@ -45,7 +45,7 @@ public class Main : BasePlugin
 {
     // Edit the below to your own plugin name, version, etc.
     public const string NAME = "MTCustomScripts";
-    public const string VERSION = "33.118.4";
+    public const string VERSION = "34.120.4";
     public const string AUTHOR = "MT";
     public const string GUID = $"{AUTHOR}.{NAME}";
 
@@ -74,6 +74,7 @@ public class Main : BasePlugin
     public static System.Collections.Generic.Dictionary<IntPtr, BattleUnitModel> intPtrCharacterState_BattleUnitModel_Dict = new();
     public static System.Collections.Generic.Dictionary<IntPtr, int> intPtrMangAddOn_ActiveMangCountOnSkillStart = new();
     public static SinActionModel currentSinActionModelPlayer = null;
+    public static bool _TIMING_OpenInfo_RunOriginMethod = true;
 
 
     public class GlobalLuaValues
@@ -490,7 +491,7 @@ public class Main : BasePlugin
         AddTiming(harmony, typeof(RecoverSwitchPanic), ["OnPanic", "OnOtherPanic", "OnLowMorale", "OnOtherLowMorale"], [90901, 90902, 90903, 90904]);
         AddTiming(null, null, ["OnRecoverBreak", "OnOtherRecoverBreak"], [90905, 90906]);
         AddTiming(null, null, ["OnTakePiledVibration", "OnOtherTakePiledVibration", "OnTakeSwitchingVibration", "OnOtherTakeSwitchingVibration"], [90907, 90908, 90909, 90910]);
-        AddTiming(harmony, typeof(LoseAnyBuff), ["OnLoseBuff", "OnBeforeLoseBuff"], [90911, 90912]);
+        // AddTiming(harmony, typeof(LoseAnyBuff), ["OnLoseBuff", "OnBeforeLoseBuff"], [90911, 90912]);
         AddTiming(harmony, typeof(ChangeSP), ["OnChangeSP", "OnOtherChangeSP", "OnTakeSPDamage", "OnOtherTakeSPDamage"], [90913, 90914, 90915, 90916]);
         AddTiming(harmony, typeof(OnUnOpposed), ["OnUnOpposed"], [90917]);
         AddTiming(harmony, typeof(OnEquipDefense), ["OnEquipDefense"], [90918]);
@@ -511,6 +512,7 @@ public class Main : BasePlugin
         MainClass.timingDict.Add("OnSlotHoverTarget", 7344);
         MainClass.timingDict.Add("OnSlotHoveredBy", 7345);
         MainClass.timingDict.Add("OnDeselectSinGlobal", 7346);
+        MainClass.timingDict.Add("OpenInfo", 7347);
 
         try
         {
@@ -531,6 +533,7 @@ public class Main : BasePlugin
             harmony.PatchAll(typeof(SlotHoveringPatch));
             harmony.PatchAll(typeof(ResetDatas_Patch));
             harmony.PatchAll(typeof(Modular_VisualUpdateForSpecialPatch));
+            harmony.PatchAll(typeof(OpenInfo_Patches));
             // harmony.PatchAll(typeof(CharacterState_Patches));
             // harmony.PatchAll(typeof(SkillAbilityMang_Patch));
 
@@ -618,6 +621,7 @@ public class Main : BasePlugin
             MainClass.acquirerDict["hasskillkeyword"] = new MTCustomScripts.Acquirers.AcquirerHasSkillKeyword();
             MainClass.acquirerDict["getsepiralevel"] = new MTCustomScripts.Acquirers.AcquirerGetSepiraLevel();
             MainClass.acquirerDict["getcoinindex"] = new MTCustomScripts.Acquirers.AcquirerGetCoinIndex();
+            MainClass.acquirerDict["getmodularvalue"] = new MTCustomScripts.Acquirers.AcquirerGetModularValue();
 
             //Override
             MainClass.acquirerDict["getcoinscale"] = new MTCustomScripts.Acquirers.AcquirerOneScale();
@@ -702,6 +706,7 @@ public class Main : BasePlugin
             MainClass.consequenceDict["setspeedlimit"] = new MTCustomScripts.Consequences.ConsequenceSetSpeedLimit();
             MainClass.consequenceDict["allowrefreshrenderer"] = new MTCustomScripts.Consequences.ConsequenceAllowRefreshRenderer();
             MainClass.consequenceDict["setmodularvalue"] = new MTCustomScripts.Consequences.ConsequenceSetModularValue();
+            MainClass.consequenceDict["allowopeninfo"] = new MTCustomScripts.Consequences.ConsequenceAllowOpenInfo();
 
             // Dynamic Locale
             MainClass.consequenceDict["dlactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleActivatePath();

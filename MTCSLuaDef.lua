@@ -1,7 +1,7 @@
 ---@meta
 
 --[[
-    MTCustomScripts Version: v33.118.4
+    MTCustomScripts Version: v34.120.4
 ]]
 
 --#region Aliases
@@ -988,6 +988,16 @@ function allowrefreshrenderer(Multi_Target, allowRefresh) return end
 ---@param valueIdx 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 ---@param newValue integer
 function setmodularvalue(valueIdx, newValue) return end
+
+---Returns the Modular's VALUE_X of the script (where X = `valueIdx`)
+---@param valueIdx 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+---@return integer
+---@nodiscard
+function getmodularvalue(valueIdx) return 0 end
+
+---OpenInfo's exclusive consequence. Allow the player to open the unit's infomation or not when clicked on
+---@param allow true | false
+function allowopeninfo(allow) return end
 --#endregion
 
 --#region Exclusive .lua functions
