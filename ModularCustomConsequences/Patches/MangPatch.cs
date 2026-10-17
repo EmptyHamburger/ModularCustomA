@@ -15,7 +15,7 @@ internal static class SkillAbilityMang_Patch
         {
             if (skillAbility.TryCast<ICreateMang>() is ICreateMang iCreateMang)
             {
-                Main.Logger.LogMessage($"Mang with Bool check: {(iCreateMang.IsCreateMang() ? iCreateMang.GetCreateMangCount() : 0)}");
+                Main.Logger.LogInfo($"Mang with Bool check: {(iCreateMang.IsCreateMang() ? iCreateMang.GetCreateMangCount() : 0)}");
             }
         }
     }
@@ -36,16 +36,16 @@ internal static class SkillAbilityMang_Patch
             {
                 if (mangController.mangList == null)
                 {
-                    Main.Logger.LogMessage($"PREFIX .mangList is NULL");
+                    Main.Logger.LogInfo($"PREFIX .mangList is NULL");
                 }
-                Main.Logger.LogMessage($"PREFIX mangObj Count: {mangController.mangList.Count}");
+                Main.Logger.LogInfo($"PREFIX mangObj Count: {mangController.mangList.Count}");
                 if (mangController._guideObj == null)
                 {
-                    Main.Logger.LogMessage($"PREFIX _guideObj is NULL");
+                    Main.Logger.LogInfo($"PREFIX _guideObj is NULL");
                 }
 
                 mangController.ActivateMangBySkillID(activeMangCount);
-                Main.Logger.LogMessage($"PREFIX Activated {activeMangCount} Mang");
+                Main.Logger.LogInfo($"PREFIX Activated {activeMangCount} Mang");
             }
         }
     }
@@ -66,16 +66,16 @@ internal static class SkillAbilityMang_Patch
             {
                 if (mangController.mangList == null)
                 {
-                    Main.Logger.LogMessage($"POSTFIX .mangList is NULL");
+                    Main.Logger.LogInfo($"POSTFIX .mangList is NULL");
                 }
-                Main.Logger.LogMessage($"POSTFIX mangObj Count: {mangController.mangList.Count}");
+                Main.Logger.LogInfo($"POSTFIX mangObj Count: {mangController.mangList.Count}");
                 if (mangController._guideObj == null)
                 {
-                    Main.Logger.LogMessage($"POSTFIX _guideObj is NULL");
+                    Main.Logger.LogInfo($"POSTFIX _guideObj is NULL");
                 }
 
                 mangController.ActivateMangBySkillID(activeMangCount);
-                Main.Logger.LogMessage($"POSTFIX Activated {activeMangCount} Mang");
+                Main.Logger.LogInfo($"POSTFIX Activated {activeMangCount} Mang");
             }
         }
     }

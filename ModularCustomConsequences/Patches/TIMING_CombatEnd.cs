@@ -25,11 +25,11 @@ public class CombatEnd
 		if (!CombatEndState.armed) return;
 
 		int remaining = __instance._actionList.Count;
-		Main.Logger.LogMessage($"[CombatEnd] Action resolved, actions remaining = {remaining}");
+		Main.Logger.LogInfo($"[CombatEnd] Action resolved, actions remaining = {remaining}");
 		if (remaining > 0) return;
 
 		CombatEndState.armed = false;
-		Main.Logger.LogMessage("[CombatEnd] Action list empty, firing timing.");
+		Main.Logger.LogInfo("[CombatEnd] Action list empty, firing timing.");
 		FireTiming();
 	}
 

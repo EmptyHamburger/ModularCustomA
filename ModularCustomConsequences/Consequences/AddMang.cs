@@ -17,7 +17,7 @@ public class ConsequenceAddMang : IModularConsequence
             BattleUnitView view = SingletonBehavior<BattleObjectManager>.Instance.GetView(unit);
             if (view == null) continue;
 
-            Main.Logger.LogMessage($"View Found with name: {unit.GetName()}");
+            Main.Logger.LogInfo($"View Found with name: {unit.GetName()}");
 
             int controllerNeededCount = (mangCount + 4) / 5;
             CharacterAppearanceMangController AddOn = null;
@@ -39,12 +39,12 @@ public class ConsequenceAddMang : IModularConsequence
                 // AddOn.Init_Spine(view._curAppearance, false);
             }
 
-            Main.Logger.LogMessage($"Found CharacterAppearanceMangController");
+            Main.Logger.LogInfo($"Found CharacterAppearanceMangController");
 
             if (AddOn.mangControllers == null)
             AddOn.mangControllers = new List<MangSkillController>();
 
-            Main.Logger.LogMessage($".mangControllers found");
+            Main.Logger.LogInfo($".mangControllers found");
 
             for(int i = 0; i < controllerNeededCount - AddOn.mangControllers.Count; i++)
             {
@@ -53,7 +53,7 @@ public class ConsequenceAddMang : IModularConsequence
                 newMangSkillController.Awake();
             }
 
-            Main.Logger.LogMessage($"Added required {controllerNeededCount} MangSkillController");
+            Main.Logger.LogInfo($"Added required {controllerNeededCount} MangSkillController");
 
             foreach(MangSkillController mangController in AddOn.mangControllers)
             {
@@ -63,7 +63,7 @@ public class ConsequenceAddMang : IModularConsequence
                 mangCount -= mangOnlyForThisOne;
             }
 
-            Main.Logger.LogMessage($"Stored IntPtr and active Mang count for Harmony Patches");
+            Main.Logger.LogInfo($"Stored IntPtr and active Mang count for Harmony Patches");
 
             AddOn.Initialize(view._curAppearance);
             AddOn.Init_Spine(view._curAppearance, false);
