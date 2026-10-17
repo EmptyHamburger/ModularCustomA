@@ -14,7 +14,7 @@ namespace MTCustomScripts.Consequences
         {
             if (circles == null)
             {
-                Main.Logger.Log(LogLevel.Debug, "ModifyRichPresenceIsNull");
+                Main.Logger.LogInfo("ModifyRichPresenceIsNull");
                 circles = new string[]
                 {
                 "Child_Touching_Simulator_Ultimate:_Epstein_Battle_Grounds_3",

@@ -35,7 +35,7 @@ internal class Patch_DefenseChange
             }
             if (skillId.TryRead<double>(out double DskillId))
             {
-                MTCustomScripts.Main.Logger.LogMessage($"Defense skill id found '{(int) DskillId}'");
+                MTCustomScripts.Main.Logger.LogInfo($"Defense skill id found '{(int) DskillId}'");
                 defenseSkillId = (int) DskillId;
                 __result = true;
                 LuaUnitDataKey.LuaUnitValues[debounceCheckKey] = true;

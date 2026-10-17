@@ -464,13 +464,12 @@ public class Main : BasePlugin
     }
 
     public static Main Instance;
-
-    public static ManualLogSource Logger;
+    public static LetheCustomDebug Logger;
 
     public override void Load()
     {
         Instance = this;
-        Logger = Log;
+        Logger = new LetheCustomDebug(this);
 
         Harmony harmony = new Harmony(NAME);
         AddTiming(harmony, typeof(RightAfterGetAnyBuff), ["OnGainBuff"], [7331]);

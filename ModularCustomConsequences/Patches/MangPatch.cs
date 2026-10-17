@@ -26,7 +26,7 @@ internal static class SkillAbilityMang_Patch
     {
         if (__instance.mangControllers == null)
         {
-            Main.Logger.LogFatal("PREFIX .mangControllers not found");
+            Main.Logger.LogFatalError("PREFIX .mangControllers not found");
             return;
         }
 
@@ -56,7 +56,7 @@ internal static class SkillAbilityMang_Patch
     {
         if (__instance.mangControllers == null)
         {
-            Main.Logger.LogFatal("POSTFIX .mangControllers not found");
+            Main.Logger.LogFatalError("POSTFIX .mangControllers not found");
             return;
         }
 

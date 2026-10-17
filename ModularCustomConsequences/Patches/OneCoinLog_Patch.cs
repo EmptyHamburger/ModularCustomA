@@ -13,17 +13,17 @@ internal class OneCoinLog_Patches
     [HarmonyPostfix]
     public static void Postfix_OneCoinLog_SetAfterLog_Parrying(BattleActionModel actorAction, BattleActionModel opponentAction, ParryingStatus parryingStatus, OneCoinLog __instance)
     {
-        // MTCustomScripts.Main.Logger.LogFatal("Postfix_OneCoinLog_SetAfterLog_Parrying ran");
-        // MTCustomScripts.Main.Logger.LogFatal($"Coin _isHead: {__instance._isHead}");
-        // MTCustomScripts.Main.Logger.LogFatal($"Coin _coinLogIdx: {__instance._coinLogIdx}; _originCoinIdx: {__instance._originCoinIdx}; _realCoinIdx: {__instance._realCoinIdx}");
+        // MTCustomScripts.Main.Logger.LogFatalError("Postfix_OneCoinLog_SetAfterLog_Parrying ran");
+        // MTCustomScripts.Main.Logger.LogFatalError($"Coin _isHead: {__instance._isHead}");
+        // MTCustomScripts.Main.Logger.LogFatalError($"Coin _coinLogIdx: {__instance._coinLogIdx}; _originCoinIdx: {__instance._originCoinIdx}; _realCoinIdx: {__instance._realCoinIdx}");
         // SkillPowerData skillPowerData = __instance._oneSkillPowerData;
-        // MTCustomScripts.Main.Logger.LogFatal($"SkillPowerData adderResultSkillPower: {skillPowerData.adderResultSkillPower}; finalValue: {skillPowerData.finalValue}; modifiedSkillPower: {skillPowerData.modifiedSkillPower}; resultValue: {skillPowerData.resultValue}; vanillaSkillPower: {skillPowerData.vanillaSkillPower}");
+        // MTCustomScripts.Main.Logger.LogFatalError($"SkillPowerData adderResultSkillPower: {skillPowerData.adderResultSkillPower}; finalValue: {skillPowerData.finalValue}; modifiedSkillPower: {skillPowerData.modifiedSkillPower}; resultValue: {skillPowerData.resultValue}; vanillaSkillPower: {skillPowerData.vanillaSkillPower}");
         // CoinData coinData = skillPowerData.coinData;
-        // MTCustomScripts.Main.Logger.LogFatal($"CoinData battleResult: {coinData.battleResult}");
+        // MTCustomScripts.Main.Logger.LogFatalError($"CoinData battleResult: {coinData.battleResult}");
         // OneCoinResult selfCoin = coinData.oneCoinResult;
         // OneCoinResult oppoCoin = coinData.opponentCoinResult;
-        // MTCustomScripts.Main.Logger.LogFatal($"OneCoinResult-SELF accumulatedValue: {selfCoin.accumulatedValue}; addedResultScale: {selfCoin.addedResultScale}; afterDmg: {selfCoin.afterDmg}; beforeDmg: {selfCoin.beforeDmg}; idx: {selfCoin.idx}; operatorType: {selfCoin.operatorType}; prob: {selfCoin.prob}; scale: {selfCoin.scale};");
-        // MTCustomScripts.Main.Logger.LogFatal($"OneCoinResult-OPPO accumulatedValue: {oppoCoin.accumulatedValue}; addedResultScale: {oppoCoin.addedResultScale}; afterDmg: {oppoCoin.afterDmg}; beforeDmg: {oppoCoin.beforeDmg}; idx: {oppoCoin.idx}; operatorType: {oppoCoin.operatorType}; prob: {oppoCoin.prob}; scale: {oppoCoin.scale};");
+        // MTCustomScripts.Main.Logger.LogFatalError($"OneCoinResult-SELF accumulatedValue: {selfCoin.accumulatedValue}; addedResultScale: {selfCoin.addedResultScale}; afterDmg: {selfCoin.afterDmg}; beforeDmg: {selfCoin.beforeDmg}; idx: {selfCoin.idx}; operatorType: {selfCoin.operatorType}; prob: {selfCoin.prob}; scale: {selfCoin.scale};");
+        // MTCustomScripts.Main.Logger.LogFatalError($"OneCoinResult-OPPO accumulatedValue: {oppoCoin.accumulatedValue}; addedResultScale: {oppoCoin.addedResultScale}; afterDmg: {oppoCoin.afterDmg}; beforeDmg: {oppoCoin.beforeDmg}; idx: {oppoCoin.idx}; operatorType: {oppoCoin.operatorType}; prob: {oppoCoin.prob}; scale: {oppoCoin.scale};");
 
         int actevent = MainClass.timingDict["AfterCoinParrying"];
         BattleUnitModel unit = actorAction._model;
