@@ -154,21 +154,24 @@ internal class SinActionModelPatches
     [HarmonyPostfix]
     public static void Postfix_SinActionModel_SelectSinOne(UnitSinModel sin, SinActionModel targetSinAction, SinActionModel __instance)
     {
-        BattleUnitModel selector = __instance._unitModel;
+        BattleUnitModel selector = __instance?._unitModel;
         BattleUnitModel target = targetSinAction?._unitModel;
 
         if (selector != null)
         {
             int actevent_OnSlotSelectsTarget = MainClass.timingDict["OnSlotSelectsTarget"];
-            SkillModel skillModel = __instance._currentBattleAction._skill;
-            long skillmodel_intlong = skillModel.Pointer.ToInt64();
-            if (SkillScriptInitPatch.modsaDict.ContainsKey(skillmodel_intlong))
-			{
-				foreach (ModularSA modsa in SkillScriptInitPatch.modsaDict[skillmodel_intlong].ToArray())
-				{
-					modsa.Enact(selector, skillModel, __instance._currentBattleAction, targetSinAction?._currentBattleAction, actevent_OnSlotSelectsTarget, BATTLE_EVENT_TIMING.NONE);
-				}
-			}
+            SkillModel skillModel = __instance?._currentBattleAction?._skill;
+            if (skillModel != null)
+            {
+                long skillmodel_intlong = skillModel.Pointer.ToInt64();
+                if (SkillScriptInitPatch.modsaDict.ContainsKey(skillmodel_intlong))
+                {
+                    foreach (ModularSA modsa in SkillScriptInitPatch.modsaDict[skillmodel_intlong].ToArray())
+                    {
+                        modsa.Enact(selector, skillModel, __instance._currentBattleAction, targetSinAction?._currentBattleAction, actevent_OnSlotSelectsTarget, BATTLE_EVENT_TIMING.NONE);
+                    }
+                }
+            }
 
             foreach (PassiveModel passiveModel in selector._passiveDetail.PassiveList)
             {
