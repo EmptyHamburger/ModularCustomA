@@ -45,7 +45,7 @@ public class Main : BasePlugin
 {
     // Edit the below to your own plugin name, version, etc.
     public const string NAME = "MTCustomScripts";
-    public const string VERSION = "34.120.4";
+    public const string VERSION = "34.121.4";
     public const string AUTHOR = "MT";
     public const string GUID = $"{AUTHOR}.{NAME}";
 
@@ -621,6 +621,7 @@ public class Main : BasePlugin
             MainClass.acquirerDict["getsepiralevel"] = new MTCustomScripts.Acquirers.AcquirerGetSepiraLevel();
             MainClass.acquirerDict["getcoinindex"] = new MTCustomScripts.Acquirers.AcquirerGetCoinIndex();
             MainClass.acquirerDict["getmodularvalue"] = new MTCustomScripts.Acquirers.AcquirerGetModularValue();
+            MainClass.acquirerDict["getkeyinput"] = new MTCustomScripts.Acquirers.AcquirerGetKeyInput();
 
             //Override
             MainClass.acquirerDict["getcoinscale"] = new MTCustomScripts.Acquirers.AcquirerOneScale();
