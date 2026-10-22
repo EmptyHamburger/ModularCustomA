@@ -78,5 +78,8 @@ public class BattleActionModelManager_Patches
 				}
 			}
 		}
+
+
+		MTCustomScripts.Main.ApplyPrioritizedAction();
 	}
 }

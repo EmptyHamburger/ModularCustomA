@@ -45,7 +45,7 @@ public class Main : BasePlugin
 {
     // Edit the below to your own plugin name, version, etc.
     public const string NAME = "MTCustomScripts";
-    public const string VERSION = "34.121.4";
+    public const string VERSION = "34.122.4";
     public const string AUTHOR = "MT";
     public const string GUID = $"{AUTHOR}.{NAME}";
 
@@ -75,7 +75,59 @@ public class Main : BasePlugin
     public static System.Collections.Generic.Dictionary<IntPtr, int> intPtrMangAddOn_ActiveMangCountOnSkillStart = new();
     public static SinActionModel currentSinActionModelPlayer = null;
     public static bool _TIMING_OpenInfo_RunOriginMethod = true;
+    public static System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<(int index, BattleActionModel action)>> actionPriorityDict = new();
 
+
+    public static void RegisterActionPriority(int group, int idx, BattleActionModel action)
+    {
+        if (!actionPriorityDict.TryGetValue(group, out System.Collections.Generic.List<(int index, BattleActionModel action)> list))
+        actionPriorityDict[group] = list = [];
+
+        list.RemoveAll(entry => entry.action == action);
+
+        if (group == 0)
+        list.Add((Math.Max(idx, 0), action));
+        else
+        {
+            idx = Math.Clamp(idx, 0, list.Count);
+            list.Insert(idx, (idx, action));
+        }
+    }
+
+    public static void ApplyPrioritizedAction()
+    {
+        Il2CppSystem.Collections.Generic.List<BattleActionModel> managerActionList = Singleton<BattleActionModelManager>.Instance._actionList;
+        System.Collections.Generic.List<BattleActionModel> modifiedList = new();
+        for (int i = 0; i < managerActionList.Count; i++) modifiedList.Add(managerActionList[i]);
+        
+        System.Collections.Generic.HashSet<BattleActionModel> noDupeList = new(modifiedList);
+
+        foreach (var group in actionPriorityDict.Values)
+        group.RemoveAll(entry => !noDupeList.Contains(entry.action));
+
+        System.Collections.Generic.HashSet<BattleActionModel> grouped = new();
+        foreach (var group in actionPriorityDict.Values)
+        foreach (var entry in group) grouped.Add(entry.action);
+
+        System.Collections.Generic.List<BattleActionModel> baseList = modifiedList.Where(action => !grouped.Contains(action)).ToList();
+
+        if (actionPriorityDict.TryGetValue(0, out var zero))
+        foreach (var (idx, action) in zero)
+        baseList.Insert(Math.Clamp(idx, 0, baseList.Count), action);
+
+        System.Collections.Generic.List<BattleActionModel> resultList = new();
+
+        foreach (var key in actionPriorityDict.Keys.Where(key => key >= 1).OrderByDescending(key => key))
+        resultList.AddRange(actionPriorityDict[key].Select(entry => entry.action));
+
+        resultList.AddRange(baseList);
+
+        foreach (var key in actionPriorityDict.Keys.Where(key => key <= -1).OrderByDescending(key => key))
+        resultList.AddRange(actionPriorityDict[key].Select(entry => entry.action));
+
+        managerActionList.Clear();
+        foreach (BattleActionModel action in resultList) managerActionList.Add(action);
+    }
 
     public class GlobalLuaValues
     {
@@ -348,6 +400,8 @@ public class Main : BasePlugin
 
         return finalResult;
     }
+
+
 
     public static string GetCustomMTData(long unit_longptr, string dataID, string dataSource = null)
     {
@@ -707,6 +761,7 @@ public class Main : BasePlugin
             MainClass.consequenceDict["allowrefreshrenderer"] = new MTCustomScripts.Consequences.ConsequenceAllowRefreshRenderer();
             MainClass.consequenceDict["setmodularvalue"] = new MTCustomScripts.Consequences.ConsequenceSetModularValue();
             MainClass.consequenceDict["allowopeninfo"] = new MTCustomScripts.Consequences.ConsequenceAllowOpenInfo();
+            MainClass.consequenceDict["removeallactions"] = new MTCustomScripts.Consequences.ConsequenceRemoveAllActions();
 
             // Dynamic Locale
             MainClass.consequenceDict["dlactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleActivatePath();

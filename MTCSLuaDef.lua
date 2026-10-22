@@ -1,7 +1,7 @@
 ---@meta
 
 --[[
-    MTCustomScripts Version: v34.120.4
+    MTCustomScripts Version: v34.122.4
 ]]
 
 --#region Aliases
@@ -866,9 +866,10 @@ function hasskillondashboard(Single_Target, skillID) return 0 end
 ---@param egoID integer --An EGO ID
 function activateegopassive(Multi_Target, egoID) return end
 
----This should works with others timing beside SortAction. Set the index of current battle action (or called 'current skill') to newIndex
----@param newIndex integer --Any integer >= 0. If the value is higher than the last battle action index in current battle, set to the last index instead
-function setactionindex(newIndex) return end
+---This should works with others timing beside SortAction. Moves the current action to a specific position in the game's battle action queue list
+---@param newIndex integer --Any integer >= 0. If the value is higher than the last battle action index in the currnet `priorityGroup` list, set to the last index instead
+---@param priorityGroup? integer --Any integer; Default = 0 -> The action is inserted directly into the game's action queue at `newIndex`; If >= 1 -> action is placed before every action in group 0 (the game's queue list). `newIndex` is now the position within that group. Higher priority groups run earlier, so group 2 runs before group 1; If <= -1 -> action is placed after every action in group 0. `newIndex` is the position within that group. Lower priority groups run later, so group -3 runs after group -2
+function setactionindex(newIndex, priorityGroup) return end
 
 ---skillsend but if it has more supports. Sends an attack from a unit to another
 ---@param Attacker string --Modular's Single-Target
@@ -998,6 +999,14 @@ function getmodularvalue(valueIdx) return 0 end
 ---OpenInfo's exclusive consequence. Allow the player to open the unit's infomation or not when clicked on
 ---@param allow true | false
 function allowopeninfo(allow) return end
+
+---Returns 1 if `keyCode` is being pressed, otherwise returns 0. Returns -1 if `keyCode`is invalid
+---@param keyCode any --Any BepInEx.Unity.IL2CPP.UnityEngine.KeyCode (CASE SENSITIVE)
+---@return -1 | 0 | 1
+function getkeyinput(keyCode) return 0 end
+
+---Removes all remaining actions in the combat phase
+function removeallactions() return end
 --#endregion
 
 --#region Exclusive .lua functions
