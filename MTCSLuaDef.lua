@@ -1,7 +1,7 @@
 ---@meta
 
 --[[
-    MTCustomScripts Version: v34.122.4
+    MTCustomScripts Version: v35.123.4
 ]]
 
 --#region Aliases
@@ -667,10 +667,10 @@ function getskilldata(Single_Target, Single_Skill, DataType, Var) return 0 end
 function addcoin(Multi_Target, Multi_Skill, CoinIndex, VAR_4, VAR_5, VAR_6, CopyStaticData) return end
 
 ---Get the current skill's power
----@param Target "Self" | "MainTarget" | "Target"
----@return integer
----@nodiscard
-function getcurrentpower(Target) return 0 end
+-- ---@param Target "Self" | "MainTarget" | "Target"
+-- ---@return integer
+-- ---@nodiscard
+-- function getcurrentpower(Target) return 0 end
 
 ---Clear/Remove all abilities of the skill
 ---@param Target "Self" | "MainTarget" | "Target"
@@ -1007,6 +1007,12 @@ function getkeyinput(keyCode) return 0 end
 
 ---Removes all remaining actions in the combat phase
 function removeallactions() return end
+
+---Only usable with AfterDuelClashLog TIMING. Returns the Clash Power of the current parry. Returns -1 if current timing is invalid
+---@param target "Self" | "MainTarget"
+---@return integer | -1
+---@nodiscard
+function getparryingclashpower(target) return 0 end
 --#endregion
 
 --#region Exclusive .lua functions

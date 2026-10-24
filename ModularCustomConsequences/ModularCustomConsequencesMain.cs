@@ -45,7 +45,7 @@ public class Main : BasePlugin
 {
     // Edit the below to your own plugin name, version, etc.
     public const string NAME = "MTCustomScripts";
-    public const string VERSION = "34.122.4";
+    public const string VERSION = "35.123.4";
     public const string AUTHOR = "MT";
     public const string GUID = $"{AUTHOR}.{NAME}";
 
@@ -64,7 +64,7 @@ public class Main : BasePlugin
     public System.Collections.Generic.Dictionary<BattleUnitModel, int[]> changeMpDict = [];
     public bool equipdefense_refreshslotview = false;
     public bool forceEndDuel = false;
-    public BattleLog_Parrying currentBattleLog_Parrying;
+    public static BattleLog_Parrying currentBattleLog_Parrying = null;
     public static System.Collections.Generic.Dictionary<BuffModel, System.Collections.Generic.HashSet<string>> dl_activePathsDict = new();
     public static System.Collections.Generic.Dictionary<BuffModel, System.Collections.Generic.Dictionary<string, string>> dl_overwritePathValue = new();
     public static int lastSinSlotIndex = 0;
@@ -566,6 +566,7 @@ public class Main : BasePlugin
         MainClass.timingDict.Add("OnSlotHoveredBy", 7345);
         MainClass.timingDict.Add("OnDeselectSinGlobal", 7346);
         MainClass.timingDict.Add("OpenInfo", 7347);
+        MainClass.timingDict.Add("AfterDuelClashLog", 7348);
 
         try
         {
@@ -654,7 +655,7 @@ public class Main : BasePlugin
             MainClass.acquirerDict["isactionable"] = new MTCustomScripts.Acquirers.AcquirerIsActionable();
             MainClass.acquirerDict["getopposkillid"] = new MTCustomScripts.Acquirers.AcquirerGetOppoSkillId();
             MainClass.acquirerDict["getabilitymoduleproperty"] = new MTCustomScripts.Acquirers.AcquirerGetAbilityModuleProperty();
-            MainClass.acquirerDict["getcurrentpower"] = new MTCustomScripts.Acquirers.AcquirerGetCurrentPower();
+            // MainClass.acquirerDict["getcurrentpower"] = new MTCustomScripts.Acquirers.AcquirerGetCurrentPower();
             MainClass.acquirerDict["getdefaultmaxhp"] = new MTCustomScripts.Acquirers.AcquirerGetDefaultMaxHp();
             MainClass.acquirerDict["gethpincrement"] = new MTCustomScripts.Acquirers.AcquirerGetHpIncrementByLevel();
             MainClass.acquirerDict["getchangespvalue"] = new MTCustomScripts.Acquirers.AcquirerGetChangedSPValue();
@@ -676,6 +677,7 @@ public class Main : BasePlugin
             MainClass.acquirerDict["getcoinindex"] = new MTCustomScripts.Acquirers.AcquirerGetCoinIndex();
             MainClass.acquirerDict["getmodularvalue"] = new MTCustomScripts.Acquirers.AcquirerGetModularValue();
             MainClass.acquirerDict["getkeyinput"] = new MTCustomScripts.Acquirers.AcquirerGetKeyInput();
+            MainClass.acquirerDict["getparryingclashpower"] = new MTCustomScripts.Acquirers.AcquirerGetParryingClashPower();
 
             //Override
             MainClass.acquirerDict["getcoinscale"] = new MTCustomScripts.Acquirers.AcquirerOneScale();

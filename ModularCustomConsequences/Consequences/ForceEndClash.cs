@@ -9,7 +9,7 @@ public class ConsequenceForceEndDuel : IModularConsequence
     public void ExecuteConsequence(ModularSA modular, string section, string circledSection, string[] circles)
     {
         MTCustomScripts.Main.Instance.forceEndDuel = true;
-        BattleLog_Parrying battleLog_Parrying = MTCustomScripts.Main.Instance.currentBattleLog_Parrying;
+        BattleLog_Parrying battleLog_Parrying = MTCustomScripts.Main.currentBattleLog_Parrying;
 
         string Get(int index) => (circles != null && index < circles.Length) ? circles[index] : null;
 
