@@ -765,6 +765,9 @@ public class Main : BasePlugin
             MainClass.consequenceDict["allowopeninfo"] = new MTCustomScripts.Consequences.ConsequenceAllowOpenInfo();
             MainClass.consequenceDict["removeallactions"] = new MTCustomScripts.Consequences.ConsequenceRemoveAllActions();
 
+            //Sec
+            MainClass.consequenceDict["changecustommotion"] = new MTCustomScripts.Consequences.ConsequenceChangeCustomMotion();
+
             // Dynamic Locale
             MainClass.consequenceDict["dlactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleActivatePath();
             MainClass.consequenceDict["dldeactivatepath"] = new MTCustomScripts.Consequences.ConsequenceDynamicLocaleDeactivatePath();
