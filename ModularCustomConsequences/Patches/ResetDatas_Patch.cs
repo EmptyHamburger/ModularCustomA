@@ -16,7 +16,7 @@ public class ResetDatas_Patch
         MTCustomScripts.Main.dl_activePathsDict.Clear();
         MTCustomScripts.Main.dl_overwritePathValue.Clear();
         MTCustomScripts.Main.gateSPDict.Clear();
-        MTUtil._excludeRendererRefreshInstanceIDList.Clear();
+        MTUtil._rendererRefreshInstanceIDList.Clear();
     }
 
     [HarmonyPatch(typeof(StageModel), nameof(StageModel.OnStageEnd))]
@@ -26,7 +26,7 @@ public class ResetDatas_Patch
         MTCustomScripts.Main.dl_activePathsDict.Clear();
         MTCustomScripts.Main.dl_overwritePathValue.Clear();
         MTCustomScripts.Main.gateSPDict.Clear();
-        MTUtil._excludeRendererRefreshInstanceIDList.Clear();
+        MTUtil._rendererRefreshInstanceIDList.Clear();
     }
 
     [HarmonyPatch(typeof(Data), nameof(Data.LoadCustomLocale), new[] { typeof(LOCALIZE_LANGUAGE) })]

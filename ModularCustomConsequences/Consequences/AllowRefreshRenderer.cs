@@ -14,7 +14,7 @@ namespace MTCustomScripts.Consequences
             bool allowRefresh = modular.GetBoolFromParamString(circles[1]);
 
             foreach (BattleUnitModel unit in targetList)
-            if (allowRefresh) MTUtil._excludeRendererRefreshInstanceIDList.Remove(unit._instanceID); else MTUtil._excludeRendererRefreshInstanceIDList.Add(unit._instanceID);
+            if (allowRefresh) MTUtil._rendererRefreshInstanceIDList.Add(unit._instanceID); else MTUtil._rendererRefreshInstanceIDList.Remove(unit._instanceID);
         }
     }
 }
