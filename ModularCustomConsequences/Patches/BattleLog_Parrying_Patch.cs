@@ -39,7 +39,7 @@ public class BattleLog_Parrying_Patch
                 foreach (ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong])
                 {
                     modpa.modsa_passiveModel = passiveModel;
-                    modpa.Enact(actorUnit, actorAction._skill, actorAction, opponentAction, actevent, BATTLE_EVENT_TIMING.NONE);
+                    modpa.Enact(actorUnit, actorAction._skill, actorAction, opponentAction, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
                 }
             }
 
@@ -52,7 +52,7 @@ public class BattleLog_Parrying_Patch
                 foreach (ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong])
                 {
                     modpa.modsa_passiveModel = passiveModel;
-                    modpa.Enact(actorUnit, actorAction._skill, actorAction, opponentAction, actevent, BATTLE_EVENT_TIMING.NONE);
+                    modpa.Enact(actorUnit, actorAction._skill, actorAction, opponentAction, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
                 }
             }
 
@@ -64,7 +64,7 @@ public class BattleLog_Parrying_Patch
                 foreach (ModularSA modba in SkillScriptInitPatch.modbaDict[buffmodel_intlong])
                 {
                     modba.modsa_buffModel = buffModel;
-                    modba.Enact(actorUnit, actorAction._skill, actorAction, opponentAction, actevent, BATTLE_EVENT_TIMING.NONE);
+                    modba.Enact(actorUnit, actorAction._skill, actorAction, opponentAction, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
                 }
             }
         }
@@ -80,7 +80,7 @@ public class BattleLog_Parrying_Patch
                 foreach (ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong])
                 {
                     modpa.modsa_passiveModel = passiveModel;
-                    modpa.Enact(opponentUnit, opponentAction._skill, opponentAction, actorAction, actevent, BATTLE_EVENT_TIMING.NONE);
+                    modpa.Enact(opponentUnit, opponentAction._skill, opponentAction, actorAction, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
                 }
             }
 
@@ -93,7 +93,7 @@ public class BattleLog_Parrying_Patch
                 foreach (ModularSA modpa in SkillScriptInitPatch.modpaDict[passiveModel_intlong])
                 {
                     modpa.modsa_passiveModel = passiveModel;
-                    modpa.Enact(opponentUnit, opponentAction._skill, opponentAction, actorAction, actevent, BATTLE_EVENT_TIMING.NONE);
+                    modpa.Enact(opponentUnit, opponentAction._skill, opponentAction, actorAction, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
                 }
             }
 
@@ -105,7 +105,7 @@ public class BattleLog_Parrying_Patch
                 foreach (ModularSA modba in SkillScriptInitPatch.modbaDict[buffmodel_intlong])
                 {
                     modba.modsa_buffModel = buffModel;
-                    modba.Enact(opponentUnit, opponentAction._skill, opponentAction, actorAction, actevent, BATTLE_EVENT_TIMING.NONE);
+                    modba.Enact(opponentUnit, opponentAction._skill, opponentAction, actorAction, actevent, BATTLE_EVENT_TIMING.ALL_TIMING);
                 }
             }
         }

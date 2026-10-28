@@ -588,6 +588,7 @@ public class Main : BasePlugin
             harmony.PatchAll(typeof(ResetDatas_Patch));
             harmony.PatchAll(typeof(Modular_VisualUpdateForSpecialPatch));
             harmony.PatchAll(typeof(OpenInfo_Patches));
+            harmony.PatchAll(typeof(BattleLog_Parrying_Patch));
             // harmony.PatchAll(typeof(CharacterState_Patches));
             // harmony.PatchAll(typeof(SkillAbilityMang_Patch));
 
